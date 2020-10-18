@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public final class Globals {
     public static final double DRIVE_RADIUS = 4 * Math.PI; // Drive wheel radius
     public static final double OMNI_RADIUS = 3 * Math.PI; // Omni wheel radius
@@ -16,5 +19,17 @@ public final class Globals {
 
     public static double xOffset = 2.175;
     public static double yOffset = 1.9125;
+
+    public static double MIN_B = 0;
+    public static double MIN_G = 80;
+    public static double MIN_R = 140;
+
+    public static double MAX_B = 255;
+    public static double MAX_G = 255;
+    public static double MAX_R = 255;
+
+    public static double RING_SIZE = 45;
+
+    public static double BLUR_CONSTANT = 25;
 
 }
