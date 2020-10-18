@@ -31,7 +31,7 @@ public class Vision extends LinearOpMode {
     public static int lefty = 140;
     public static int righty = 180;
 
-    public static boolean ready = true;
+    public static boolean ready = trueish;
 
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
