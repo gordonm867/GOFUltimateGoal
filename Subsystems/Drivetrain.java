@@ -41,7 +41,7 @@ public class Drivetrain implements Subsystem {
                 if (gamepad1.left_stick_y != 0) {
                     drive = drive * 0.1; // Slow down joystick driving
                 } else {
-                    if (gamepad1.dpad_down) {
+                    if (gamepad1.dpad_up) {
                         drive = -0.1; // Slow drive backwards
                     } else {
                         drive = 0.1; // Slow drive forwards
