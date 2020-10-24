@@ -17,8 +17,8 @@ public final class Globals {
     public static double START_Y = 0; // Default starting y position
     public static double START_THETA = 0; // Default starting angle
 
-    public static double xOffset = 4.06888396692;
-    public static double yOffset = 1.50640725586;
+    public static double xOffset = -13.9652406417;
+    public static double yOffset = -0.31283422459;
 
     public static double MIN_B = 0;
     public static double MIN_G = 80;
