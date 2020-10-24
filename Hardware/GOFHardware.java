@@ -269,7 +269,7 @@ public class GOFHardware {
      */
     public int getHOmniPos(RevBulkData rev) {
         if (lb != null) {
-            return rev.getMotorCurrentPosition(lb);
+            return -rev.getMotorCurrentPosition(lb);
         }
         return 0;
     }

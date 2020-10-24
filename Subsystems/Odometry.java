@@ -168,6 +168,7 @@ public class Odometry implements Subsystem {
             dTime += System.currentTimeMillis() - lastTime;
             velocity = displacement / (System.currentTimeMillis() - lastTime);
             lastTime = System.currentTimeMillis();
+            //y *= -1;
             handler.pushData("Odometry Point", new Point(x, y));
         }
     }
@@ -268,6 +269,8 @@ public class Odometry implements Subsystem {
             dTime += System.currentTimeMillis() - lastTime;
             velocity = displacement / (System.currentTimeMillis() - lastTime);
             lastTime = System.currentTimeMillis();
+            //y *= -1;
+            handler.pushData("Odometry Point", new Point(x, y));
         }
 
         /*

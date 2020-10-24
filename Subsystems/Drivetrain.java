@@ -152,7 +152,7 @@ public class Drivetrain implements Subsystem {
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             if(PIDd != -displacement) {
-                angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
@@ -169,7 +169,7 @@ public class Drivetrain implements Subsystem {
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= (Math.sqrt(2) / 10) || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
+                if(Math.abs(displacement) <= 1.0/24.0 || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
                     drive = 0;
                     angle = 0;
                 }
@@ -187,7 +187,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Math.abs(Math.max(displacement / 2.5, Globals.MIN_SPEED) / max);
             }
         }
-        odometry.update(data, current);
+        odometry.update(data);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -297,7 +297,7 @@ public class Drivetrain implements Subsystem {
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             if(PIDd != -displacement) {
-                angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);

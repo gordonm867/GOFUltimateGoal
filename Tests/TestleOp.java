@@ -56,20 +56,25 @@ public class TestleOp extends MyOpMode {
             }
         }
         else {
-            Globals.MAX_SPEED = 0.4;
+            Globals.MAX_SPEED = .85;
             Point target = new Point(2, 2);
             double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-            while(displacement > 0.25) {
-                drive.update(robot, target, odometry, 135, odometry.getAngle(), data);
+            double lastDisplacement = displacement;
+            while(displacement > 1.0/24.0 && opModeIsActive()) {
+                data = robot.bulkRead();
+                data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                drive.clupdate(robot, target, odometry, 135, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getHOmniPos(data));
                 telemetry.addData("yraw", robot.getVOmniPos(data));
                 telemetry.update();
             }
+            robot.setDrivePower(0,0,0,0);
             double time = System.currentTimeMillis();
-            while(System.currentTimeMillis() - time <= 5000) {
+            while(System.currentTimeMillis() - time <= 5000 && opModeIsActive()) {
                 odometry.update(data);
                 telemetry.addData("Status", "Waiting.... ( " + (((5000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
                 telemetry.addData("x", odometry.getX());
@@ -81,25 +86,30 @@ public class TestleOp extends MyOpMode {
                     throw new InterruptedException();
                 }
             }
-            Globals.MAX_SPEED = 1.0;
+            Globals.MAX_SPEED = .85;
             target = new Point(2, -4);
             displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-            while(displacement > 0.25) {
-                drive.update(robot, target, odometry, 0, odometry.getAngle(), data);
+            lastDisplacement = displacement;
+            while(displacement > 1.0/24.0 && opModeIsActive()) {
+                data = robot.bulkRead();
+                data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                drive.clupdate(robot, target, odometry, 0, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getHOmniPos(data));
                 telemetry.addData("yraw", robot.getVOmniPos(data));
                 telemetry.update();
             }
+            robot.setDrivePower(0,0,0,0);
             telemetry.addData("x", odometry.getX());
             telemetry.addData("y", odometry.getY());
             telemetry.addData("xraw", robot.getHOmniPos(data));
             telemetry.addData("yraw", robot.getVOmniPos(data));
             telemetry.update();
             time = System.currentTimeMillis();
-            while(System.currentTimeMillis() - time <= 3000) {
+            while(System.currentTimeMillis() - time <= 3000 && opModeIsActive()) {
                 odometry.update(data);
                 if(!opModeIsActive()) {
                     throw new InterruptedException();
