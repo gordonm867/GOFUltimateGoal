@@ -42,9 +42,9 @@ public class Drivetrain implements Subsystem {
                     drive = drive * 0.1; // Slow down joystick driving
                 } else {
                     if (gamepad1.dpad_up) {
-                        drive = -0.1; // Slow drive backwards
+                        drive = -0.1; // Slow drive forwards
                     } else {
-                        drive = 0.1; // Slow drive forwards
+                        drive = 0.1; // Slow drive backwards
                     }
                 }
             }
@@ -64,10 +64,10 @@ public class Drivetrain implements Subsystem {
 
             /* Precision turn */
             if (gamepad1.left_bumper) {
-                turn = -0.1; // Slow left turn
+                turn = 0.1; // Slow left turn
             }
             if (gamepad1.right_bumper) {
-                turn = 0.1; // Slow right turn
+                turn = -0.1; // Slow right turn
             }
             if(gamepad1.start && gamepad1.y && !changed) {
                 field = !field;

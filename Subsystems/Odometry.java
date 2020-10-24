@@ -364,6 +364,7 @@ public class Odometry implements Subsystem {
     }
 
     public void reset() {
+        angleOffset = 0;
         robot.resetOmnis();
         lastXPos = 0;
         lastYPos = 0;
