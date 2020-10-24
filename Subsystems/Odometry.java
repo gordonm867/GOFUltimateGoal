@@ -84,6 +84,7 @@ public class Odometry implements Subsystem {
             data = data1;
             updates++;
             angle = Functions.normalize(robot.getAngle() + angleOffset);
+            handler.pushData("Angle", angle);
             double dTheta = angle - lastAngle;
             if(dTheta >= 300) {
                 dTheta -= 360;

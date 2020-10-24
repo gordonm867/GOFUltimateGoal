@@ -39,15 +39,25 @@ public class Point {
     public double angle(Point newPoint, AngleUnit unit) {
         double angle;
         if(unit == AngleUnit.DEGREES) {
-            angle = Math.toDegrees(Math.atan2(newPoint.getY() - y, newPoint.getX() - x));
+            angle = Functions.normalize(Math.toDegrees(Math.atan2(newPoint.getY() - y, newPoint.getX() - x)));
             while(angle < -180 || angle > 180) {
-                angle += 360;
+                if(angle < -180) {
+                    angle += 360;
+                }
+                else {
+                    angle -= 360;
+                }
             }
         }
         else {
             angle = Math.atan2(newPoint.getY() - y, newPoint.getX() - x);
             while(angle < -Math.PI || angle > Math.PI) {
-                angle += 2 * Math.PI;
+                if(angle < -Math.PI) {
+                    angle += 2 * Math.PI;
+                }
+                else {
+                    angle -= 2 * Math.PI;
+                }
             }
         }
         return angle;

@@ -51,16 +51,15 @@ public class TestleOp extends MyOpMode {
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getHOmniPos(data));
                 telemetry.addData("yraw", robot.getVOmniPos(data));
-                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
         }
         else {
-            Globals.MAX_SPEED = .85;
+            Globals.MAX_SPEED = 1.0;
             Point target = new Point(2, 2);
             double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             double lastDisplacement = displacement;
-            while(displacement > 1.0/24.0 && opModeIsActive()) {
+            while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
@@ -74,7 +73,7 @@ public class TestleOp extends MyOpMode {
             }
             robot.setDrivePower(0,0,0,0);
             double time = System.currentTimeMillis();
-            while(System.currentTimeMillis() - time <= 5000 && opModeIsActive()) {
+            while(opModeIsActive() && System.currentTimeMillis() - time <= 5000) {
                 odometry.update(data);
                 telemetry.addData("Status", "Waiting.... ( " + (((5000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
                 telemetry.addData("x", odometry.getX());
@@ -90,7 +89,7 @@ public class TestleOp extends MyOpMode {
             target = new Point(2, -4);
             displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             lastDisplacement = displacement;
-            while(displacement > 1.0/24.0 && opModeIsActive()) {
+            while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
@@ -109,7 +108,7 @@ public class TestleOp extends MyOpMode {
             telemetry.addData("yraw", robot.getVOmniPos(data));
             telemetry.update();
             time = System.currentTimeMillis();
-            while(System.currentTimeMillis() - time <= 3000 && opModeIsActive()) {
+            while(opModeIsActive() && System.currentTimeMillis() - time <= 3000) {
                 odometry.update(data);
                 if(!opModeIsActive()) {
                     throw new InterruptedException();

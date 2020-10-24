@@ -19,6 +19,10 @@ public class Drivetrain implements Subsystem {
 
     private boolean backwards = false;
 
+    private double angleToHold = 0;
+    private double lasterror = 0;
+    private double lasttime = 0;
+
     public Drivetrain(State state) {
         this.state = state;
     }
@@ -35,6 +39,8 @@ public class Drivetrain implements Subsystem {
         double drive = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
         double angle = gamepad1.left_stick_x;
+        angle = Math.abs(angle) < 0.15 && Math.abs(drive) > 0.75 ? 0 : angle;
+        drive = Math.abs(drive) < 0.15 && Math.abs(angle) > 0.75 ? 0 : drive;
         if(state == State.ON) {
             /* Precision vertical drive */
             if (gamepad1.dpad_down || gamepad1.dpad_up) {
@@ -76,6 +82,9 @@ public class Drivetrain implements Subsystem {
             if(changed && !(gamepad1.start && gamepad1.y)) {
                 changed = false;
             }
+            if(turn != 0 || (drive == 0 && angle == 0)) {
+                angleToHold = (double)handler.getData("Angle");
+            }
             if(!field) {
                 drive = adjust(drive);
                 turn = adjust(turn);
@@ -89,16 +98,22 @@ public class Drivetrain implements Subsystem {
                     scaleFactor = Globals.MAX_SPEED;
                 }
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
+                double Kp = 0.0325;
+                double error = angleToHold - (double)handler.getData("Angle");
+                turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
             else {
                 double maxspeed = Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
                 double driveangle = Math.atan2(drive, angle);
-                double relAngle = Math.toRadians(Math.toDegrees(driveangle) - robot.getAngle());
+                double relAngle = Math.toRadians(Math.toDegrees(driveangle) - ((double)handler.getData("Angle")));
                 drive = Math.cos(relAngle);
                 angle = Math.sin(relAngle);
                 double scaleFactor = maxspeed / Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
+                double Kp = 0.0325;
+                double error = angleToHold - (double)handler.getData("Angle");
+                turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
         }
@@ -187,7 +202,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Math.abs(Math.max(displacement / 2.5, Globals.MIN_SPEED) / max);
             }
         }
-        odometry.update(data);
+        odometry.update(data, current);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -296,12 +311,42 @@ public class Drivetrain implements Subsystem {
         double turn = 0;
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
-            if(PIDd != -displacement) {
-                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
-                drive = PIDd;
-                if(!Double.isNaN(myAngle)) {
+            angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+            drive = PIDd;
+            if(displacement > 1) {
+                double firstAngle = myPos.angle(target, AngleUnit.DEGREES);
+                double firsterror = Math.abs(current - firstAngle);
+                double secondAngle = Functions.normalize(myPos.angle(target, AngleUnit.DEGREES) + 180);
+                double seconderror = Math.abs(current - secondAngle);
+                if(firsterror <= seconderror) {
+                    myAngle = firstAngle;
+                }
+                else {
+                    myAngle = secondAngle;
+                }
+            }
+            if (!Double.isNaN(myAngle)) {
+                double error = Functions.normalize(myAngle - current);
+                if (Math.abs(error) >= 1.0) {
+                    error = Functions.normalize(myAngle - current);
+                    if (Math.abs(error + 360) < Math.abs(error)) {
+                        error += 360;
+                    }
+                    if (Math.abs(error - 360) < Math.abs(error)) {
+                        error -= 360;
+                    }
+                    double max = Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
+                    double Kp = max / 45;
+                    double pow = (Kp * error);
+                    turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
+                }
+            }
+            if(Math.abs(displacement) <= (Math.sqrt(2) / 100) || (Math.abs(angle) < 0.00001 && Math.abs(drive) < 0.00001)) {
+                drive = 0;
+                angle = 0;
+                if (!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
-                    if(Math.abs(error) >= 1.0) {
+                    if (Math.abs(error) >= 1.0) {
                         error = Functions.normalize(myAngle - current);
                         if (Math.abs(error + 360) < Math.abs(error)) {
                             error += 360;
@@ -312,25 +357,6 @@ public class Drivetrain implements Subsystem {
                         double Kp = 0.0325;
                         double pow = (Kp * error);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
-                    }
-                }
-                if(Math.abs(displacement) <= (Math.sqrt(2) / 100) || (Math.abs(angle) < 0.00001 && Math.abs(drive) < 0.00001)) {
-                    drive = 0;
-                    angle = 0;
-                    if(!Double.isNaN(myAngle)) {
-                        double error = Functions.normalize(myAngle - current);
-                        if(Math.abs(error) >= 1.0) {
-                            error = Functions.normalize(myAngle - current);
-                            if (Math.abs(error + 360) < Math.abs(error)) {
-                                error += 360;
-                            }
-                            if (Math.abs(error - 360) < Math.abs(error)) {
-                                error -= 360;
-                            }
-                            double Kp = 0.0325;
-                            double pow = (Kp * error);
-                            turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
-                        }
                     }
                 }
             }

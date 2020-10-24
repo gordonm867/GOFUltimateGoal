@@ -26,8 +26,9 @@ public class GOFTeleOp extends MyOpMode {
         odometry = Odometry.getInstance(robot);
 
         robot.enabled = true;
-        subsystems.add(drive);
+
         subsystems.add(odometry);
+        subsystems.add(drive);
 
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
