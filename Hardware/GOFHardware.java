@@ -55,8 +55,6 @@ public class GOFHardware {
     public DcMotor rb;
     public DcMotor lf;
     public DcMotor lb;
-    public DcMotor vodo;
-    public DcMotor hodo;
 
     public boolean enabled;
 
@@ -144,21 +142,6 @@ public class GOFHardware {
             rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception p_exception) {
             rf = null;
-        }
-
-        try { // Vertically-aligned odometry wheel
-            vodo = hwMap.get(DcMotor.class, "vodo");
-            vodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            vodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        } catch (Exception p_exception) {
-            vodo = null;
-        }
-        try { // Horizontally-aligned odometry wheel
-            hodo = hwMap.get(DcMotor.class, "hodo");
-            hodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            hodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        } catch (Exception p_exception) {
-            hodo = null;
         }
 
     }
@@ -261,10 +244,10 @@ public class GOFHardware {
      * Reset omni encoders
      */
     public void resetOmnis() {
-        vodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        hodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
@@ -273,8 +256,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getVOmniPos(RevBulkData rev) {
-        if (vodo != null) {
-            return rev.getMotorCurrentPosition(vodo);
+        if (lf != null) {
+            return rev.getMotorCurrentPosition(lf);
         }
         return 0;
     }
@@ -285,8 +268,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getHOmniPos(RevBulkData rev) {
-        if (hodo != null) {
-            return -rev.getMotorCurrentPosition(hodo);
+        if (lb != null) {
+            return rev.getMotorCurrentPosition(lb);
         }
         return 0;
     }

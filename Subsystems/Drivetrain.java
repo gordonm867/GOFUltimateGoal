@@ -33,8 +33,8 @@ public class Drivetrain implements Subsystem {
     
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         double drive = gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
-        double angle = -gamepad1.left_stick_x;
+        double turn = -gamepad1.right_stick_x;
+        double angle = gamepad1.left_stick_x;
         if(state == State.ON) {
             /* Precision vertical drive */
             if (gamepad1.dpad_down || gamepad1.dpad_up) {

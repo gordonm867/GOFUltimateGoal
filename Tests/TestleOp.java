@@ -26,8 +26,10 @@ public class TestleOp extends MyOpMode {
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
+        robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);
+        odometry.reset();
 
         robot.enabled = true;
         subsystems.add(drive);
@@ -49,6 +51,7 @@ public class TestleOp extends MyOpMode {
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getHOmniPos(data));
                 telemetry.addData("yraw", robot.getVOmniPos(data));
+                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
         }
@@ -104,11 +107,11 @@ public class TestleOp extends MyOpMode {
             }
             running = false;
         }
-        if(gamepad1.a && !apressed) {
+        if(gamepad1.x && !apressed) {
             apressed = true;
             running = true;
         }
-        if(!gamepad1.a) {
+        if(!gamepad1.x) {
             apressed = false;
         }
     }
