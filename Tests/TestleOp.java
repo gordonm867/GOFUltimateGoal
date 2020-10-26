@@ -32,8 +32,8 @@ public class TestleOp extends MyOpMode {
         odometry.reset();
 
         robot.enabled = true;
-        subsystems.add(drive);
         subsystems.add(odometry);
+        subsystems.add(drive);
 
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
@@ -55,7 +55,7 @@ public class TestleOp extends MyOpMode {
             }
         }
         else {
-            Globals.MAX_SPEED = 1.0;
+            Globals.MAX_SPEED = 0.75;
             Point target = new Point(2, 2);
             double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             double lastDisplacement = displacement;
@@ -63,7 +63,7 @@ public class TestleOp extends MyOpMode {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                drive.clupdate(robot, target, odometry, 135, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                drive.clupdate(robot, target, odometry, 0, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
@@ -85,7 +85,7 @@ public class TestleOp extends MyOpMode {
                     throw new InterruptedException();
                 }
             }
-            Globals.MAX_SPEED = .85;
+            Globals.MAX_SPEED = 0.75;
             target = new Point(2, -4);
             displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             lastDisplacement = displacement;

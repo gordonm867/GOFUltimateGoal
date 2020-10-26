@@ -313,6 +313,7 @@ public class Drivetrain implements Subsystem {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             drive = PIDd;
+            /*
             if(displacement > 1) {
                 double firstAngle = myPos.angle(target, AngleUnit.DEGREES);
                 double firsterror = Math.abs(current - firstAngle);
@@ -325,6 +326,7 @@ public class Drivetrain implements Subsystem {
                     myAngle = secondAngle;
                 }
             }
+             */
             if (!Double.isNaN(myAngle)) {
                 double error = Functions.normalize(myAngle - current);
                 if (Math.abs(error) >= 1.0) {
@@ -335,8 +337,7 @@ public class Drivetrain implements Subsystem {
                     if (Math.abs(error - 360) < Math.abs(error)) {
                         error -= 360;
                     }
-                    double max = Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
-                    double Kp = max / 45;
+                    double Kp = 0.0325;
                     double pow = (Kp * error);
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
