@@ -23,6 +23,9 @@ public class Drivetrain implements Subsystem {
     private double lasterror = 0;
     private double lasttime = 0;
 
+    public boolean bpressed = false;
+    public boolean turningToPoint = false;
+
     public Drivetrain(State state) {
         this.state = state;
     }
@@ -75,6 +78,15 @@ public class Drivetrain implements Subsystem {
             if (gamepad1.right_bumper) {
                 turn = -0.1; // Slow right turn
             }
+
+            if(turn != 0 || drive != 0 || angle != 0) {
+                turningToPoint = false;
+            }
+
+            if(turningToPoint) {
+                clupdate(robot, new Point(-3, 6), );
+            }
+
             if(gamepad1.start && gamepad1.y && !changed) {
                 field = !field;
                 changed = true;
@@ -115,6 +127,13 @@ public class Drivetrain implements Subsystem {
                 double error = angleToHold - (double)handler.getData("Angle");
                 turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
+            }
+            if (gamepad1.b && !bpressed) {
+                bpressed = true;
+                turningToPoint = true;
+            }
+            if(!gamepad1.b) {
+                bpressed = false;
             }
         }
         else if (state == State.OFF) {
@@ -355,7 +374,7 @@ public class Drivetrain implements Subsystem {
                         if (Math.abs(error - 360) < Math.abs(error)) {
                             error -= 360;
                         }
-                        double Kp = 0.0325;
+                        double Kp = 0.0325 * Globals.MAX_SPEED;
                         double pow = (Kp * error);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }

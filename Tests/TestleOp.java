@@ -55,15 +55,15 @@ public class TestleOp extends MyOpMode {
             }
         }
         else {
-            Globals.MAX_SPEED = 0.75;
-            Point target = new Point(2, 2);
+            Globals.MAX_SPEED = 0.6;
+            Point target = new Point(1.5, 4);
             double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             double lastDisplacement = displacement;
             while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                drive.clupdate(robot, target, odometry, 0, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
@@ -85,15 +85,15 @@ public class TestleOp extends MyOpMode {
                     throw new InterruptedException();
                 }
             }
-            Globals.MAX_SPEED = 0.75;
-            target = new Point(2, -4);
+            Globals.MAX_SPEED = 0.6;
+            target = new Point(1, 9);
             displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             lastDisplacement = displacement;
             while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                drive.clupdate(robot, target, odometry, 0, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
