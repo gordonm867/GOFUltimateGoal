@@ -55,6 +55,8 @@ public class GOFHardware {
     public DcMotor rb;
     public DcMotor lf;
     public DcMotor lb;
+    public DcMotor in;
+    public DcMotor vodo;
 
     public boolean enabled;
 
@@ -85,7 +87,7 @@ public class GOFHardware {
             ex2 = null;
         }
         try {
-            ex3 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 3");
+            ex3 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 173");
         } catch (Exception p_exception) {
             ex3 = null;
         }
@@ -142,6 +144,22 @@ public class GOFHardware {
             rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception p_exception) {
             rf = null;
+        }
+
+        try { // Intake wheel
+            in = hwMap.get(DcMotor.class, "in");
+            in.setDirection(DcMotor.Direction.FORWARD);
+            in.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            in.setPower(0);
+            in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        } catch (Exception p_exception) {
+            in = null;
+        }
+
+        try { // y-axis odometry wheel
+            vodo = hwMap.get(DcMotor.class, "vw");
+        } catch (Exception p_exception) {
+            vodo = null;
         }
 
     }
@@ -241,12 +259,22 @@ public class GOFHardware {
     }
 
     /**
+     * Power the intake
+     * @param power Proportion of max power for the intake
+     */
+    public void setIntakePower(double power) {
+        if(in != null) {
+            in.setPower(Range.clip(power, -Globals.MAX_IN_SPEED, Globals.MAX_IN_SPEED));
+        }
+    }
+
+    /**
      * Reset omni encoders
      */
     public void resetOmnis() {
-        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        vodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -257,7 +285,7 @@ public class GOFHardware {
      */
     public int getVOmniPos(RevBulkData rev) {
         if (lf != null) {
-            return rev.getMotorCurrentPosition(lf);
+            return rev.getMotorCurrentPosition(vodo);
         }
         return 0;
     }

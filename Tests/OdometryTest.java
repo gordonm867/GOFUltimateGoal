@@ -13,8 +13,8 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
-@TeleOp(name="TestleOp",group="Tests")
-public class TestleOp extends MyOpMode {
+@TeleOp(name="OdometryTest",group="Tests")
+public class OdometryTest extends MyOpMode {
     private ArrayList<Subsystem> subsystems = new ArrayList<>();
     private Drivetrain drive;
     private GOFHardware robot = GOFHardware.getInstance();
@@ -49,8 +49,9 @@ public class TestleOp extends MyOpMode {
                 subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
-                telemetry.addData("xraw", robot.getHOmniPos(data));
-                telemetry.addData("yraw", robot.getVOmniPos(data));
+                telemetry.addData("xraw", robot.getVOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
         }
@@ -63,23 +64,25 @@ public class TestleOp extends MyOpMode {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
-                telemetry.addData("xraw", robot.getHOmniPos(data));
-                telemetry.addData("yraw", robot.getVOmniPos(data));
+                telemetry.addData("xraw", robot.getVOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
             robot.setDrivePower(0,0,0,0);
             double time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 5000) {
-                odometry.update(data);
+                odometry.update(data2);
                 telemetry.addData("Status", "Waiting.... ( " + (((5000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
-                telemetry.addData("xraw", robot.getHOmniPos(data));
-                telemetry.addData("yraw", robot.getVOmniPos(data));
+                telemetry.addData("xraw", robot.getVOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
                 if(!opModeIsActive()) {
                     throw new InterruptedException();
@@ -93,23 +96,25 @@ public class TestleOp extends MyOpMode {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
-                telemetry.addData("xraw", robot.getHOmniPos(data));
-                telemetry.addData("yraw", robot.getVOmniPos(data));
+                telemetry.addData("xraw", robot.getVOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
             robot.setDrivePower(0,0,0,0);
             telemetry.addData("x", odometry.getX());
             telemetry.addData("y", odometry.getY());
-            telemetry.addData("xraw", robot.getHOmniPos(data));
-            telemetry.addData("yraw", robot.getVOmniPos(data));
+            telemetry.addData("xraw", robot.getVOmniPos(data2));
+            telemetry.addData("yraw", robot.getHOmniPos(data2));
+            telemetry.addData("angle", odometry.getAngle());
             telemetry.update();
             time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 3000) {
-                odometry.update(data);
+                odometry.update(data2);
                 if(!opModeIsActive()) {
                     throw new InterruptedException();
                 }

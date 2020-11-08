@@ -95,9 +95,9 @@ public class Odometry implements Subsystem {
             lastAngle = angle;
             double xDist;
             double yDist;
-            if(data != null && robot.lf != null && robot.lb != null) {
-                xDist = (data.getMotorCurrentPosition(robot.lb) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
-                yDist = (data.getMotorCurrentPosition(robot.lf) - lastYPos) * Globals.OMNI_FEET_PER_TICK;
+            if(data != null && robot.lb != null && robot.vodo != null) {
+                xDist = (-data.getMotorCurrentPosition(robot.vodo) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
+                yDist = (data.getMotorCurrentPosition(robot.lb) - lastYPos) * Globals.OMNI_FEET_PER_TICK;
             }
             else {
                 return;
@@ -159,9 +159,9 @@ public class Odometry implements Subsystem {
                 x += displacement * Math.cos(Math.toRadians(angle));
                 y += displacement * Math.sin(Math.toRadians(angle));
             }
-            if(data != null && robot.lf != null && robot.lb != null) {
-                lastXPos = data.getMotorCurrentPosition(robot.lb);
-                lastYPos = data.getMotorCurrentPosition(robot.lf);
+            if(data != null && robot.lb != null && robot.vodo != null) {
+                lastXPos = -data.getMotorCurrentPosition(robot.vodo);
+                lastYPos = data.getMotorCurrentPosition(robot.lb);
             }
             else {
                 return;
@@ -188,9 +188,9 @@ public class Odometry implements Subsystem {
             lastAngle = angle;
             double xDist;
             double yDist;
-            if(data != null && robot.lf != null && robot.lb != null) {
-                xDist = (data.getMotorCurrentPosition(robot.lb) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
-                yDist = (data.getMotorCurrentPosition(robot.lf) - lastYPos) * Globals.OMNI_FEET_PER_TICK;
+            if(data != null && robot.lb != null && robot.vodo != null) {
+                xDist = (-data.getMotorCurrentPosition(robot.vodo) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
+                yDist = (data.getMotorCurrentPosition(robot.lb) - lastYPos) * Globals.OMNI_FEET_PER_TICK;
             }
             else {
                 return;
@@ -260,9 +260,9 @@ public class Odometry implements Subsystem {
                 this.x += x1;
                 this.y += y1;
             }
-            if(data != null && robot.lf != null && robot.lb != null) {
-                lastXPos = data.getMotorCurrentPosition(robot.lb);
-                lastYPos = data.getMotorCurrentPosition(robot.lf);
+            if(data != null && robot.lb != null && robot.vodo != null) {
+                lastXPos = -data.getMotorCurrentPosition(robot.vodo);
+                lastYPos = data.getMotorCurrentPosition(robot.lb);
             }
             else {
                 return;
@@ -270,7 +270,6 @@ public class Odometry implements Subsystem {
             dTime += System.currentTimeMillis() - lastTime;
             velocity = displacement / (System.currentTimeMillis() - lastTime);
             lastTime = System.currentTimeMillis();
-            //y *= -1;
             handler.pushData("Odometry Point", new Point(x, y));
         }
 
@@ -364,7 +363,7 @@ public class Odometry implements Subsystem {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
-        update(data1);
+        update(data2);
     }
 
     public void reset() {

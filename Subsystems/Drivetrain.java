@@ -41,7 +41,7 @@ public class Drivetrain implements Subsystem {
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         double drive = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
-        double angle = gamepad1.left_stick_x;
+        double angle = -gamepad1.left_stick_x;
         angle = Math.abs(angle) < 0.15 && Math.abs(drive) > 0.75 ? 0 : angle;
         drive = Math.abs(drive) < 0.15 && Math.abs(angle) > 0.75 ? 0 : drive;
         if(state == State.ON) {
@@ -84,7 +84,7 @@ public class Drivetrain implements Subsystem {
             }
 
             if(turningToPoint) {
-                clupdate(robot, new Point(-3, 6), );
+                //clupdate(robot, new Point(-3, 6), );
             }
 
             if(gamepad1.start && gamepad1.y && !changed) {
@@ -330,7 +330,7 @@ public class Drivetrain implements Subsystem {
         double turn = 0;
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
-            angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+            angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             drive = PIDd;
             /*
             if(displacement > 1) {
@@ -478,6 +478,54 @@ public class Drivetrain implements Subsystem {
         mylist[2] = scaleFactor * (drive - turn + angle);
         mylist[3] = scaleFactor * (drive - turn - angle);
         return mylist;
+    }
+
+    /**
+     * Move towards point with smooth deceleration
+     * @param robot Hardware instance
+     * @param target Our target point on the field
+     * @param odometry Odometer
+     * @param myAngle Target angle
+     * @param current Current angle (we don't want to read again)
+     * @param data Bulk data from REV hub
+     */
+    public void fastupdate(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data) {
+        Point myPos = odometry.getPoint();
+        double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
+        double angle = 0;
+        double drive = 0;
+        double turn = 0;
+        if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
+            double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+            if(PIDd != -displacement) {
+                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                drive = PIDd;
+                if(!Double.isNaN(myAngle)) {
+                    double error = Functions.normalize(myAngle - current);
+                    if(Math.abs(error) >= 1.0) {
+                        error = Functions.normalize(myAngle - current);
+                        if (Math.abs(error + 360) < Math.abs(error)) {
+                            error += 360;
+                        }
+                        if (Math.abs(error - 360) < Math.abs(error)) {
+                            error -= 360;
+                        }
+                        double Kp = 0.0325;
+                        double pow = (Kp * error);
+                        turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
+                    }
+                }
+                if(Math.abs(displacement) <= 1.0/24.0 || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
+                    drive = 0;
+                    angle = 0;
+                }
+            }
+        }
+        double scaleFactor;
+        double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
+        scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+        odometry.update(data, current);
+        robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
     /*
