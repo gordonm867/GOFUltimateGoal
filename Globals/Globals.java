@@ -13,7 +13,7 @@ public final class Globals {
     public static double MAX_SPEED = 1.0; // Maximum proportion of speed allowed
     public static double MIN_SPEED = 0.15;
 
-    public static double MAX_IN_SPEED = 1.0;
+    public static double MAX_IN_SPEED = 0.75;
 
     public static double START_Y = -5.25853; // Default starting y position
     public static double START_X = 3.56582167; // Default starting x position

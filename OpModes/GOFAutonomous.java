@@ -59,7 +59,7 @@ public class GOFAutonomous extends LinearOpMode {
         odometry.reset();
         robot.enabled = true;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        /*
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "wc1"), cameraMonitorViewId);
         phoneCam.openCameraDevice();
@@ -100,8 +100,8 @@ public class GOFAutonomous extends LinearOpMode {
             telemetry.update();
         }
         phoneCam.closeCameraDevice();
-         */
-        int sum = 1;
+
+        /*int sum = 4;
         while(!isStarted() && !isStopRequested() && !gamepad1.x) {
             telemetry.addData("Rings", sum);
             telemetry.addData("Usage", "Press b to change rings");
@@ -123,18 +123,17 @@ public class GOFAutonomous extends LinearOpMode {
                 bpressed = false;
             }
         }
+        */
         waitForStart();
-        RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         while(opModeIsActive()) {
             Globals.MIN_SPEED = 0.25;
             Globals.MAX_SPEED = 0.85;
-            Point target = new Point(5, -3);
+            Point target = new Point(4, -3);
             double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             double lastDisplacement = displacement;
-            double angle = odometry.getAngle();
+            double angle;
             while(opModeIsActive() && displacement > 0.5) {
-                data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 angle = odometry.getAngle();
@@ -150,12 +149,10 @@ public class GOFAutonomous extends LinearOpMode {
             }
             robot.setDrivePower(0,0,0,0);
             Globals.MAX_SPEED = 0.85;
-            target = new Point(5, 1.4);
+            target = new Point(4.8, 1.4);
             displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
             lastDisplacement = displacement;
-            angle = odometry.getAngle();
             while(opModeIsActive() && displacement > 0.5) {
-                data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 angle = odometry.getAngle();
@@ -172,12 +169,10 @@ public class GOFAutonomous extends LinearOpMode {
             robot.setDrivePower(0,0,0,0);
             if(sum == 0) {
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(5, -0.6);
+                target = new Point(4.8, -0.6);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
                 while (opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -191,43 +186,23 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.addData("target", target);
                     telemetry.update();
                 }
-                angle = odometry.getAngle();
                 robot.setDrivePower(0,0,0,0);
-                double time = System.currentTimeMillis();
-                while(opModeIsActive() && System.currentTimeMillis() - time <= 500) {
-                    angle = odometry.getAngle();
-                    odometry.update(data2);
-                    telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
-                    telemetry.addData("x", odometry.getX());
-                    telemetry.addData("y", odometry.getY());
-                    telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
-                    telemetry.addData("angle", angle);
-                    telemetry.update();
-                    if(!opModeIsActive()) {
-                        throw new InterruptedException();
-                    }
-                }
                 Globals.MAX_SPEED = 0.85;
                 target = new Point(1.5, -0.6);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while (opModeIsActive() && (displacement > 0.1 || Math.abs(angle + 66) > 4)) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
                     drive.update(robot, target, odometry, -66, angle, data2);
-                    lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(2.1, -4.1);
+                target = new Point(1.7, -4.1);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.1) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -247,16 +222,11 @@ public class GOFAutonomous extends LinearOpMode {
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
                 target = new Point(2.3, -4.3);
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && Math.abs(angle - 45) > 4) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
-                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
                     drive.update(robot, target, odometry, 45, angle, data2);
-                    lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
                     telemetry.addData("xraw", robot.getVOmniPos(data2));
@@ -270,51 +240,7 @@ public class GOFAutonomous extends LinearOpMode {
                 target = new Point(4.75, -2);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while (opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
-                    data2 = robot.bulkReadTwo();
-                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                    angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 45, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
-                    lastDisplacement = displacement;
-                    telemetry.addData("x", odometry.getX());
-                    telemetry.addData("y", odometry.getY());
-                    telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
-                    telemetry.addData("angle", angle);
-                    telemetry.addData("target", target);
-                    telemetry.update();
-                }
-                robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 0.85;
-                target = odometry.getPoint();
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while(opModeIsActive() && (displacement > 0.1 || Math.abs(angle - 90) > 4)) {
-                    data = robot.bulkRead();
-                    data2 = robot.bulkReadTwo();
-                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                    angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
-                    lastDisplacement = displacement;
-                    telemetry.addData("x", odometry.getX());
-                    telemetry.addData("y", odometry.getY());
-                    telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
-                    telemetry.addData("angle", angle);
-                    telemetry.addData("target", target);
-                    telemetry.update();
-                }
-                robot.setDrivePower(0, 0, 0, 0);
-                Globals.MAX_SPEED = 0.85;
-                target = new Point(5, -0.2);
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while (opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
+                while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -329,13 +255,45 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.update();
                 }
                 robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 0.85;
-                target = new Point(5, -3);
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(5, 0.8);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
                 while (opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
+                    data2 = robot.bulkReadTwo();
+                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                    angle = odometry.getAngle();
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    lastDisplacement = displacement;
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
+                robot.setDrivePower(0,0,0,0);
+                double time = System.currentTimeMillis();
+                while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
+                    angle = odometry.getAngle();
+                    odometry.update(data2);
+                    telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.update();
+                    if(!opModeIsActive()) {
+                        throw new InterruptedException();
+                    }
+                }
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(5, -1.5);
+                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                lastDisplacement = displacement;
+                while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -351,12 +309,29 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(3.25, 0.5);
+                target = new Point(4, -1.5);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
                 while (opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
+                    data2 = robot.bulkReadTwo();
+                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                    angle = odometry.getAngle();
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    lastDisplacement = displacement;
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
+                robot.setDrivePower(0,0,0,0);
+                Globals.MAX_SPEED = 0.85;
+                target = new Point(3, 0.5);
+                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                lastDisplacement = displacement;
+                while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -377,9 +352,7 @@ public class GOFAutonomous extends LinearOpMode {
                 target = new Point(3.5, 3.3);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.2) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -395,7 +368,7 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 double time = System.currentTimeMillis();
-                while(opModeIsActive() && System.currentTimeMillis() - time <= 500) {
+                while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
                     angle = odometry.getAngle();
                     odometry.update(data2);
                     telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
@@ -413,9 +386,7 @@ public class GOFAutonomous extends LinearOpMode {
                 target = new Point(3.1, 1.25);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -433,10 +404,8 @@ public class GOFAutonomous extends LinearOpMode {
                 Globals.MAX_SPEED = 0.85;
                 target = new Point(1.2, -0.6);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle + 66) > 5)) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -451,13 +420,11 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(2.1, -4.1);
+                target = new Point(2.3, -4.3);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                while(opModeIsActive() && (displacement > 0.1 || Math.abs(angle + 66) > 5)) {
-                    data = robot.bulkRead();
+                while (opModeIsActive() && displacement > 0.1) {
                     data2 = robot.bulkReadTwo();
-                    angle = odometry.getAngle();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
                     if(displacement < 0.34) {
@@ -473,55 +440,28 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.addData("target", target);
                     telemetry.update();
                 }
+                robot.setDrivePower(0,0,0,0);
+                Globals.MAX_SPEED = 0.85;
+                target = new Point(2.3, -4.3);
+                angle = odometry.getAngle();
+                while(opModeIsActive() && Math.abs(angle - 45) > 4) {
+                    data2 = robot.bulkReadTwo();
+                    angle = odometry.getAngle();
+                    drive.update(robot, target, odometry, 45, angle, data2);
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
-                target = odometry.getPoint();
+                target = new Point(4.75, -2);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while(opModeIsActive() && Math.abs(angle - 90) > 5) {
-                    data = robot.bulkRead();
-                    data2 = robot.bulkReadTwo();
-                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                    angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, 90, angle, data2);
-                    lastDisplacement = displacement;
-                    telemetry.addData("x", odometry.getX());
-                    telemetry.addData("y", odometry.getY());
-                    telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
-                    telemetry.addData("angle", angle);
-                    telemetry.addData("target", target);
-                    telemetry.update();
-                }
-                robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 0.85;
-                target = new Point(1.9, 1);
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 2)) {
-                    data = robot.bulkRead();
-                    data2 = robot.bulkReadTwo();
-                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                    drive.update(robot, target, odometry, 90, angle, data2);
-                    lastDisplacement = displacement;
-                    telemetry.addData("x", odometry.getX());
-                    telemetry.addData("y", odometry.getY());
-                    telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
-                    telemetry.addData("angle", angle);
-                    telemetry.addData("target", target);
-                    telemetry.update();
-                }
-                robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 0.85;
-                target = new Point(3, 2.5);
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while(opModeIsActive() && displacement > 0.2) {
-                    data = robot.bulkRead();
+                while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -536,13 +476,46 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.update();
                 }
                 robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 0.85;
-                target = new Point(2.8, 0.5);
+                Globals.MAX_SPEED = 0.7;
+                target = new Point(3.1, 2.4);
+                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                lastDisplacement = displacement;
+                while(opModeIsActive() && displacement > 0.2) {
+                    data2 = robot.bulkReadTwo();
+                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                    angle = odometry.getAngle();
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    lastDisplacement = displacement;
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
+                robot.setDrivePower(0,0,0,0);
+                time = System.currentTimeMillis();
+                while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
+                    angle = odometry.getAngle();
+                    odometry.update(data2);
+                    telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.update();
+                    if(!opModeIsActive()) {
+                        throw new InterruptedException();
+                    }
+                }
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(3.25, 0.5);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.2) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -560,12 +533,11 @@ public class GOFAutonomous extends LinearOpMode {
             }
             else {
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(5, 4.5);
+                target = new Point(4.9, 4.6);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.2) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -581,7 +553,7 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 double time = System.currentTimeMillis();
-                while(opModeIsActive() && System.currentTimeMillis() - time <= 500) {
+                while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
                     angle = odometry.getAngle();
                     odometry.update(data2);
                     telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
@@ -595,13 +567,12 @@ public class GOFAutonomous extends LinearOpMode {
                         throw new InterruptedException();
                     }
                 }
-                Globals.MAX_SPEED = 1.0;
-                target = new Point(5, 1);
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(4.9, 3);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.5) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -616,13 +587,11 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.update();
                 }
                 robot.setDrivePower(0,0,0,0);
-                Globals.MAX_SPEED = 1.0;
+                Globals.MAX_SPEED = 0.85;
                 target = new Point(1.2, -0.6);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle + 66) > 5)) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
@@ -637,13 +606,11 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(2.1, -4.1);
+                target = new Point(2.3, -4.3);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                while(opModeIsActive() && (displacement > 0.1 || Math.abs(angle + 66) > 5)) {
-                    data = robot.bulkRead();
+                while (opModeIsActive() && displacement > 0.1) {
                     data2 = robot.bulkReadTwo();
-                    angle = odometry.getAngle();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
                     if(displacement < 0.34) {
@@ -659,18 +626,32 @@ public class GOFAutonomous extends LinearOpMode {
                     telemetry.addData("target", target);
                     telemetry.update();
                 }
+                robot.setDrivePower(0,0,0,0);
+                Globals.MAX_SPEED = 0.85;
+                target = new Point(2.3, -4.3);
+                angle = odometry.getAngle();
+                while(opModeIsActive() && Math.abs(angle - 45) > 4) {
+                    data2 = robot.bulkReadTwo();
+                    angle = odometry.getAngle();
+                    drive.update(robot, target, odometry, 45, angle, data2);
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
-                target = odometry.getPoint();
+                target = new Point(4.75, -2);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
-                angle = odometry.getAngle();
-                while(opModeIsActive() && Math.abs(angle - 90) > 5) {
-                    data = robot.bulkRead();
+                while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, 90, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
@@ -682,15 +663,65 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
-                target = new Point(4.9, 3.5);
+                target = new Point(4.75, 3.0);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
-                lastDisplacement = displacement;
                 angle = odometry.getAngle();
-                while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 2)) {
-                    data = robot.bulkRead();
+                while(opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     drive.update(robot, target, odometry, 90, angle, data2);
+                    lastDisplacement = displacement;
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
+                robot.setDrivePower(0,0,0,0);
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(4.75, 4.7);
+                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                angle = odometry.getAngle();
+                while(opModeIsActive() && displacement > 0.5 ) {
+                    data2 = robot.bulkReadTwo();
+                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                    drive.update(robot, target, odometry, 90, angle, data2);
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.addData("target", target);
+                    telemetry.update();
+                }
+                robot.setDrivePower(0,0,0,0);
+                time = System.currentTimeMillis();
+                while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
+                    angle = odometry.getAngle();
+                    odometry.update(data2);
+                    telemetry.addData("Status", "Waiting.... ( " + (((500 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
+                    telemetry.addData("x", odometry.getX());
+                    telemetry.addData("y", odometry.getY());
+                    telemetry.addData("xraw", robot.getVOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("angle", angle);
+                    telemetry.update();
+                    if(!opModeIsActive()) {
+                        throw new InterruptedException();
+                    }
+                }
+                Globals.MAX_SPEED = 0.6;
+                target = new Point(4.75, 3);
+                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                lastDisplacement = displacement;
+                angle = odometry.getAngle();
+                while(opModeIsActive() && displacement > 0.5) {
+                    data2 = robot.bulkReadTwo();
+                    displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                    angle = odometry.getAngle();
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
@@ -702,12 +733,11 @@ public class GOFAutonomous extends LinearOpMode {
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 1.0;
-                target = new Point(4.9, 0.5);
+                target = new Point(4.75, 1.5);
                 displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                 lastDisplacement = displacement;
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.2) {
-                    data = robot.bulkRead();
                     data2 = robot.bulkReadTwo();
                     displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
                     angle = odometry.getAngle();
