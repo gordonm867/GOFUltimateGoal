@@ -186,7 +186,7 @@ public class Drivetrain implements Subsystem {
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             if(PIDd != -displacement) {
-                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
