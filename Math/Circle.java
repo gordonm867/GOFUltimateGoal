@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math;
 
-public final class Circle {
+public class Circle {
 
     public final double r;
     private Point center;

@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Handler;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -76,12 +77,12 @@ public class Victory extends MyOpMode {
     @Override
     public void startOp() throws InterruptedException, GOFException {
         Point target = new Point(radius, odometry.getY());
-        double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+        double displacement = odometry.getPoint().distance(target, Unit.FEET);
         double lastDisplacement = displacement;
         while(opModeIsActive() && displacement > 1.0/24.0) {
             data = robot.bulkRead();
             data2 = robot.bulkReadTwo();
-            displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+            displacement = odometry.getPoint().distance(target, Unit.FEET);
             drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
             lastDisplacement = displacement;
         }

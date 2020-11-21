@@ -4,31 +4,62 @@ import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 
 public class Point {
 
     private double x;
     private double y;
     private double angle;
+    private double speed;
 
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
         this.angle = Double.NaN;
+        this.speed = Double.NaN;
     }
 
     public Point(double x, double y, double angle) {
         this.x = x;
         this.y = y;
         this.angle = angle;
+        this.speed = Double.NaN;
     }
 
-    public double distance(double newX, double newY) {
-        return(int)(Math.round((Math.sqrt(Math.pow(x - newX, 2) + Math.pow(y - newY, 2))) / -Globals.DRIVE_FEET_PER_TICK));
+    public Point(double x, double y, double angle, double speed) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+        this.speed = speed;
     }
 
-    public int distance(Point newPoint) {
-        return(int)(Math.round((Math.sqrt(Math.pow(x - newPoint.getX(), 2) + Math.pow(y - newPoint.getY(), 2))) / -Globals.DRIVE_FEET_PER_TICK));
+    /* To get a Point with an x, y, and speed, pass Double.NaN as angle :) */
+
+    public double distance(double newX, double newY, Unit unit) {
+        if(unit == Unit.TICKS) {
+            return (int) (Math.round((Math.sqrt(Math.pow(x - newX, 2) + Math.pow(y - newY, 2))) / -Globals.DRIVE_FEET_PER_TICK));
+        }
+        else if(unit == Unit.FEET) {
+            return Math.sqrt(Math.pow(x - newX, 2) + Math.pow(y - newY, 2));
+        }
+        else {
+            return Math.sqrt(Math.pow(x - newX, 2) + Math.pow(y - newY, 2)) / 12.0;
+
+        }
+    }
+
+    public double distance(Point newPoint, Unit unit) {
+        if(unit == Unit.TICKS) {
+            return (int) (Math.round((Math.sqrt(Math.pow(x - newPoint.getX(), 2) + Math.pow(y - newPoint.getY(), 2))) / -Globals.DRIVE_FEET_PER_TICK));
+        }
+        else if(unit == Unit.FEET) {
+            return Math.sqrt(Math.pow(x - newPoint.getX(), 2) + Math.pow(y - newPoint.getY(), 2));
+        }
+        else {
+            return Math.sqrt(Math.pow(x - newPoint.getX(), 2) + Math.pow(y - newPoint.getY(), 2)) / 12.0;
+
+        }
     }
 
     public double angle(double newX, double newY, AngleUnit unit) {
@@ -89,7 +120,7 @@ public class Point {
 
     @NonNull
     public String toString() {
-        return "(" + Math.round(100 * getX()) / 100f + ", " + Math.round(100 * getY()) / 100f + ")";
+        return "(" + getX() + ", " + getY() + ")";
     }
 
     @Override

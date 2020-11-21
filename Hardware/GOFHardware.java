@@ -1,16 +1,22 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Functions;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.DetectionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -64,6 +70,14 @@ public class GOFHardware {
     public ExpansionHubEx ex3;
 
     private static GOFHardware myInstance = null;
+
+    public OpenCvCamera phoneCam;
+
+    public boolean cameraOn = false;
+
+    public Integer camId;
+
+    public DetectionPipeline pipeline;
 
 
     /* Constructor */
@@ -160,6 +174,15 @@ public class GOFHardware {
             vodo = hwMap.get(DcMotor.class, "vw");
         } catch (Exception p_exception) {
             vodo = null;
+        }
+
+        try {
+            camId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
+            phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "wc1"), camId);
+            pipeline = new DetectionPipeline();
+        }
+        catch(Exception e) {
+            phoneCam = null;
         }
 
     }
@@ -300,5 +323,16 @@ public class GOFHardware {
             return -rev.getMotorCurrentPosition(lb);
         }
         return 0;
+    }
+
+    public void cameraInit() {
+        phoneCam.openCameraDevice();
+        phoneCam.setPipeline(pipeline);
+        phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+        FtcDashboard.getInstance().startCameraStream(phoneCam, 0);
+    }
+
+    public void cameraOff() {
+        phoneCam.closeCameraDevice();
     }
 }

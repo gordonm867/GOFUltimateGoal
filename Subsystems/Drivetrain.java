@@ -481,7 +481,7 @@ public class Drivetrain implements Subsystem {
     }
 
     /**
-     * Move towards point with smooth deceleration
+     * Move towards point with no deceleration
      * @param robot Hardware instance
      * @param target Our target point on the field
      * @param odometry Odometer

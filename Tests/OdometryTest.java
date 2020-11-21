@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -58,12 +59,12 @@ public class OdometryTest extends MyOpMode {
         else {
             Globals.MAX_SPEED = 0.6;
             Point target = new Point(1.5, 4);
-            double displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+            double displacement = odometry.getPoint().distance(target, Unit.FEET);
             double lastDisplacement = displacement;
             while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                displacement = odometry.getPoint().distance(target, Unit.FEET);
                 drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
@@ -90,12 +91,12 @@ public class OdometryTest extends MyOpMode {
             }
             Globals.MAX_SPEED = 0.6;
             target = new Point(1, 9);
-            displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+            displacement = odometry.getPoint().distance(target, Unit.FEET);
             lastDisplacement = displacement;
             while(opModeIsActive() && displacement > 1.0/24.0) {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
-                displacement = odometry.getPoint().distance(target) * -Globals.DRIVE_FEET_PER_TICK;
+                displacement = odometry.getPoint().distance(target, Unit.FEET);
                 drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());

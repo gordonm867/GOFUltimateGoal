@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Circle;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Functions;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Line;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.TAG;
@@ -143,8 +144,8 @@ public class Odometry implements Subsystem {
                 else {
                     Point testPoint = points[0];
                     Point testPoint2 = points[1];
-                    int dist1 = testPoint.distance(approxPoint);
-                    int dist2 = testPoint2.distance(approxPoint);
+                    double dist1 = testPoint.distance(approxPoint, Unit.FEET);
+                    double dist2 = testPoint2.distance(approxPoint, Unit.FEET);
                     if(Math.abs(dist1) < Math.abs(dist2)) {
                         x = points[0].getX();
                         y = points[0].getY();
@@ -244,8 +245,8 @@ public class Odometry implements Subsystem {
                 else {
                     Point testPoint = points[0];
                     Point testPoint2 = points[1];
-                    int dist1 = testPoint.distance(approxPoint);
-                    int dist2 = testPoint2.distance(approxPoint);
+                    double dist1 = testPoint.distance(approxPoint, Unit.FEET);
+                    double dist2 = testPoint2.distance(approxPoint, Unit.FEET);
                     if(Math.abs(dist1) < Math.abs(dist2)) {
                         this.x = points[0].getX();
                         this.y = points[0].getY();

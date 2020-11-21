@@ -5,6 +5,10 @@ import static java.lang.Math.*;
 
 public class Functions {
 
+    //public static void main(String[] args) {
+        //System.out.println(Functions.isPassed(new Line(new Point(3, 3), new Point(4, 4)), new Point(4.1, 3.91), new Point(4, 4)));
+    //}
+
     /**
      * Finds every intersection between a line segment and a circle
      * @param circle Circle to test intersection points
@@ -83,13 +87,39 @@ public class Functions {
             if(!((Double)quad).isNaN()) {
                 allPoints.add(new Point(quad, (slope * quad) + yint));
             }
-            quad = ((-b - constant) / (2 * a));
-            if(!((Double)quad).isNaN()) {
-                allPoints.add(new Point(quad, (slope * quad) + yint));
+            if(constant != 0) {
+                quad = ((-b - constant) / (2 * a));
+                if (!((Double) quad).isNaN()) {
+                    allPoints.add(new Point(quad, (slope * quad) + yint));
+                }
             }
         }
         catch (Exception p_exception) {}
         return allPoints;
+    }
+
+    public static double[] tangentSlopeThroughPoint(Point point, Circle circle) {
+        double h = circle.getCenter().getX();
+        double k = circle.getCenter().getY();
+        double a = point.getX();
+        double b = point.getY();
+        double r = circle.getRadius();
+
+        double quada = ((-4 * pow(h, 2)) + (8 * a * h) - (4 * pow(a, 2)) + (4 * pow(r, 2)));
+        double quadb = (-8 * b * h) + (8 * k * h) + (8 * a * b) + (-8 * a * k);
+        double quadc = (-4 * pow(b, 2)) + (-4 * pow(k, 2)) + (8 * b * k) + (4 * pow(r, 2));
+
+        double[] answers = new double[2];
+        double v = pow(quadb, 2) - (4 * quada * quadc);
+        try {
+            answers[0] = (-quadb + sqrt(v)) / (2 * quada);
+            answers[1] = (-quadb - sqrt(v)) / (2 * quada);
+        }
+        catch(Exception e) {
+            answers[0] = Double.NaN;
+            answers[1] = Double.NaN;
+        }
+        return answers;
     }
 
     /**

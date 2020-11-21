@@ -1,15 +1,27 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Obstacle;
+
+import java.util.ArrayList;
 
 public class Line {
 
     private Point end1;
     private Point end2;
 
+    public ArrayList<Obstacle> obstacles;
+
     public Line(Point end1, Point end2) {
         this.end1 = end1;
         this.end2 = end2;
+        obstacles = null;
+    }
+
+    public Line(Point end1, Point end2, ArrayList<Obstacle> obstacles) {
+        this.end1 = end1;
+        this.end2 = end2;
+        this.obstacles = obstacles;
     }
 
     public double getXComp() {
@@ -49,5 +61,10 @@ public class Line {
 
     public Point getMidpoint() {
         return new Point((end1.getX() + end2.getX()) / 2, (end1.getY() + end2.getY()) / 2);
+    }
+
+    @Override
+    public String toString() {
+        return "Line from " + end1.toString() + " to " + end2.toString();
     }
 }
