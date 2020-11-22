@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Astar;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Line;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
 

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util;
+package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math;
 
 import android.util.Log;
 
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Line;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Obstacle;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
