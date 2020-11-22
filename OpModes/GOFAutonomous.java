@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Circle;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Functions;
@@ -180,6 +181,7 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void loopOp() {
+        Globals.MAX_SPEED = 0.8;
         RevBulkData data2 = robot.bulkReadTwo();
         double angle = odometry.getAngle();
         if(subindex >= path.get(index).length - 1) {
