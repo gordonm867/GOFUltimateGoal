@@ -515,10 +515,6 @@ public class Drivetrain implements Subsystem {
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= 1.0/24.0 || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
-                    drive = 0;
-                    angle = 0;
-                }
             }
         }
         double scaleFactor;

@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -39,7 +40,7 @@ public class GOFAutonomous extends MyOpMode {
 
     Point subtarget;
 
-    double radius = 0.25;
+    double radius = 0.5;
 
     private Drivetrain drive;
     private GOFHardware robot = GOFHardware.getInstance();
@@ -50,6 +51,24 @@ public class GOFAutonomous extends MyOpMode {
     ArrayList<Point[]> path;
 
     double lastDisplacement = 0;
+
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+        PathGenerator generator0 = new PathGenerator(0);
+        PathGenerator generator1 = new PathGenerator(1);
+        PathGenerator generator4 = new PathGenerator(4);
+        ExecutorService myservice = Executors.newCachedThreadPool();
+        Future<ArrayList<Point[]>> path0 = myservice.submit(generator0);
+        Future<ArrayList<Point[]>> path1 = myservice.submit(generator1);
+        Future<ArrayList<Point[]>> path4 = myservice.submit(generator4);
+        ArrayList<Point[]> path = path4.get();
+        myservice.shutdown();
+        for(Point[] points : path) {
+            for(Point point : points) {
+                System.out.println(point);
+            }
+            System.out.println("\n\n\n");
+        }
+    }
 
     public void initOp() {
         PathGenerator generator0 = new PathGenerator(0);
@@ -184,10 +203,10 @@ public class GOFAutonomous extends MyOpMode {
         Globals.MAX_SPEED = 0.8;
         RevBulkData data2 = robot.bulkReadTwo();
         double angle = odometry.getAngle();
+        double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         if(subindex >= path.get(index).length - 1) {
-            double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
             if(displacement > 0.08) {
-                drive.clupdate(robot, subtarget, odometry, path.get(index)[(path.get(index).length - 1)].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
             }
             else if(Functions.normalize(angle - path.get(index)[(path.get(index).length - 1)].getAngle()) > 2) {
                 drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
@@ -204,12 +223,25 @@ public class GOFAutonomous extends MyOpMode {
             }
             lastDisplacement = displacement;
         }
-        else if(!Functions.isPassed(new Line(path.get(index)[subindex - 1], path.get(index)[subindex]), odometry.getPoint(), path.get(index)[subindex])) {
-            drive.fastupdate(robot, subtarget, odometry, odometry.getPoint().angle(subtarget, AngleUnit.DEGREES), angle, data2);
+        else if(!Functions.isPassed(new Line(path.get(index)[ssubindex], path.get(index)[subindex]), odometry.getPoint(), path.get(index)[subindex - 1]) && displacement > 0.1) {
+            double relAngle = Functions.normalize(odometry.getPoint().angle(subtarget, AngleUnit.DEGREES) - odometry.getAngle());
+            double drive = -Math.cos(Math.toRadians(relAngle));
+            double turn = 0.008 * relAngle;
+            double scaleFactor;
+            double max = Math.max(Math.abs((drive + turn)), Math.abs((drive - turn)));
+            if (max > 1) {
+                scaleFactor = Globals.MAX_SPEED / max;
+            } else {
+                scaleFactor = Globals.MAX_SPEED;
+            }
+            robot.setDrivePower(scaleFactor * (drive + turn), scaleFactor * (drive + turn), scaleFactor * (drive - turn), scaleFactor * (drive - turn));
         }
         else {
             findTarget();
         }
+        telemetry.addData("Target", subtarget);
+        telemetry.addData("Point", odometry.getPoint());
+        telemetry.update();
     }
 
     public void findTarget() {

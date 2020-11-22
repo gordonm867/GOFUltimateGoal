@@ -10,15 +10,15 @@ import java.util.Arrays;
 
 public class Astar {
 
-    static ArrayList<Point> validpath = new ArrayList<>();
-    static double size = Double.MAX_VALUE;
+    ArrayList<Point> validpath = new ArrayList<>();
+    double size = Double.MAX_VALUE;
 
-    static boolean done = false;
+    boolean done = false;
 
-    static int gridx = 850;
-    static int gridy = 1700;
+    int gridx = 850;
+    int gridy = 1700;
 
-    public static ArrayList<Point> astar(Line line) {
+    public ArrayList<Point> astar(Line line) {
         done = false;
         while(!done) {
             try {
@@ -58,7 +58,7 @@ public class Astar {
         return validpath;
     }
 
-    public static boolean recur(int[][] grid, Point start, Point target, ArrayList<Point> path, double totaldist) {
+    public boolean recur(int[][] grid, Point start, Point target, ArrayList<Point> path, double totaldist) {
         if(path == null) {
             path = new ArrayList<>();
         }
@@ -112,7 +112,7 @@ public class Astar {
         return false;
     }
 
-    public static Point[] mergeSortByDistance(Point[] toSort, Point target, Point start) {
+    public Point[] mergeSortByDistance(Point[] toSort, Point target, Point start) {
         if(toSort.length >= 2) {
             int m = toSort.length / 2;
             Point[] half1 = new Point[m];
@@ -146,7 +146,7 @@ public class Astar {
         }
     }
 
-    public static Point gridToPoint(int gridx, int gridy, int[][] grid) {
+    public Point gridToPoint(int gridx, int gridy, int[][] grid) {
         return new Point((5.26/(grid[0].length - 1)) * gridx, 5.26 - ((10.52/(grid.length - 1)) * gridy));
     }
 }
