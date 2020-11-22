@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Circle;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Functions;
@@ -15,15 +15,15 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Astar;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Obstacle;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Path;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.PathGenerator;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Config
 @Autonomous(name="GOFAutonomous")
@@ -46,11 +46,20 @@ public class GOFAutonomous extends MyOpMode {
 
     public int rings = 0;
 
-    ArrayList<ArrayList<Point>> path;
+    ArrayList<Point[]> path;
 
     double lastDisplacement = 0;
 
     public void initOp() {
+        PathGenerator generator0 = new PathGenerator(0);
+        PathGenerator generator1 = new PathGenerator(1);
+        PathGenerator generator4 = new PathGenerator(4);
+
+        ExecutorService myservice = Executors.newCachedThreadPool();
+
+        Future<ArrayList<Point[]>> path0 = myservice.submit(generator0);
+        Future<ArrayList<Point[]>> path1 = myservice.submit(generator1);
+        Future<ArrayList<Point[]>> path4 = myservice.submit(generator4);
 
         robot.init(hardwareMap);
         robot.resetOmnis();
@@ -61,10 +70,6 @@ public class GOFAutonomous extends MyOpMode {
         odometry.reset();
         robot.enabled = true;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        ArrayList<ArrayList<Point>> path0 = getPath(0);
-        ArrayList<ArrayList<Point>> path1 = getPath(1);
-        ArrayList<ArrayList<Point>> path4 = getPath(4);
 
         robot.cameraInit();
 
@@ -104,14 +109,18 @@ public class GOFAutonomous extends MyOpMode {
         }
         robot.cameraOff();
         rings = (int)Math.round(sum);
-        if(rings == 0) {
-            path = path0;
+        try {
+            if (rings == 0) {
+                path = path0.get();
+            } else if (rings == 1) {
+                path = path1.get();
+            } else {
+                path = path4.get();
+            }
+            myservice.shutdown();
         }
-        else if(rings == 1) {
-            path = path1;
-        }
-        else {
-            path = path4;
+        catch(Exception e) {
+            throw new GOFException("You need a new programmer");
         }
     }
 
@@ -166,31 +175,6 @@ public class GOFAutonomous extends MyOpMode {
     }
      */
 
-    public ArrayList<ArrayList<Point>> getPath(int rings) {
-        ArrayList<ArrayList<Point>> optimizedpath = new ArrayList<>();
-        ArrayList<Line> path = new ArrayList();
-        ArrayList<Obstacle> obstacles = new ArrayList<>();
-        if(rings == 0) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(4.9, 1.4, -120, 0.8), obstacles));
-            path.add(new Line(new Point(4.9, 1.4), new Point(4.9, 1)));
-        }
-        else if(rings == 1) {
-            obstacles.add(new Obstacle(-3, -2, 1.5));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(3.5, 3.3, -120, 0.8), obstacles));
-            path.add(new Line(new Point(3.5, 3.3), new Point(3.5, 1)));
-        }
-        else {
-            obstacles.add(new Obstacle(-3, -2, 1.5));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(4.9, 4.6, -120, 0.8), obstacles));
-            path.add(new Line(new Point(4.9, 4.6), new Point(4.9, 1)));
-        }
-        Astar astar = new Astar();
-        for(Line line : path) {
-            optimizedpath.add(astar.astar(line));
-        }
-        return optimizedpath;
-    }
-
     public void startOp() {
         findTarget();
     }
@@ -198,27 +182,27 @@ public class GOFAutonomous extends MyOpMode {
     public void loopOp() {
         RevBulkData data2 = robot.bulkReadTwo();
         double angle = odometry.getAngle();
-        if(subindex >= path.get(index).size() - 1) {
+        if(subindex >= path.get(index).length - 1) {
             double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
             if(displacement > 0.08) {
-                drive.clupdate(robot, subtarget, odometry, path.get(index).get(path.get(index).size() - 1).getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                drive.clupdate(robot, subtarget, odometry, path.get(index)[(path.get(index).length - 1)].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
             }
-            else if(Functions.normalize(angle - path.get(index).get(path.get(index).size() - 1).getAngle()) > 2) {
-                drive.update(robot, subtarget, odometry, path.get(index).get(path.get(index).size() - 1).getAngle(), angle, data2);
+            else if(Functions.normalize(angle - path.get(index)[(path.get(index).length - 1)].getAngle()) > 2) {
+                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
             }
             else {
+                robot.setDrivePower(0, 0, 0, 0);
                 ssubindex = 0;
                 subindex = 0;
                 index++;
                 if(index == path.size()) {
-                    robot.setDrivePower(0, 0, 0, 0);
                     requestOpModeStop();
                 }
                 findTarget();
             }
             lastDisplacement = displacement;
         }
-        else if(!Functions.isPassed(new Line(path.get(index).get(subindex - 1), path.get(index).get(subindex)), odometry.getPoint(), path.get(index).get(subindex))) {
+        else if(!Functions.isPassed(new Line(path.get(index)[subindex - 1], path.get(index)[subindex]), odometry.getPoint(), path.get(index)[subindex])) {
             drive.fastupdate(robot, subtarget, odometry, odometry.getPoint().angle(subtarget, AngleUnit.DEGREES), angle, data2);
         }
         else {
@@ -230,8 +214,8 @@ public class GOFAutonomous extends MyOpMode {
         Circle myCircle = new Circle(odometry.getPoint(), radius);
         int bestindex = 0;
         double bestdist = Double.MAX_VALUE;
-        for(int x = subindex; x < path.get(index).size(); x++) {
-            double dist = Math.abs(path.get(index).get(x).distance(myCircle.getCenter(), Unit.FEET) - myCircle.getRadius());
+        for(int x = subindex; x < path.get(index).length; x++) {
+            double dist = Math.abs(path.get(index)[x].distance(myCircle.getCenter(), Unit.FEET) - myCircle.getRadius());
             if(dist < bestdist) {
                 bestdist = dist;
                 bestindex = x;
@@ -240,7 +224,7 @@ public class GOFAutonomous extends MyOpMode {
                 break;
             }
         }
-        subtarget = path.get(index).get(bestindex);
+        subtarget = path.get(index)[bestindex];
         ssubindex = subindex;
         subindex = bestindex;
     }

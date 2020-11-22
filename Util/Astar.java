@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Line;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
 
@@ -8,37 +10,57 @@ import java.util.Arrays;
 
 public class Astar {
 
-    ArrayList<Point> validpath = null;
+    static ArrayList<Point> validpath = new ArrayList<>();
     static double size = Double.MAX_VALUE;
 
-    public Astar() {}
+    static boolean done = false;
 
-    public ArrayList<Point> astar(Line line) {
-        int[][] grid = new int[1830][915];
-        if(line.obstacles != null) {
-            for (int y = 0; y < grid.length; y++) {
-                for (int x = 0; x < grid[0].length; x++) {
-                    Point point = gridToPoint(x, y, grid);
-                    for (Obstacle obstacle : line.obstacles) {
-                        if (point.distance(obstacle.getCircle().getCenter(), Unit.FEET) < obstacle.getCircle().getRadius()) {
-                            grid[y][x] = 1;
-                            break;
+    static int gridx = 850;
+    static int gridy = 1700;
+
+    public static ArrayList<Point> astar(Line line) {
+        done = false;
+        while(!done) {
+            try {
+                size = Double.MAX_VALUE;
+                validpath.clear();
+                int[][] grid = new int[gridy][gridx];
+                if (line.obstacles != null) {
+                    for (int y = 0; y < grid.length; y++) {
+                        for (int x = 0; x < grid[0].length; x++) {
+                            Point point = gridToPoint(x, y, grid);
+                            for (Obstacle obstacle : line.obstacles) {
+                                if (point.distance(obstacle.getCircle().getCenter(), Unit.FEET) < obstacle.getCircle().getRadius()) {
+                                    grid[y][x] = 1;
+                                    break;
+                                }
+                            }
+                            //System.out.print(grid[y][x]);
                         }
+                        //System.out.println();
                     }
-                    //System.out.print(grid[y][x]);
                 }
-                //System.out.println();
+                Point target = line.getPoint2();
+                Point start = line.getPoint1();
+                recur(grid, start, target, null, 0);
+                return validpath;
+            } catch (StackOverflowError e) {
+                try {
+                    Log.d("Uh oh", "Stack overflow....", e);
+                }
+                catch(Exception er) {
+                    System.out.println("Uh oh: " + e);
+                }
+                gridx -= 50;
+                gridy -= 100;
             }
         }
-        Point target = line.getPoint2();
-        Point start = line.getPoint1();
-        recur(grid, start, target, null, 0);
         return validpath;
     }
 
-    public boolean recur(int[][] grid, Point start, Point target, ArrayList<Point> path, double totaldist) {
+    public static boolean recur(int[][] grid, Point start, Point target, ArrayList<Point> path, double totaldist) {
         if(path == null) {
-            path = new ArrayList<Point>();
+            path = new ArrayList<>();
         }
         path.add(start);
         int gridsx = (int)Math.round(start.getX() * ((grid[0].length - 1)/5.26));
@@ -109,7 +131,7 @@ public class Astar {
             int ind1 = 0;
             int ind2 = 0;
             for(int x = 0; x < sorted.length; x++) {
-                if (ind1 >= half1.length || ind2 < half2.length && (half1[ind1].distance(target, Unit.FEET) + half1[ind1].distance(start, Unit.FEET)) > (half2[ind2].distance(target, Unit.FEET) + half2[ind2].distance(start, Unit.FEET))) {
+                if (ind1 >= half1.length || ind2 < half2.length && (half1[ind1].distance(target, Unit.FEET) + (half1[ind1].distance(start, Unit.FEET))) > (half2[ind2].distance(target, Unit.FEET) + (half2[ind2].distance(start, Unit.FEET)))) {
                     sorted[x] = half2[ind2];
                     ind2++;
                 } else {
