@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Handler;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.openftc.revextensions2.RevBulkData;
+
+import java.util.ArrayList;
 
 @TeleOp(name="ShooterTest")
 public class ShooterTest extends MyOpMode {
@@ -17,14 +25,42 @@ public class ShooterTest extends MyOpMode {
     boolean xpressed = false;
     boolean ypressed = false;
 
+    private ArrayList<Subsystem> subsystems = new ArrayList<>();
+    private Drivetrain drive;
+    private Intake intake;
+    private Odometry odometry;
+    private Shooter shooter;
+
     public void initOp() {
+        Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
-        Shooter shooter = new Shooter(Shooter.State.ON);
+
+        drive = new Drivetrain(Subsystem.State.OFF);
+        intake = new Intake(Subsystem.State.OFF);
+        odometry = Odometry.getInstance(robot);
+        shooter = new Shooter(Shooter.State.ON);
+        robot.enabled = true;
+
+        subsystems.add(odometry);
+        subsystems.add(drive);
+        subsystems.add(intake);
+        subsystems.add(shooter);
+
+        for(Subsystem subsystem : subsystems) {
+            subsystem.setState(Subsystem.State.ON);
+        }
+
         handler.pushData("stv", 0);
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
     public void loopOp() {
+        RevBulkData data = robot.bulkRead();
+        RevBulkData data2 = robot.bulkReadTwo();
+        for(Subsystem subsystem : subsystems) {
+            subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
+        }
         if(gamepad1.x && !xpressed) {
             xpressed = true;
             velocity += 0.1;
