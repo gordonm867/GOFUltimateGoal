@@ -30,21 +30,29 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Line> path = new ArrayList<>();
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         if(rings == 0) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(4.9, 1.4, -120, 0.8), obstacles));
-            path.add(new Line(new Point(4.9, 1.4), new Point(4.9, 1)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-4.8, 0.8, 90, 0.8)));
+            path.add(new Line(new Point(-4.8, 0.8), new Point(-3, -4.75, 90)));
+            path.add(new Line(new Point(-3, -4.75), new Point(-4.1, 1, 90)));
         }
         else if(rings == 1) {
-            obstacles.add(new Obstacle(3, -2, 1));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(3.5, 3.3, -120, 0.8), obstacles));
-            path.add(new Line(new Point(3.5, 3.3), new Point(3.5, 1)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90, 0.8)));
+            path.add(new Line(new Point(-3, -2.5, 90, 0.8), new Point(-2.9, 2.7, 60, 0.8)));
+            path.add(new Line(new Point(-2.9, 2.7), new Point(-3, -4.75, 90)));
+            path.add(new Line(new Point(-3, -4.75), new Point(-2.1, 2.1, 120)));
+            path.add(new Line(new Point(-2.1, 2.1), new Point(-2.1, 1)));
         }
         else {
-            obstacles.add(new Obstacle(3, -2, 1));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(4.9, 4.6, -120, 0.8), obstacles));
-            path.add(new Line(new Point(4.9, 4.6), new Point(4.9, 1)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90, 0.8)));
+            path.add(new Line(new Point(-3, -2.5, 90, 0.8), new Point(-4.8, 4.8, 90, 0.8)));
+            path.add(new Line(new Point(-4.8, 4.8), new Point(-3, -4.75, 90)));
+            path.add(new Line(new Point(-3, -4.75), new Point(-4.25, 4.25, 120)));
+            path.add(new Line(new Point(-4.25, 4.25), new Point(-4.25, 1)));
         }
         for(Line line : path) {
+            Point last = line.getPoint2();
             ArrayList<Point> paththing = (new Astar()).astar(line);
+            paththing.remove(paththing.size() - 1);
+            paththing.add(last);
             optimizedpath.add(Arrays.copyOf(paththing.toArray(), paththing.size(), Point[].class));
         }
         return optimizedpath;

@@ -21,6 +21,16 @@ public class Handler {
         return handler;
     }
 
+    public boolean contains(Object caption) {
+        try {
+            getData(caption);
+            return true;
+        }
+        catch(Exception e) {
+            return false;
+        }
+    }
+
     public void pushData(Object caption, Object data) {
         this.data.put(caption, data);
     }

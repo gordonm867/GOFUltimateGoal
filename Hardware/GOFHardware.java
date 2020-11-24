@@ -63,6 +63,7 @@ public class GOFHardware {
     public DcMotor lb;
     public DcMotor in;
     public DcMotor vodo;
+    public DcMotor shoot;
 
     public boolean enabled;
 
@@ -168,6 +169,17 @@ public class GOFHardware {
             in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception p_exception) {
             in = null;
+        }
+
+        try {
+            shoot = hwMap.get(DcMotor.class, "shoot");
+            shoot.setDirection(DcMotor.Direction.FORWARD);
+            shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            shoot.setPower(0);
+            shoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        catch(Exception p_exception) {
+            shoot = null;
         }
 
         try { // y-axis odometry wheel
@@ -330,6 +342,13 @@ public class GOFHardware {
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
         FtcDashboard.getInstance().startCameraStream(phoneCam, 0);
+    }
+
+    public double getPower(DcMotor motor) {
+        if(motor != null) {
+            return motor.getPower();
+        }
+        return Double.NaN;
     }
 
     public void cameraOff() {

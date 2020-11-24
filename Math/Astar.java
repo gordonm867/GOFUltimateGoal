@@ -63,10 +63,13 @@ public class Astar {
             path = new ArrayList<>();
         }
         path.add(start);
-        int gridsx = (int)Math.round(start.getX() * ((grid[0].length - 1)/5.26));
+        int gridsx = (int)Math.round(start.getX() * ((grid[0].length - 1)/-5.26));
         int gridsy = (int)Math.round((start.getY() - 5.26) * (-(grid.length - 1)/10.52));
-        int gridtx = (int)Math.round(target.getX() * ((grid[0].length - 1)/5.26));
+        int gridtx = (int)Math.round(target.getX() * ((grid[0].length - 1)/-5.26));
         int gridty = (int)Math.round((target.getY() - 5.26) * (-(grid.length - 1)/10.52));
+        if(gridsx < 0 || gridsy < 0) {
+            System.out.println(gridToPoint(gridsx, gridsy, grid));
+        }
         grid[gridsy][gridsx] = 1;
         if(gridsx == gridtx && gridsy == gridty) {
             if(totaldist < size) {
@@ -147,6 +150,6 @@ public class Astar {
     }
 
     public Point gridToPoint(int gridx, int gridy, int[][] grid) {
-        return new Point((5.26/(grid[0].length - 1)) * gridx, 5.26 - ((10.52/(grid.length - 1)) * gridy));
+        return new Point((-5.26/(grid[0].length - 1)) * gridx, 5.26 - ((10.52/(grid.length - 1)) * gridy));
     }
 }

@@ -498,7 +498,7 @@ public class Drivetrain implements Subsystem {
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             if(PIDd != -displacement) {
-                angle = (-1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
@@ -510,7 +510,7 @@ public class Drivetrain implements Subsystem {
                         if (Math.abs(error - 360) < Math.abs(error)) {
                             error -= 360;
                         }
-                        double Kp = 0.0325;
+                        double Kp = 0.008;
                         double pow = (Kp * error);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
@@ -518,10 +518,17 @@ public class Drivetrain implements Subsystem {
             }
         }
         double scaleFactor;
-        double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
-        scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+        double max = Math.max(Math.abs(drive - angle), Math.abs(drive + angle));
+        if(Globals.MAX_SPEED > max) {
+            if(angle * 2 > drive) {
+                angle *= Globals.MAX_SPEED / max;
+            }
+            drive *= Globals.MAX_SPEED / max;
+        }
+        max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
+        scaleFactor = Globals.MAX_SPEED / max;
         odometry.update(data, current);
-        robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
+        robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
     }
 
     /*
