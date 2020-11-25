@@ -63,7 +63,8 @@ public class GOFHardware {
     public DcMotor lb;
     public DcMotor in;
     public DcMotor vodo;
-    public DcMotor shoot;
+    public DcMotor shoot1;
+    public DcMotor shoot2;
 
     public boolean enabled;
 
@@ -172,14 +173,24 @@ public class GOFHardware {
         }
 
         try {
-            shoot = hwMap.get(DcMotor.class, "shoot");
-            shoot.setDirection(DcMotor.Direction.FORWARD);
-            shoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            shoot.setPower(0);
-            shoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shoot1 = hwMap.get(DcMotor.class, "shoot1");
+            shoot1.setDirection(DcMotor.Direction.FORWARD);
+            shoot1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            shoot1.setPower(0);
+            shoot1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         catch(Exception p_exception) {
-            shoot = null;
+            shoot1 = null;
+        }
+        try {
+            shoot2 = hwMap.get(DcMotor.class, "shoot2");
+            shoot2.setDirection(DcMotor.Direction.FORWARD);
+            shoot2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            shoot2.setPower(0);
+            shoot2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        catch(Exception p_exception) {
+            shoot2 = null;
         }
 
         try { // y-axis odometry wheel

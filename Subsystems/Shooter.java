@@ -17,9 +17,10 @@ public class Shooter implements Subsystem {
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
-        if(robot.shoot != null && handler.contains("stv")) {
-            ((DcMotorEx) robot.shoot).setVelocity((((double) handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI), AngleUnit.DEGREES);
-            handler.pushData("sav", (((DcMotorEx) robot.shoot).getVelocity(AngleUnit.DEGREES)) * 4 * Math.PI * 0.0254 / 360.0);
+        if(robot.shoot1 != null && handler.contains("stv")) {
+            ((DcMotorEx)robot.shoot1).setVelocity((((double) handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI), AngleUnit.DEGREES);
+            ((DcMotorEx)robot.shoot2).setVelocity((((double) handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI), AngleUnit.DEGREES);
+            handler.pushData("sav", (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES)) * 4 * Math.PI * 0.0254 / 360.0);
         }
     }
 
