@@ -1,7 +1,19 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import java.util.ArrayList;
-import static java.lang.Math.*;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.pow;
+import static java.lang.Math.signum;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+import static java.lang.Math.toRadians;
 
 public class Functions {
 
@@ -134,6 +146,27 @@ public class Functions {
             return myPoint.getX() * signum(myLine.getXComp()) >= testPoint.getX() * signum(myLine.getXComp());
         }
         return !(signum(myLine.getYComp()) * (myPoint.getY() - testPoint.getY()) < signum(myLine.getYComp()) * ((-1 / myLine.getSlope()) * (myPoint.getX() - testPoint.getX())));
+    }
+
+    public static double calcTargetVel(double dx, double dy, double theta, AngleUnit unit) {
+        if(unit == AngleUnit.DEGREES) {
+            try {
+                double numerator = 3 * sqrt(218) * dx * sqrt(((dx * tan(toRadians(theta))) - dy));
+                double denominator = 20 * ((dy * cos(toRadians(theta))) - (dx * sin(toRadians(theta))));
+                return abs(numerator / denominator);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+        else {
+            try {
+                double numerator = 3 * sqrt(218) * dx * sqrt(((dx * tan(theta)) - dy));
+                double denominator = (20 * (dy * cos(theta)) - (dx * sin(theta)));
+                return abs(numerator / denominator);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
     }
 
     /**

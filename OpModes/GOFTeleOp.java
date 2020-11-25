@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
@@ -20,6 +21,7 @@ public class GOFTeleOp extends MyOpMode {
     private     Intake                  intake;
     private     GOFHardware             robot      = GOFHardware.getInstance();
     private     Odometry                odometry;
+    private     Shooter                 shooter;
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
@@ -27,12 +29,14 @@ public class GOFTeleOp extends MyOpMode {
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);
+        shooter = new Shooter(Subsystem.State.OFF);
 
         robot.enabled = true;
 
         subsystems.add(odometry);
         subsystems.add(drive);
         subsystems.add(intake);
+        subsystems.add(shooter);
 
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);

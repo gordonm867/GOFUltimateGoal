@@ -37,7 +37,7 @@ public class Drivetrain implements Subsystem {
     public void setState(State state) {
         this.state = state;
     }
-    
+
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         double drive = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
@@ -361,23 +361,23 @@ public class Drivetrain implements Subsystem {
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
-            if(Math.abs(displacement) <= (Math.sqrt(2) / 100) || (Math.abs(angle) < 0.00001 && Math.abs(drive) < 0.00001)) {
-                drive = 0;
-                angle = 0;
-                if (!Double.isNaN(myAngle)) {
-                    double error = Functions.normalize(myAngle - current);
-                    if (Math.abs(error) >= 1.0) {
-                        error = Functions.normalize(myAngle - current);
-                        if (Math.abs(error + 360) < Math.abs(error)) {
-                            error += 360;
-                        }
-                        if (Math.abs(error - 360) < Math.abs(error)) {
-                            error -= 360;
-                        }
-                        double Kp = 0.0325 * Globals.MAX_SPEED;
-                        double pow = (Kp * error);
-                        turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
+        }
+        if(Math.abs(displacement) <= (Math.sqrt(2) / 100) || (Math.abs(angle) < 0.00001 && Math.abs(drive) < 0.00001)) {
+            drive = 0;
+            angle = 0;
+            if (!Double.isNaN(myAngle)) {
+                double error = Functions.normalize(myAngle - current);
+                if (Math.abs(error) >= 1.0) {
+                    error = Functions.normalize(myAngle - current);
+                    if (Math.abs(error + 360) < Math.abs(error)) {
+                        error += 360;
                     }
+                    if (Math.abs(error - 360) < Math.abs(error)) {
+                        error -= 360;
+                    }
+                    double Kp = 0.0325 * Globals.MAX_SPEED;
+                    double pow = (Kp * error);
+                    turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
         }
@@ -389,7 +389,7 @@ public class Drivetrain implements Subsystem {
         } else {
             if(displacement >= 0.5) {
                 backwards = false;
-                scaleFactor = Math.abs(Math.max(displacement * 2, Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs(Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED) / max);
             }
             else {
                 if(delta < 0 || Math.abs(velocity) < 1) {

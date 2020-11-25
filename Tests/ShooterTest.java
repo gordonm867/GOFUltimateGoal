@@ -4,9 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Handler;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
@@ -26,8 +24,8 @@ public class ShooterTest extends MyOpMode {
     boolean ypressed = false;
 
     private ArrayList<Subsystem> subsystems = new ArrayList<>();
-    private Drivetrain drive;
-    private Intake intake;
+    //private Drivetrain drive;
+    //private Intake intake;
     private Odometry odometry;
     private Shooter shooter;
 
@@ -35,15 +33,15 @@ public class ShooterTest extends MyOpMode {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
 
-        drive = new Drivetrain(Subsystem.State.OFF);
-        intake = new Intake(Subsystem.State.OFF);
+        //drive = new Drivetrain(Subsystem.State.OFF);
+        //intake = new Intake(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);
         shooter = new Shooter(Shooter.State.ON);
         robot.enabled = true;
 
         subsystems.add(odometry);
-        subsystems.add(drive);
-        subsystems.add(intake);
+        //subsystems.add(drive);
+        //subsystems.add(intake);
         subsystems.add(shooter);
 
         for(Subsystem subsystem : subsystems) {
