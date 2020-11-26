@@ -42,12 +42,11 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
             path.add(new Line(new Point(-2.1, 2.1), new Point(-2.1, 1)));
         }
         else {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90, 0.8)));
-            path.add(new Line(new Point(-3, -2.5, 90, 0.8), new Point(-4.8, 4.8, 90, 0.8)));
-            path.add(new Line(new Point(-4.8, 4.8), new Point(-3, -4.75, 90)));
-            path.add(new Line(new Point(-3, -4.75), new Point(-4.25, 4.25, 120)));
-            path.add(new Line(new Point(-4.25, 4.25), new Point(-4.25, 1)));
-        }
+            path.add(new Line(new Point(-1.0625 - (15.0/12.0), -5.25853), new Point(-3, -2.5, 90, 0.8)));
+            path.add(new Line(new Point(-3, -2.5, 90, 0.8), new Point(-4.8, 4.8, 110, 0.8)));
+            path.add(new Line(new Point(-4.8, 4.8), new Point(-3.25, -4.75, 90)));
+            path.add(new Line(new Point(-3.25, -4.75), new Point(-4.35, 4.35, 120)));
+            path.add(new Line(new Point(-4.35, 4.35), new Point(-4.35, 1)));        }
         for(Line line : path) {
             Point last = line.getPoint2();
             ArrayList<Point> paththing = (new Astar()).astar(line);

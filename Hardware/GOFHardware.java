@@ -174,7 +174,7 @@ public class GOFHardware {
 
         try {
             shoot1 = hwMap.get(DcMotor.class, "shoot1");
-            shoot1.setDirection(DcMotor.Direction.FORWARD);
+            shoot1.setDirection(DcMotor.Direction.REVERSE);
             shoot1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shoot1.setPower(0);
             shoot1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -184,7 +184,7 @@ public class GOFHardware {
         }
         try {
             shoot2 = hwMap.get(DcMotor.class, "shoot2");
-            shoot2.setDirection(DcMotor.Direction.FORWARD);
+            shoot2.setDirection(DcMotor.Direction.REVERSE);
             shoot2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shoot2.setPower(0);
             shoot2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

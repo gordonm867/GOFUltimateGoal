@@ -58,6 +58,8 @@ public class GOFAutonomous extends MyOpMode {
 
     boolean fired = false;
 
+    Point synthetic;
+
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         PathGenerator generator0 = new PathGenerator(0);
         PathGenerator generator1 = new PathGenerator(1);
@@ -137,7 +139,9 @@ public class GOFAutonomous extends MyOpMode {
         }
         //robot.cameraOff();
         rings = (int)Math.round(sum);
-        rings = 4;
+        //rings = 0;
+        //rings = 1;
+        //rings = 4;
         try {
             if (rings == 0) {
                 path = path0.get();
@@ -205,8 +209,8 @@ public class GOFAutonomous extends MyOpMode {
      */
 
     public void startOp() {
-        Globals.MAX_SPEED = 0.85;
-        Point target = new Point(-1.8125, -5.25853);
+        Globals.MAX_SPEED = 1.0;
+        Point target = new Point(-1.0625, -5.25853);
         double displacement = odometry.getPoint().distance(target, Unit.FEET);
         while(opModeIsActive() && displacement > 0.08) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -217,7 +221,7 @@ public class GOFAutonomous extends MyOpMode {
         robot.setDrivePower(0,0,0,0);
         double timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(-1.8125 + (7.5/12.0), -5.25853);
+        target = new Point(-1.0625 - (7.5/12.0), -5.25853);
         displacement = odometry.getPoint().distance(target, Unit.FEET);
         while(opModeIsActive() && displacement > 0.08) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -228,7 +232,7 @@ public class GOFAutonomous extends MyOpMode {
         robot.setDrivePower(0,0,0,0);
         timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(-1.8125 + (15.0/12.0), -5.25853);
+        target = new Point(-1.0625 - (15.0/12.0), -5.25853);
         displacement = odometry.getPoint().distance(target, Unit.FEET);
         while(opModeIsActive() && displacement > 0.08) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -238,17 +242,16 @@ public class GOFAutonomous extends MyOpMode {
         }
         robot.setDrivePower(0,0,0,0);
         timer = System.currentTimeMillis();
-        while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
         findTarget();
+        while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
     }
 
     public void loopOp() {
-        Globals.MAX_SPEED = 0.8;
+        Globals.MAX_SPEED = 1.0;
         RevBulkData data2 = robot.bulkReadTwo();
         RevBulkData data = robot.bulkRead();
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
-        Point synthetic;
         if(rings > 0) {
             if (index == 1 && robot.getPower(robot.in) != Globals.MAX_IN_SPEED) {
                 robot.setIntakePower(Globals.MAX_IN_SPEED);
@@ -286,12 +289,6 @@ public class GOFAutonomous extends MyOpMode {
                     }
                 }
             }
-        }
-        if(odometry.getPoint().getX() != subtarget.getX()) {
-            synthetic = new Point(odometry.getX() + (0.5 * Math.signum(subtarget.getX() - odometry.getX())), odometry.getY() + (0.5 * Math.signum(subtarget.getX() - odometry.getX()) * new Line(odometry.getPoint(), subtarget).getSlope()));
-        }
-        else {
-            synthetic = new Point(odometry.getX(), odometry.getY() + (0.5 * Math.signum(subtarget.getY() - odometry.getY())));
         }
         if(subindex >= path.get(index).length - 1) {
             if(displacement > 0.08) {
@@ -333,6 +330,10 @@ public class GOFAutonomous extends MyOpMode {
                 index++;
                 if(index == path.size()) {
                     requestOpModeStop();
+                    while(opModeIsActive()) {
+                        robot.setDrivePower(0, 0, 0, 0);
+                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                    }
                 }
                 findTarget();
             }
@@ -340,8 +341,19 @@ public class GOFAutonomous extends MyOpMode {
         }
         else if(!Functions.isPassed(new Line(path.get(index)[ssubindex], synthetic), odometry.getPoint(), subtarget)) {
             double turnto;
-            if(path.get(index).length - subindex > 400) {
-                turnto = odometry.getPoint().angle(subtarget, AngleUnit.DEGREES);
+            if(path.get(index).length - subindex > 150) {
+                turnto = odometry.getPoint().angle(synthetic, AngleUnit.DEGREES);
+                if(Double.isNaN(path.get(index)[path.get(index).length - 1].getAngle())) {
+                    double error = Math.abs(Functions.normalize(turnto - angle));
+                    double error2 = Math.abs(Functions.normalize(turnto - angle + 180));
+                    if(error2 < error) {
+                        turnto = Functions.normalize(turnto + 180);
+                    }
+                }
+                else if(Math.abs(Functions.normalize(path.get(index)[path.get(index).length - 1].getAngle() - turnto)) > Math.abs(Functions.normalize(path.get(index)[path.get(index).length - 1].getAngle() - turnto + 180))) {
+                    turnto += 180;
+                    turnto = Functions.normalize(turnto);
+                }
             }
             else {
                 turnto = path.get(index)[path.get(index).length - 1].getAngle();
@@ -371,6 +383,15 @@ public class GOFAutonomous extends MyOpMode {
             else if(dist > 2 * bestdist) {
                 break;
             }
+        }
+        if(subtarget == null) {
+            subtarget = odometry.getPoint();
+        }
+        if(path.get(index)[bestindex].getX() != subtarget.getX()) {
+            synthetic = new Point(path.get(index)[bestindex].getX() + (0.5 * Math.signum(path.get(index)[bestindex].getX() - subtarget.getX())), path.get(index)[bestindex].getY() + (0.5 * Math.signum(path.get(index)[bestindex].getX() - subtarget.getX()) * new Line(path.get(index)[bestindex], subtarget).getSlope()));
+        }
+        else {
+            synthetic = new Point(path.get(index)[bestindex].getX(), path.get(index)[bestindex].getY() + (0.5 * Math.signum(path.get(index)[bestindex].getY() - subtarget.getY())));
         }
         subtarget = path.get(index)[bestindex];
         ssubindex = subindex;
