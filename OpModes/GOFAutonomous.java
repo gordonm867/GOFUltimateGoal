@@ -19,8 +19,6 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.PathGenerator;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
-import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -137,7 +135,7 @@ public class GOFAutonomous extends MyOpMode {
             telemetry.addData("Paths", path0.isDone() + ", " + path1.isDone() + ", " + path4.isDone());
             telemetry.update();
         }
-        //robot.cameraOff();
+        robot.cameraOff();
         rings = (int)Math.round(sum);
         //rings = 0;
         //rings = 1;
@@ -250,7 +248,7 @@ public class GOFAutonomous extends MyOpMode {
         RevBulkData data = robot.bulkRead();
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
-        if(rings > 0) {
+        /* if(rings > 0) {
             if (index == 1 && robot.getPower(robot.in) != Globals.MAX_IN_SPEED) {
                 robot.setIntakePower(Globals.MAX_IN_SPEED);
             }
@@ -287,7 +285,7 @@ public class GOFAutonomous extends MyOpMode {
                     }
                 }
             }
-        }
+        } */
         if(subindex >= path.get(index).length - 1) {
             if(displacement > 0.08) {
                 drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
@@ -297,7 +295,7 @@ public class GOFAutonomous extends MyOpMode {
             }
             else {
                 double timer = System.currentTimeMillis();
-                if(rings > 0 && !fired && index == 1) {
+               /* if(rings > 0 && !fired && index == 1) {
                     while (opModeIsActive() && System.currentTimeMillis() - timer <= 1000) {
                         odometry.update(robot.bulkReadTwo(), odometry.getAngle());
                     }
@@ -316,13 +314,13 @@ public class GOFAutonomous extends MyOpMode {
                     while (opModeIsActive() && System.currentTimeMillis() - timer <= (rings == 1 ? 500 : 1500)) {
                         odometry.update(robot.bulkReadTwo(), odometry.getAngle());
                     }
+                } */
+                //else {
+                while (opModeIsActive() && System.currentTimeMillis() - timer <= 500) {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    odometry.update(robot.bulkReadTwo(), odometry.getAngle());
                 }
-                else {
-                    while (opModeIsActive() && System.currentTimeMillis() - timer <= 500) {
-                        robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
-                    }
-                }
+                //}
                 ssubindex = 0;
                 subindex = 0;
                 index++;
