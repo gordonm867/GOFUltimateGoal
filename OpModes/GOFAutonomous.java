@@ -210,7 +210,7 @@ public class GOFAutonomous extends MyOpMode {
 
     public void startOp() {
         Globals.MAX_SPEED = 1.0;
-        Point target = new Point(-1.0625, -5.25853);
+        Point target = new Point(Globals.START_X, Globals.START_Y + 0.2);
         double displacement = odometry.getPoint().distance(target, Unit.FEET);
         while(opModeIsActive() && displacement > 0.08) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -221,23 +221,21 @@ public class GOFAutonomous extends MyOpMode {
         robot.setDrivePower(0,0,0,0);
         double timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(-1.0625 - (7.5/12.0), -5.25853);
-        displacement = odometry.getPoint().distance(target, Unit.FEET);
-        while(opModeIsActive() && displacement > 0.08) {
+        target = new Point(Globals.START_X, Globals.START_Y + 0.2, target.angle(new Point(Globals.START_X + (7.5/12), 6), AngleUnit.DEGREES));
+        double angle = odometry.getAngle();
+        while(opModeIsActive() && Math.abs(Functions.normalize(target.getAngle() - angle)) > 1) {
             RevBulkData data2 = robot.bulkReadTwo();
-            displacement = odometry.getPoint().distance(target, Unit.FEET);
-            double angle = odometry.getAngle();
+            angle = odometry.getAngle();
             drive.update(robot, target, odometry, 90, angle, data2);
         }
         robot.setDrivePower(0,0,0,0);
         timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(-1.0625 - (15.0/12.0), -5.25853);
-        displacement = odometry.getPoint().distance(target, Unit.FEET);
-        while(opModeIsActive() && displacement > 0.08) {
+        target = new Point(Globals.START_X, Globals.START_Y + 0.2, target.angle(new Point(Globals.START_X + (15.0/12), 6), AngleUnit.DEGREES));
+        angle = odometry.getAngle();
+        while(opModeIsActive() && Math.abs(Functions.normalize(target.getAngle() - angle)) > 1) {
             RevBulkData data2 = robot.bulkReadTwo();
-            displacement = odometry.getPoint().distance(target, Unit.FEET);
-            double angle = odometry.getAngle();
+            angle = odometry.getAngle();
             drive.update(robot, target, odometry, 90, angle, data2);
         }
         robot.setDrivePower(0,0,0,0);
