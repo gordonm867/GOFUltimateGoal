@@ -208,7 +208,7 @@ public class GOFAutonomous extends MyOpMode {
 
     public void startOp() {
         Globals.MAX_SPEED = 1.0;
-        Point target = new Point(Globals.START_X, Globals.START_Y + 0.2);
+        Point target = new Point(Globals.START_X, Globals.START_Y + 0.5);
         double displacement = odometry.getPoint().distance(target, Unit.FEET);
         while(opModeIsActive() && displacement > 0.08) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -217,9 +217,10 @@ public class GOFAutonomous extends MyOpMode {
             drive.update(robot, target, odometry, 90, angle, data2);
         }
         robot.setDrivePower(0,0,0,0);
+        /*
         double timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(Globals.START_X, Globals.START_Y + 0.2, target.angle(new Point(Globals.START_X + (7.5/12), 6), AngleUnit.DEGREES));
+        target = new Point(Globals.START_X, Globals.START_Y + 0.5, target.angle(new Point(Globals.START_X + (7.5/12), 6), AngleUnit.DEGREES));
         double angle = odometry.getAngle();
         while(opModeIsActive() && Math.abs(Functions.normalize(target.getAngle() - angle)) > 1) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -229,7 +230,7 @@ public class GOFAutonomous extends MyOpMode {
         robot.setDrivePower(0,0,0,0);
         timer = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
-        target = new Point(Globals.START_X, Globals.START_Y + 0.2, target.angle(new Point(Globals.START_X + (15.0/12), 6), AngleUnit.DEGREES));
+        target = new Point(Globals.START_X, Globals.START_Y + 0.5, target.angle(new Point(Globals.START_X + (15.0/12), 6), AngleUnit.DEGREES));
         angle = odometry.getAngle();
         while(opModeIsActive() && Math.abs(Functions.normalize(target.getAngle() - angle)) > 1) {
             RevBulkData data2 = robot.bulkReadTwo();
@@ -240,6 +241,8 @@ public class GOFAutonomous extends MyOpMode {
         timer = System.currentTimeMillis();
         findTarget();
         while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {}
+         */
+        findTarget();
     }
 
     public void loopOp() {
@@ -288,10 +291,12 @@ public class GOFAutonomous extends MyOpMode {
         } */
         if(subindex >= path.get(index).length - 1) {
             if(displacement > 0.08) {
-                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
+                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
             }
             else if(Functions.normalize(path.get(index)[(path.get(index).length - 1)].getAngle() - angle) > 2) {
+                drive.kp = 0.0325;
                 drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data2);
+                drive.kp = 0.008;
             }
             else {
                 double timer = System.currentTimeMillis();
@@ -335,7 +340,7 @@ public class GOFAutonomous extends MyOpMode {
             }
             lastDisplacement = displacement;
         }
-        else if(!Functions.isPassed(new Line(path.get(index)[ssubindex], synthetic), odometry.getPoint(), subtarget)) {
+        else if(displacement > 0.15 || !Functions.isPassed(new Line(path.get(index)[ssubindex], synthetic), odometry.getPoint(), subtarget)) {
             double turnto;
             if(path.get(index).length - subindex > 150) {
                 turnto = odometry.getPoint().angle(synthetic, AngleUnit.DEGREES);
@@ -363,6 +368,7 @@ public class GOFAutonomous extends MyOpMode {
         telemetry.addData("Target", subtarget);
         telemetry.addData("Synthetic target", synthetic);
         telemetry.addData("Point", odometry.getPoint());
+        telemetry.addData("Aabhas why did you break the code? D:", index);
         telemetry.update();
     }
 
@@ -370,14 +376,34 @@ public class GOFAutonomous extends MyOpMode {
         Circle myCircle = new Circle(odometry.getPoint(), radius);
         int bestindex = 0;
         double bestdist = Double.MAX_VALUE;
-        for(int x = subindex; x < path.get(index).length; x++) {
+        double mydisttotarg = odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET);
+        for(int x = subindex + 1; x < path.get(index).length; x++) {
             double dist = Math.abs(path.get(index)[x].distance(myCircle.getCenter(), Unit.FEET) - myCircle.getRadius());
-            if(dist < bestdist) {
+            double disttotarg = path.get(index)[x].distance(path.get(index)[path.get(index).length - 1], Unit.FEET);
+            if(dist < bestdist && mydisttotarg > disttotarg) {
                 bestdist = dist;
                 bestindex = x;
             }
+            /*
             else if(dist > 2 * bestdist) {
                 break;
+            }
+             */
+        }
+        if(bestdist == Double.MAX_VALUE) {
+            bestindex = path.get(index).length - 1;
+            if(path.get(index)[bestindex].equals(subtarget)) {
+                index++;
+                if(index >= path.size()) {
+                    requestOpModeStop();
+                    while(opModeIsActive()) {
+                        robot.setDrivePower(0, 0, 0, 0);
+                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                    }
+                }
+                else {
+                    findTarget(); // If this throws a StackOverflowException, I'm moving to 506
+                }
             }
         }
         if(subtarget == null) {

@@ -26,6 +26,8 @@ public class Drivetrain implements Subsystem {
     public boolean bpressed = false;
     public boolean turningToPoint = false;
 
+    public double kp = 0.008;
+
     public Drivetrain(State state) {
         this.state = state;
     }
@@ -191,12 +193,12 @@ public class Drivetrain implements Subsystem {
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 1.0) {
-                        double Kp = 0.0325;
-                        double pow = (Kp * error);
-                        turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
+                        double pow = (kp * error);
+                        //turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
+                        turn = pow;
                     }
                 }
-                if(Math.abs(displacement) <= 1.0/24.0 || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
+                if(Math.abs(displacement) <= 1.0/24.0) {
                     drive = 0;
                     angle = 0;
                 }
