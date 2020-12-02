@@ -27,13 +27,11 @@ public class DetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        if(rects.isEmpty()) {
-            rects.add(null);
-        }
-        disp.release();
-        filtered = new Mat();
-        disp = new Mat();
         myMat = new Mat();
+        disp = new Mat();
+        filtered = new Mat();
+        test = new Mat();
+        contlist.clear();
         input.copyTo(myMat);
         input.copyTo(disp);
         Imgproc.cvtColor(myMat, myMat, Imgproc.COLOR_RGB2HSV);
@@ -56,7 +54,9 @@ public class DetectionPipeline extends OpenCvPipeline {
             }
             x++;
         }
-        contlist.removeAll(toRemove);
+        for(MatOfPoint rem : toRemove) {
+            contlist.remove(rem);
+        }
         toRemove.clear();
         if(contlist.size() > 0) {
             ArrayList<Double> distances = new ArrayList<>();
@@ -68,7 +68,7 @@ public class DetectionPipeline extends OpenCvPipeline {
                 double contx = rect.x;
                 double conty = rect.y;
                 double dist = Math.sqrt(Math.pow((myMat.cols() / 2f) - contx, 2) + Math.pow((myMat.rows() / 2f) - conty, 2));
-                if(!(Math.abs(contx) > 300 || Math.abs(conty) > 300) && dist < mindist && rect.height > 50 /* && (Math.abs(myMat.rows() / 2f) - conty) < 60 && (Math.abs(myMat.cols() / 2f) - contx) < 60*/) {
+                if(!(Math.abs(contx) > 400 || Math.abs(conty) > 400) && dist < mindist && rect.height > 25 /* && (Math.abs(myMat.rows() / 2f) - conty) < 60 && (Math.abs(myMat.cols() / 2f) - contx) < 60*/) {
                     mindist = dist;
                     index = l;
                 }
@@ -81,11 +81,11 @@ public class DetectionPipeline extends OpenCvPipeline {
             }
             if(index != -1) {
                 MatOfPoint keep = contlist.get(index);
-                contlist = new ArrayList<>();
+                contlist.clear();
                 contlist.add(keep);
             }
             else {
-                contlist = new ArrayList<>();
+                contlist.clear();
             }
         }
         if(contlist.size() == 0) {
@@ -93,7 +93,8 @@ public class DetectionPipeline extends OpenCvPipeline {
         }
         else {
             rings = contlist.get(0).height() < Globals.RING_SIZE ? 1 : 4;
-            rects.set(0, contlist.get(0));
+            rects.clear();
+            rects.add(contlist.get(0));
         }
         isProc = true;
         myMat.release();

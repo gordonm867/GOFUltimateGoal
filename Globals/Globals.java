@@ -11,7 +11,7 @@ public final class Globals {
     public static final double OMNI_FEET_PER_TICK = (OMNI_RADIUS / (1440 * 12)); // Feet moved per omni wheel encoder tick
 
     public static double MAX_SPEED = 1.0; // Maximum proportion of speed allowed
-    public static double MIN_SPEED = 0.20;
+    public static double MIN_SPEED = 0.3;
 
     public static double MAX_IN_SPEED = 0.75;
 

@@ -22,7 +22,7 @@ public class Shooter implements Subsystem {
         }
         if(robot.shoot2 != null && handler.contains("stv")) {
             ((DcMotorEx) robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI), AngleUnit.DEGREES);
-            handler.pushData("sav", (((DcMotorEx)robot.shoot2).getVelocity() / 28.0) * 4 * Math.PI * 0.0254 / 360.0);
+            handler.pushData("sav", (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0);
         }
     }
 

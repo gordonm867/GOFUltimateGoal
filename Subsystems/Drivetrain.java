@@ -192,7 +192,7 @@ public class Drivetrain implements Subsystem {
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
-                    if(Math.abs(error) >= 1.0) {
+                    if(Math.abs(error) >= 0.8) {
                         double pow = (kp * error);
                         turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }
@@ -201,6 +201,13 @@ public class Drivetrain implements Subsystem {
                     drive = 0;
                     angle = 0;
                 }
+            }
+        }
+        else if(!Double.isNaN(myAngle)) {
+            double error = Functions.normalize(myAngle - current);
+            if(Math.abs(error) >= 0.8) {
+                double pow = (kp * error);
+                turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
             }
         }
         double scaleFactor;
