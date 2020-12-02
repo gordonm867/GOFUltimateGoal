@@ -340,7 +340,7 @@ public class GOFAutonomous extends MyOpMode {
             }
             lastDisplacement = displacement;
         }
-        else if(displacement > 0.15 || !Functions.isPassed(new Line(path.get(index)[ssubindex], synthetic), odometry.getPoint(), subtarget)) {
+        else if(displacement > 0.15 && !Functions.isPassed(new Line(path.get(index)[ssubindex], synthetic), odometry.getPoint(), subtarget) && odometry.getPoint().distance(synthetic, Unit.FEET) > 0.5) {
             double turnto;
             if(path.get(index).length - subindex > 150) {
                 turnto = odometry.getPoint().angle(synthetic, AngleUnit.DEGREES);

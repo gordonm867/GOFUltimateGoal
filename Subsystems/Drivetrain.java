@@ -194,8 +194,7 @@ public class Drivetrain implements Subsystem {
                     double error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 1.0) {
                         double pow = (kp * error);
-                        //turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
-                        turn = pow;
+                        turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }
                 }
                 if(Math.abs(displacement) <= 1.0/24.0) {
@@ -257,7 +256,7 @@ public class Drivetrain implements Subsystem {
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= (Math.sqrt(2) / 10) || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
+                if(Math.abs(displacement) <= (1.0/24.0) || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
                     drive = 0;
                     angle = 0;
                     if(!Double.isNaN(myAngle)) {
