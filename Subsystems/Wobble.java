@@ -16,6 +16,7 @@ public class Wobble implements Subsystem {
     public int target = 0;
 
     public boolean bumperpressed = false;
+    public boolean arrived = false;
 
     public Wobble(Subsystem.State state) {
         this.parent = state;
@@ -84,6 +85,41 @@ public class Wobble implements Subsystem {
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);
+        }
+    }
+
+    public void update(GOFHardware robot, WheelState targetstate) {
+        if(parent == Subsystem.State.ON) {
+            if(child == State.OPEN && robot.wobble != null) {
+                robot.wobble.setPosition(openpose);
+            }
+            else if(robot.wobble != null) {
+                robot.wobble.setPosition(closedpose);
+            }
+        }
+        if(targetstate == WheelState.PICKUP) {
+            target = 1280;
+        }
+        if(targetstate == WheelState.UP) {
+            target = 464;
+        }
+        if(targetstate == WheelState.LOW) {
+            target = 1000;
+        }
+        if(targetstate == WheelState.DOWN) {
+            target = 1100;
+        }
+        if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
+            if(target - robot.lf.getCurrentPosition() < 0) {
+                robot.wobblewheel.setPower(1);
+            }
+            else {
+                robot.wobblewheel.setPower(-1);
+            }
+        }
+        else if(robot.wobblewheel != null && robot.lf != null) {
+            robot.wobblewheel.setPower(0);
+            arrived = true;
         }
     }
 

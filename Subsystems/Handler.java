@@ -23,8 +23,7 @@ public class Handler {
 
     public boolean contains(Object caption) {
         try {
-            getData(caption);
-            return true;
+            return getData(caption) != null;
         }
         catch(Exception e) {
             return false;

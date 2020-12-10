@@ -200,12 +200,9 @@ public class GOFHardware {
         }
 
         try {
-            wobblewheel = hwMap.get(DcMotor.class, "wm");
-            wobblewheel.setDirection(DcMotor.Direction.REVERSE);
+            wobblewheel = hwMap.get(DcMotor.class, "vw");
             wobblewheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobblewheel.setPower(0);
-            wobblewheel.setTargetPosition(0);
-            wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
         catch(Exception p_exception) {
             wobblewheel = null;
