@@ -176,7 +176,7 @@ public class GOFAutonomous extends MyOpMode {
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET), 0.5), 1.0);
-        if((rings > 0 && index == 3) || (rings == 0 && index == 2) && displacement < 3) {
+        if(index == 2 && displacement < 3) {
             wobble.update(robot, Wobble.WheelState.PICKUP);
         }
         if(subindex >= path.get(index).length - 1) {
@@ -233,10 +233,10 @@ public class GOFAutonomous extends MyOpMode {
                         }
                         break;
                     }
-                    if((rings > 0 && index == 2) || (rings == 0 && index == 1)) {
+                    if(index == 1) {
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.DOWN);
+                            wobble.update(robot, Wobble.WheelState.PICKUP);
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
@@ -245,10 +245,10 @@ public class GOFAutonomous extends MyOpMode {
                         while(System.currentTimeMillis() - wtime <= 100) {}
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.UP);
+                            wobble.update(robot, Wobble.WheelState.HIGH);
                         }
                     }
-                    if((rings > 0 && index == 3) || (rings == 0 && index == 2)) {
+                    if(index == 2) {
                         wobble.arrived = false;
                         while(!wobble.arrived) {
                             wobble.update(robot, Wobble.WheelState.PICKUP);
@@ -257,13 +257,17 @@ public class GOFAutonomous extends MyOpMode {
                             robot.wobble.setPosition(wobble.closedpose);
                         }
                         double wobbletime = System.currentTimeMillis();
-                        while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 300) {}
-                        break;
-                    }
-                    if((rings > 0 && index == 4) || (rings == 0 && index == 3)) {
+                        while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 100) {}
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.DOWN);
+                            wobble.update(robot, Wobble.WheelState.CARRY);
+                        }
+                        break;
+                    }
+                    if(index == 3) {
+                        wobble.arrived = false;
+                        while(!wobble.arrived) {
+                            wobble.update(robot, Wobble.WheelState.PICKUP);
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
@@ -271,8 +275,11 @@ public class GOFAutonomous extends MyOpMode {
                         double wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 100) {}
                         wobble.arrived = false;
-                        while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.UP);
+                        while(!wobble.arrived && System.currentTimeMillis() - wtime <= 750) {
+                            wobble.update(robot, Wobble.WheelState.HIGH);
+                        }
+                        if(robot.wobblewheel != null) {
+                            robot.wobblewheel.setPower(0);
                         }
                     }
                 }

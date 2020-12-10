@@ -40,16 +40,14 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         }
         else if(rings == 1) {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90 + offset)));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90)));
-            path.add(new Line(new Point(-3, -2.5), new Point(-3, 2, -45)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, 2, -45)));
             path.add(new Line(new Point(-3, 2), new Point(-3.8, -3.1, 90)));
             path.add(new Line(new Point(-3.8, -3.1), new Point(-2.6, 1.6, -45)));
             path.add(new Line(new Point(-2.6, 1.6), new Point(-1, 1, 90)));
         }
         else {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90 + offset)));
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90)));
-            path.add(new Line(new Point(-3, -2.5), new Point(-4.7, 4.2, -45)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-4.7, 4.2, -45)));
             path.add(new Line(new Point(-4.7, 4.2), new Point(-3.6, -3, 90)));
             path.add(new Line(new Point(-3.6, -3), new Point(-4.3, 3.4, -45)));
             path.add(new Line(new Point(-4.3, 3.4), new Point(-4.3, 1, 90)));
