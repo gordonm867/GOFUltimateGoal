@@ -10,7 +10,6 @@ import org.openftc.revextensions2.RevBulkData;
 public class Shooter implements Subsystem {
 
     private State state;
-    private State stateeee;
 
     boolean apressed = false;
     boolean rt = false;

@@ -74,9 +74,16 @@ public class Wobble implements Subsystem {
                 target = 1100;
             }
         }
-        if(robot.wobblewheel != null) {
-            robot.wobblewheel.setTargetPosition(target);
-            robot.wobblewheel.setPower(0.75);
+        if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
+            if(target - robot.lf.getCurrentPosition() < 0) {
+                robot.wobblewheel.setPower(1);
+            }
+            else {
+                robot.wobblewheel.setPower(-1);
+            }
+        }
+        else if(robot.wobblewheel != null && robot.lf != null) {
+            robot.wobblewheel.setPower(0);
         }
     }
 
