@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Handler;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
@@ -24,6 +25,7 @@ public class GOFTeleOp extends MyOpMode {
     private     Odometry                odometry;
     private     Shooter                 shooter;
     private     Wobble                  wobble;
+    private     Handler                 handler = Handler.getInstance();
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
@@ -45,6 +47,7 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
+        wobble.target = 100;
     }
 
     public void loopOp() {
@@ -53,6 +56,9 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
+        telemetry.addData("actual velocity", shooter.v);
+        telemetry.addData("target velocity", shooter.t);
+        telemetry.update();
     }
 
     public void stopOp() {
@@ -61,4 +67,5 @@ public class GOFTeleOp extends MyOpMode {
         }
         robot.enabled = false;
     }
+
 }

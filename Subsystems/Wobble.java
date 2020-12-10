@@ -10,8 +10,8 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public double closedpose = 0.5;
-    public double openpose = 0.99;
+    public double closedpose = 0.0;
+    public double openpose = 0.4;
 
     public int target = 0;
 
@@ -58,28 +58,28 @@ public class Wobble implements Subsystem {
         }
         if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
             if (gamepad2.right_stick_y < -0.5) {
-                wheelstate = WheelState.PICKUP;
-                target = 1280;
+                wheelstate = WheelState.UP;
+                target = 500;
             }
             if (gamepad2.right_stick_y > 0.5) {
-                wheelstate = WheelState.UP;
-                target = 464;
+                wheelstate = WheelState.PICKUP;
+                target = 1450;
             }
             if (gamepad2.right_stick_x < -0.5) {
-                wheelstate = WheelState.LOW;
-                target = 1000;
+                wheelstate = WheelState.DOWN;
+                target = 1250;
             }
             if (gamepad2.right_stick_x > 0.5) {
-                wheelstate = WheelState.DOWN;
-                target = 1100;
+                wheelstate = WheelState.LOW;
+                target = 100;
             }
         }
         if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
             if(target - robot.lf.getCurrentPosition() < 0) {
-                robot.wobblewheel.setPower(1);
+                robot.wobblewheel.setPower(.90);
             }
             else {
-                robot.wobblewheel.setPower(-1);
+                robot.wobblewheel.setPower(-0.90);
             }
         }
         else if(robot.wobblewheel != null && robot.lf != null) {

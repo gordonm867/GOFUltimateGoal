@@ -134,8 +134,8 @@ public class Drivetrain implements Subsystem {
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
             if (gamepad1.b && !bpressed) {
-                bpressed = true;
-                turningToPoint = true;
+                //bpressed = true;
+                //turningToPoint = true;
             }
             if(!gamepad1.b) {
                 bpressed = false;

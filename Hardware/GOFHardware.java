@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -200,13 +201,10 @@ public class GOFHardware {
         }
 
         try {
-            wobblewheel = hwMap.get(DcMotor.class, "wm");
-            wobblewheel.setDirection(DcMotor.Direction.REVERSE);
+            wobblewheel = hwMap.get(DcMotor.class, "vw");
             wobblewheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobblewheel.setPower(0);
-            wobblewheel.setTargetPosition(0);
-            wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+            }
         catch(Exception p_exception) {
             wobblewheel = null;
         }
@@ -229,6 +227,9 @@ public class GOFHardware {
         try {
             wobble = hwMap.get(Servo.class, "w");
             wobble.setDirection(Servo.Direction.FORWARD);
+            wobblewheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobblewheel.setPower(0);
+            wobblewheel.setTargetPosition(0);
         }
         catch(Exception p_exception) {
             wobble = null;
