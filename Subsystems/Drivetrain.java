@@ -25,7 +25,7 @@ public class Drivetrain implements Subsystem {
 
     private double shooffset = 30;
 
-    public boolean bpressed = false;
+    public boolean xpressed = false;
     public boolean turningToPoint = false;
 
     public double kp = 0.008;
@@ -133,12 +133,12 @@ public class Drivetrain implements Subsystem {
                 turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
-            if (gamepad1.b && !bpressed) {
-                //bpressed = true;
-                //turningToPoint = true;
+            if (gamepad1.x && !xpressed) {
+                xpressed = true;
+                turningToPoint = true;
             }
-            if(!gamepad1.b) {
-                bpressed = false;
+            if(!gamepad1.x) {
+                xpressed = false;
             }
         }
         else if (state == State.OFF) {

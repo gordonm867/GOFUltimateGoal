@@ -18,14 +18,14 @@ import java.util.ArrayList;
 
 @TeleOp(name="GOFTeleOp",group="GOF")
 public class GOFTeleOp extends MyOpMode {
-    private     ArrayList<Subsystem>    subsystems = new ArrayList<>();
+    private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();
     private     Drivetrain              drive;
     private     Intake                  intake;
-    private     GOFHardware             robot      = GOFHardware.getInstance();
+    private     GOFHardware             robot       = GOFHardware.getInstance();
     private     Odometry                odometry;
     private     Shooter                 shooter;
     private     Wobble                  wobble;
-    private     Handler                 handler = Handler.getInstance();
+    private     Handler                 handler     = Handler.getInstance();
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
@@ -47,7 +47,6 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
-        wobble.target = 100;
     }
 
     public void loopOp() {
@@ -56,8 +55,8 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
-        telemetry.addData("actual velocity", shooter.v);
-        telemetry.addData("target velocity", shooter.t);
+        telemetry.addData("Shooter actual velocity", shooter.v);
+        telemetry.addData("Shooter target velocity", shooter.t);
         telemetry.update();
     }
 
@@ -67,5 +66,4 @@ public class GOFTeleOp extends MyOpMode {
         }
         robot.enabled = false;
     }
-
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -13,9 +14,10 @@ public class Wobble implements Subsystem {
     public double closedpose = 0.0;
     public double openpose = 0.4;
 
-    public int target = 0;
+    public int target = 100;
 
     public boolean bumperpressed = false;
+    public boolean arrived = false;
 
     public Wobble(Subsystem.State state) {
         this.parent = state;
@@ -29,9 +31,11 @@ public class Wobble implements Subsystem {
 
     public enum WheelState {
         PICKUP,
+        CARRY,
+        HIGH,
         UP,
-        LOW,
-        DOWN
+        DROP,
+        IN
     }
 
     @Override
@@ -66,24 +70,63 @@ public class Wobble implements Subsystem {
                 target = 1450;
             }
             if (gamepad2.right_stick_x < -0.5) {
-                wheelstate = WheelState.DOWN;
+                wheelstate = WheelState.DROP;
                 target = 1250;
             }
             if (gamepad2.right_stick_x > 0.5) {
-                wheelstate = WheelState.LOW;
+                wheelstate = WheelState.IN;
                 target = 100;
             }
         }
+        else if(gamepad2.left_bumper) {
+            wheelstate = WheelState.CARRY;
+            target = 1400;
+        }
         if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
             if(target - robot.lf.getCurrentPosition() < 0) {
-                robot.wobblewheel.setPower(.90);
+                robot.wobblewheel.setPower(1);
             }
             else {
-                robot.wobblewheel.setPower(-0.90);
+                robot.wobblewheel.setPower(-1);
             }
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);
+        }
+    }
+
+    public void update(GOFHardware robot, WheelState targetstate) {
+        if(parent == Subsystem.State.ON) {
+            if(child == State.OPEN && robot.wobble != null) {
+                robot.wobble.setPosition(openpose);
+            }
+            else if(robot.wobble != null) {
+                robot.wobble.setPosition(closedpose);
+            }
+        }
+        if(targetstate == WheelState.PICKUP) {
+            target = 1450;
+        }
+        else if(targetstate == WheelState.HIGH) {
+            target = 1000;
+        }
+        else if(targetstate == WheelState.CARRY) {
+            target = 1400;
+        }
+        else {
+            throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
+        }
+        if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
+            if(target - robot.lf.getCurrentPosition() < 0) {
+                robot.wobblewheel.setPower(0.9);
+            }
+            else {
+                robot.wobblewheel.setPower(-0.9);
+            }
+        }
+        else if(robot.wobblewheel != null && robot.lf != null) {
+            robot.wobblewheel.setPower(0);
+            arrived = true;
         }
     }
 

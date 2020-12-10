@@ -16,6 +16,8 @@ public class Shooter implements Subsystem {
     boolean lt = false;
     boolean g2 = true;
 
+    public boolean shot = false;
+
     boolean shooting = false;
     Target targ;
 
@@ -42,8 +44,8 @@ public class Shooter implements Subsystem {
             rt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", -19.2);
-            t = (-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5);
+            handler.pushData("stv", -21.14375);
+            t = (double)handler.getData("stv");
             targ = Target.GOAL;
         }
         if(gamepad2.right_trigger < 0.05 && rt) {
@@ -53,8 +55,8 @@ public class Shooter implements Subsystem {
             lt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", -19.2);
-            t = (-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5);
+            handler.pushData("stv", -21.14375);
+            t = (double)handler.getData("stv");
             targ = Target.POWER;
         }
         if(gamepad2.left_trigger < 0.05) {
@@ -64,8 +66,8 @@ public class Shooter implements Subsystem {
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
         }
         if(robot.shoot2 != null && handler.contains("stv")) {
-            t = (-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5);
-            ((DcMotorEx) robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            t = (double)handler.getData("stv");
+            ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             handler.pushData("sav", v);
         }
@@ -76,16 +78,46 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && Math.abs(Math.abs(v) - Math.abs(t)) < 8.5) {
+        if(shooting && Math.abs(Math.abs(v) - Math.abs(t)) < 0.85) {
             shoot(targ, robot);
         }
         else if(shooting) {
-            handler.pushData("stv", 19.2);
+            handler.pushData("stv", -21.14375);
         }
         if(!shooting) {
             handler.pushData("stv", 0.0);
         }
         handler.pushData("gamepad2", g2);
+    }
+
+    public void shoot(GOFHardware robot, double velocity) {
+        handler.pushData("stv", velocity);
+        if(robot.shoot1 != null) {
+            ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+        }
+        if(robot.shoot2 != null) {
+            t = (double)handler.getData("stv");
+            ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            handler.pushData("sav", v);
+        }
+        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.85) {
+            shootonce(targ, robot);
+        }
+        handler.pushData("gamepad2", g2);
+    }
+
+    public void start(GOFHardware robot, double velocity) {
+        handler.pushData("stv", velocity);
+        if(robot.shoot1 != null) {
+            ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+        }
+        if(robot.shoot2 != null) {
+            t = (double)handler.getData("stv");
+            ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            handler.pushData("sav", v);
+        }
     }
 
     @Override
@@ -94,16 +126,15 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target target, GOFHardware robot) {
-
         if(step == 0 && robot.flicker != null) {
-            robot.flicker.setPosition(0.65);
-            time = System.currentTimeMillis();
-            step++;
             attempts++;
             if(attempts == 3) {
                 shooting = false;
                 return;
             }
+            robot.flicker.setPosition(0.65);
+            time = System.currentTimeMillis();
+            step++;
         }
         if(step == 1 && System.currentTimeMillis() - time > 200) {
             robot.flicker.setPosition(0.3);
@@ -111,8 +142,30 @@ public class Shooter implements Subsystem {
             step++;
         }
         if(step == 2 && System.currentTimeMillis() - time > 200) {
-            shoot(target, robot);
             step = 0;
+            shoot(target, robot);
+        }
+    }
+
+    public void shootonce(Target target, GOFHardware robot) {
+        if(step == 0 && robot.flicker != null) {
+            attempts++;
+            if(attempts == 3) {
+                shooting = false;
+                return;
+            }
+            robot.flicker.setPosition(0.65);
+            time = System.currentTimeMillis();
+            step++;
+        }
+        if(step == 1 && System.currentTimeMillis() - time > 200) {
+            robot.flicker.setPosition(0.3);
+            time = System.currentTimeMillis();
+            step++;
+        }
+        if(step == 2 && System.currentTimeMillis() - time > 500) {
+            step = 0;
+            shot = true;
         }
     }
 }
