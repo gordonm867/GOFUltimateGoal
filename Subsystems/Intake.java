@@ -17,10 +17,21 @@ public class Intake implements Subsystem {
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(state == State.ON) {
-            double rawpower = gamepad2.right_trigger - gamepad2.left_trigger;
-            double intakepower = Math.min(Math.abs(rawpower), Globals.MAX_IN_SPEED) * Math.signum(rawpower);
-            robot.setIntakePower(intakepower);
-            handler.pushData("Intake power", intakepower);
+            if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0.2) {
+                robot.setIntakePower(-Globals.MAX_IN_SPEED);
+            }
+            else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0) {
+                robot.setIntakePower(-Globals.MIN_IN_SPEED);
+            }
+            else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > -0.2) {
+                robot.setIntakePower(Globals.MIN_IN_SPEED);
+            }
+            else if(Math.abs(gamepad2.left_stick_y) > 0.05) {
+                robot.setIntakePower(Globals.MAX_IN_SPEED);
+            }
+            else {
+                robot.setIntakePower(0);
+            }
         }
         else {
             robot.setIntakePower(0);

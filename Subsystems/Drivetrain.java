@@ -23,6 +23,8 @@ public class Drivetrain implements Subsystem {
     private double lasterror = 0;
     private double lasttime = 0;
 
+    private double shooffset = 30;
+
     public boolean bpressed = false;
     public boolean turningToPoint = false;
 
@@ -86,7 +88,8 @@ public class Drivetrain implements Subsystem {
             }
 
             if(turningToPoint) {
-                //clupdate(robot, new Point(-3, 6), );
+                update(robot, odometry.getPoint(), odometry, odometry.getPoint().angle(new Point(3.5, 6.2), AngleUnit.DEGREES) + shooffset, angle, data2);
+                return;
             }
 
             if(gamepad1.start && gamepad1.y && !changed) {

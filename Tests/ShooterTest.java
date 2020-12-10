@@ -54,7 +54,7 @@ public class ShooterTest extends MyOpMode {
         telemetry.update();
     }
     public void loopOp() {
-        double increment = 0.01;
+        double increment = 0.1;
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
@@ -63,6 +63,14 @@ public class ShooterTest extends MyOpMode {
         if(gamepad1.x && !xpressed) {
             xpressed = true;
             velocity += increment;
+            if(Math.abs(velocity) < 15) {
+                if(velocity >= 0) {
+                    velocity = 15;
+                }
+                else {
+                    velocity = 0;
+                }
+            }
         }
         if(!gamepad1.x) {
             xpressed = false;
@@ -70,6 +78,14 @@ public class ShooterTest extends MyOpMode {
         if(gamepad1.y && !ypressed) {
             ypressed = true;
             velocity -= increment;
+            if(Math.abs(velocity) < 15) {
+                if(velocity <= 0) {
+                    velocity = -15;
+                }
+                else {
+                    velocity = 0;
+                }
+            }
         }
         if(!gamepad1.y) {
             ypressed = false;

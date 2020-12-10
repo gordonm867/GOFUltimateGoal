@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -65,6 +66,10 @@ public class GOFHardware {
     public DcMotor vodo;
     public DcMotor shoot1;
     public DcMotor shoot2;
+    public DcMotor wobblewheel;
+
+    public Servo wobble;
+    public Servo flicker;
 
     public boolean enabled;
 
@@ -182,6 +187,7 @@ public class GOFHardware {
         catch(Exception p_exception) {
             shoot1 = null;
         }
+
         try {
             shoot2 = hwMap.get(DcMotor.class, "shoot2");
             shoot2.setDirection(DcMotor.Direction.REVERSE);
@@ -193,10 +199,39 @@ public class GOFHardware {
             shoot2 = null;
         }
 
+        try {
+            wobblewheel = hwMap.get(DcMotor.class, "wm");
+            wobblewheel.setDirection(DcMotor.Direction.REVERSE);
+            wobblewheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobblewheel.setPower(0);
+            wobblewheel.setTargetPosition(0);
+            wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        catch(Exception p_exception) {
+            wobblewheel = null;
+        }
+
         try { // y-axis odometry wheel
             vodo = hwMap.get(DcMotor.class, "vw");
         } catch (Exception p_exception) {
             vodo = null;
+        }
+
+        try {
+            flicker = hwMap.get(Servo.class, "f");
+            flicker.setDirection(Servo.Direction.FORWARD);
+            flicker.setPosition(0.3);
+        }
+        catch(Exception p_exception) {
+            flicker = null;
+        }
+
+        try {
+            wobble = hwMap.get(Servo.class, "w");
+            wobble.setDirection(Servo.Direction.FORWARD);
+        }
+        catch(Exception p_exception) {
+            wobble = null;
         }
 
         try {

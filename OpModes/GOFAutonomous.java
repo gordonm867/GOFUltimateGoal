@@ -56,6 +56,8 @@ public class GOFAutonomous extends MyOpMode {
 
     boolean fired = false;
 
+    public double offset = 30;
+
     Point synthetic;
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
@@ -328,23 +330,26 @@ public class GOFAutonomous extends MyOpMode {
                 while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {
                     robot.setDrivePower(0, 0, 0, 0);
                     if(index == 0) {
-                        double targ = odometry.getPoint().angle(new Point(Globals.START_X + (7.5 / 12), 6), AngleUnit.DEGREES);
-                        angle = robot.getAngle();
-                        while (Math.abs(Functions.normalize(targ - angle)) > 1) {
+                        double shoottimer = System.currentTimeMillis();
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 500) {}
+                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (7.5 / 12), Globals.START_Y + 1), Unit.FEET);
+                        while(displacement > 1.0/24) {
                             angle = robot.getAngle();
                             data2 = robot.bulkReadTwo();
-                            drive.update(robot, odometry.getPoint(), odometry, targ, angle, data2);
+                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (7.5 / 12), Globals.START_Y + 1), Unit.FEET);
+                            drive.update(robot, new Point(Globals.START_X + (7.5/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data2);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkReadTwo(), odometry.getAngle());
-                        double shoottimer = System.currentTimeMillis();
+                        shoottimer = System.currentTimeMillis();
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 500) {}
-                        targ = odometry.getPoint().angle(new Point(Globals.START_X + (15.0 / 12), 6), AngleUnit.DEGREES);
+                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
                         angle = robot.getAngle();
-                        while(Math.abs(Functions.normalize(targ - angle)) > 1) {
+                        while(displacement > 1.0/24) {
                             angle = robot.getAngle();
                             data2 = robot.bulkReadTwo();
-                            drive.update(robot, odometry.getPoint(), odometry, targ, angle, data2);
+                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), 6), Unit.FEET);
+                            drive.update(robot, new Point(Globals.START_X + (15.0/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data2);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkReadTwo(), odometry.getAngle());
@@ -356,7 +361,7 @@ public class GOFAutonomous extends MyOpMode {
                 ssubindex = 0;
                 subindex = 0;
                 index++;
-                if(index == path.size()) {
+                if(index >= path.size()) {
                     while(opModeIsActive()) {
                         drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
                         robot.setDrivePower(0, 0, 0, 0);
@@ -392,11 +397,6 @@ public class GOFAutonomous extends MyOpMode {
             findTarget();
             odometry.update(data2, angle);
         }
-        telemetry.addData("Target", subtarget);
-        telemetry.addData("Synthetic target", synthetic);
-        telemetry.addData("Point", odometry.getPoint());
-        telemetry.addData("Aabhas why did you break the code? D:", index);
-        telemetry.update();
     }
 
     public void findTarget() {

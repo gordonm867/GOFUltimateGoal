@@ -15,6 +15,8 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
 
     public static ArrayList<Point[]> path0 = new ArrayList<>();
 
+    public double offset = 30;
+
     public PathGenerator(int param) {
         this.param = param;
     }
@@ -30,14 +32,14 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Line> path = new ArrayList<>();
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         if(rings == 0) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90 + offset)));
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y + 0.5), new Point(-4.7, 0.3, -45)));
             path.add(new Line(new Point(-4.7, 0.3), new Point(-3.6, -3, 90)));
             path.add(new Line(new Point(-3.6, -3), new Point(-4.3, -0.5, -45)));
             path.add(new Line(new Point(-4.3, -0.5), new Point(-2, 1, 90)));
         }
         else if(rings == 1) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90 + offset)));
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90)));
             path.add(new Line(new Point(-3, -2.5), new Point(-3, 2, -45)));
             path.add(new Line(new Point(-3, 2), new Point(-3.8, -3.1, 90)));
@@ -45,7 +47,7 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
             path.add(new Line(new Point(-2.6, 1.6), new Point(-1, 1, 90)));
         }
         else {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 1.0, 90 + offset)));
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-3, -2.5, 90)));
             path.add(new Line(new Point(-3, -2.5), new Point(-4.7, 4.2, -45)));
             path.add(new Line(new Point(-4.7, 4.2), new Point(-3.6, -3, 90)));
