@@ -44,7 +44,7 @@ public class Shooter implements Subsystem {
             rt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", -21.14375);
+            handler.pushData("stv", 19.2);
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
         }
@@ -55,7 +55,7 @@ public class Shooter implements Subsystem {
             lt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", -21.14375);
+            handler.pushData("stv", 19.2);
             t = (double)handler.getData("stv");
             targ = Target.POWER;
         }
@@ -78,11 +78,11 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && Math.abs(Math.abs(v) - Math.abs(t)) < 0.85) {
+        if(shooting && Math.abs(Math.abs(v) - Math.abs(t)) < 0.25) {
             shoot(targ, robot);
         }
         else if(shooting) {
-            handler.pushData("stv", -21.14375);
+            handler.pushData("stv", 19.0);
         }
         if(!shooting) {
             handler.pushData("stv", 0.0);
@@ -101,7 +101,7 @@ public class Shooter implements Subsystem {
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             handler.pushData("sav", v);
         }
-        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.85) {
+        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.50) {
             shootonce(targ, robot);
         }
         handler.pushData("gamepad2", g2);
@@ -128,20 +128,20 @@ public class Shooter implements Subsystem {
     public void shoot(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
             attempts++;
-            if(attempts == 3) {
+            if(attempts == 4) {
                 shooting = false;
                 return;
             }
-            robot.flicker.setPosition(0.65);
+            robot.flicker.setPosition(0.70);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > 200) {
-            robot.flicker.setPosition(0.3);
+        if(step == 1 && System.currentTimeMillis() - time > 400) {
+            robot.flicker.setPosition(0.25);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 200) {
+        if(step == 2 && System.currentTimeMillis() - time > 400) {
             step = 0;
             shoot(target, robot);
         }
@@ -149,21 +149,16 @@ public class Shooter implements Subsystem {
 
     public void shootonce(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
-            attempts++;
-            if(attempts == 3) {
-                shooting = false;
-                return;
-            }
-            robot.flicker.setPosition(0.65);
+            robot.flicker.setPosition(0.70);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > 200) {
-            robot.flicker.setPosition(0.3);
+        if(step == 1 && System.currentTimeMillis() - time > 500) {
+            robot.flicker.setPosition(0.2);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 500) {
+        if(step == 2 && System.currentTimeMillis() - time > 300) {
             step = 0;
             shot = true;
         }

@@ -217,7 +217,7 @@ public class GOFHardware {
         try {
             flicker = hwMap.get(Servo.class, "f");
             flicker.setDirection(Servo.Direction.FORWARD);
-            flicker.setPosition(0.3);
+            flicker.setPosition(0.2);
         }
         catch(Exception p_exception) {
             flicker = null;

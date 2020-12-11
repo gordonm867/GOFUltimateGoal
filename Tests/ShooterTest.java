@@ -48,7 +48,8 @@ public class ShooterTest extends MyOpMode {
             subsystem.setState(Subsystem.State.ON);
         }
 
-        handler.pushData("stv", 0.0);
+        handler.pushData("" +
+                "stv", 0.0);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

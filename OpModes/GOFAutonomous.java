@@ -41,6 +41,8 @@ public class GOFAutonomous extends MyOpMode {
     int subindex = 0;
     int ssubindex = 0;
 
+    public int hello = 0;
+
     Point subtarget;
 
     double radius = 0.375;
@@ -59,7 +61,7 @@ public class GOFAutonomous extends MyOpMode {
 
     boolean fired = false;
 
-    public double offset = 30;
+    public double offset = -10;
 
     Point synthetic;
     Shooter shooter;
@@ -96,6 +98,10 @@ public class GOFAutonomous extends MyOpMode {
         Future<ArrayList<Point[]>> path4 = myservice.submit(generator4);
 
         robot.init(hardwareMap);
+        if (robot.wobble != null)
+        {
+            robot.wobble.setPosition(0.0);
+        }
         robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         shooter = new Shooter(Subsystem.State.OFF);
@@ -166,7 +172,7 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void startOp() {
-        shooter.start(robot, -19.2);
+        shooter.start(robot, 20.5);
         findTarget();
     }
 
@@ -196,10 +202,10 @@ public class GOFAutonomous extends MyOpMode {
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
-                            shooter.shoot(robot, -19.2);
+                            shooter.shoot(robot, 20.5);
                         }
                         displacement = odometry.getPoint().distance(new Point(Globals.START_X + (7.5 / 12), Globals.START_Y + 1), Unit.FEET);
-                        while(displacement > 1.0/24) {
+                        while(displacement > 1.0/24.0) {
                             angle = robot.getAngle();
                             data2 = robot.bulkReadTwo();
                             displacement = odometry.getPoint().distance(new Point(Globals.START_X + (7.5 / 12), Globals.START_Y + 1), Unit.FEET);
@@ -210,14 +216,14 @@ public class GOFAutonomous extends MyOpMode {
                         shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
-                            shooter.shoot(robot, -19.2);
+                            shooter.shoot(robot, 20.5);
                         }
                         displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
                         angle = robot.getAngle();
-                        while(displacement > 1.0/24) {
+                        while(displacement > 1.0/24.0) {
                             angle = robot.getAngle();
                             data2 = robot.bulkReadTwo();
-                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), 6), Unit.FEET);
+                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
                             drive.update(robot, new Point(Globals.START_X + (15.0/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data2);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
@@ -225,18 +231,21 @@ public class GOFAutonomous extends MyOpMode {
                         shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
-                            shooter.shoot(robot, -19.2);
+                            shooter.shoot(robot, 20.5);
+                            wobble.update(robot, Wobble.WheelState.CARRY);
                         }
-                        if(rings == 0 && robot.shoot1 != null && robot.shoot2 != null) {
+                        if(robot.shoot1 != null && robot.shoot2 != null) {
                             ((DcMotorEx)robot.shoot1).setVelocity(0);
                             ((DcMotorEx)robot.shoot2).setVelocity(0);
+                            robot.shoot1.setPower(0);
+                            robot.shoot2.setPower(0);
                         }
                         break;
                     }
                     if(index == 1) {
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.PICKUP);
+                            wobble.update(robot, Wobble.WheelState.CARRY);
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
@@ -267,7 +276,7 @@ public class GOFAutonomous extends MyOpMode {
                     if(index == 3) {
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.PICKUP);
+                            wobble.update(robot, Wobble.WheelState.CARRY);
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
@@ -327,6 +336,7 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void findTarget() {
+        hello++;
         Circle myCircle = new Circle(odometry.getPoint(), radius);
         int bestindex = 0;
         double bestdist = Double.MAX_VALUE;
