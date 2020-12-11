@@ -17,7 +17,7 @@ public final class Globals {
     public static double MIN_IN_SPEED = 0.25;
 
     public static double START_Y = -5.25853; // Default starting y position
-    public static double START_X = -1.0625 - (15.0/12); // Default starting x position
+    public static double START_X = -1.27; // Default starting x position
     public static double START_THETA = 90; // Default starting angle
 
     public static double xOffset = 7.312;

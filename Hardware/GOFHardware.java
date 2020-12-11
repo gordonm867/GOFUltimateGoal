@@ -63,7 +63,6 @@ public class GOFHardware {
     public DcMotor lf;
     public DcMotor lb;
     public DcMotor in;
-    public DcMotor vodo;
     public DcMotor shoot1;
     public DcMotor shoot2;
     public DcMotor wobblewheel;
@@ -208,12 +207,6 @@ public class GOFHardware {
             wobblewheel = null;
         }
 
-        try { // y-axis odometry wheel
-            vodo = hwMap.get(DcMotor.class, "vw");
-        } catch (Exception p_exception) {
-            vodo = null;
-        }
-
         try {
             flicker = hwMap.get(Servo.class, "f");
             flicker.setDirection(Servo.Direction.FORWARD);
@@ -350,9 +343,9 @@ public class GOFHardware {
      * Reset omni encoders
      */
     public void resetOmnis() {
-        vodo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vodo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
@@ -363,7 +356,7 @@ public class GOFHardware {
      */
     public int getVOmniPos(RevBulkData rev) {
         if (lf != null) {
-            return rev.getMotorCurrentPosition(vodo);
+            return rev.getMotorCurrentPosition(wobblewheel);
         }
         return 0;
     }

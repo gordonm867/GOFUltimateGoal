@@ -116,7 +116,7 @@ public class Drivetrain implements Subsystem {
                 }
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
                 double Kp = 0.0325;
-                double error = angleToHold - (double)handler.getData("Angle");
+                double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
                 turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
@@ -129,7 +129,7 @@ public class Drivetrain implements Subsystem {
                 double scaleFactor = maxspeed / Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
                 double Kp = 0.0325;
-                double error = angleToHold - (double)handler.getData("Angle");
+                double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
                 turn += (Kp * error);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }

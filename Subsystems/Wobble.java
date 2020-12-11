@@ -96,6 +96,9 @@ public class Wobble implements Subsystem {
     }
 
     public void update(GOFHardware robot, WheelState targetstate) {
+        if(targetstate == null) {
+            return;
+        }
         if(parent == Subsystem.State.ON) {
             if(child == State.OPEN && robot.wobble != null) {
                 robot.wobble.setPosition(openpose);
