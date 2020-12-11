@@ -153,7 +153,7 @@ public class GOFAutonomous extends MyOpMode {
         }
         //robot.cameraOff();
         rings = (int)Math.round(sum);
-        //rings = 0;
+        rings = 0;
         //rings = 1;
         //rings = 4;
         try {
@@ -177,12 +177,14 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void loopOp() {
+        telemetry.addData("odometry", odometry.getPoint());
+        telemetry.update();
         RevBulkData data2 = robot.bulkReadTwo();
         RevBulkData data = robot.bulkRead();
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
-        Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET), 0.5), 1.0);
-        if(index == 2 && displacement < 3) {
+        Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) / 2.0, 0.5), 1.0);
+        if(index == 2 && odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 3) {
             wobble.update(robot, Wobble.WheelState.PICKUP);
         }
         if(subindex >= path.get(index).length - 1) {
@@ -244,9 +246,6 @@ public class GOFAutonomous extends MyOpMode {
                     }
                     if(index == 1) {
                         wobble.arrived = false;
-                        while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.CARRY);
-                        }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
                         }
@@ -256,6 +255,15 @@ public class GOFAutonomous extends MyOpMode {
                         while(!wobble.arrived) {
                             wobble.update(robot, Wobble.WheelState.HIGH);
                         }
+                        Point target = new Point(odometry.getX() + 0.6, odometry.getY());
+                        displacement = odometry.getPoint().distance(target, Unit.FEET);
+                        while (displacement > 0.08) {
+                            angle = odometry.getAngle();
+                            data2 = robot.bulkReadTwo();
+                            drive.update(robot, target, odometry, 0, angle, data2);
+                            displacement = odometry.getPoint().distance(target, Unit.FEET);
+                        }
+                        break;
                     }
                     if(index == 2) {
                         wobble.arrived = false;
@@ -266,18 +274,15 @@ public class GOFAutonomous extends MyOpMode {
                             robot.wobble.setPosition(wobble.closedpose);
                         }
                         double wobbletime = System.currentTimeMillis();
-                        while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 100) {}
+                        while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 400) {}
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.CARRY);
+                            wobble.update(robot, Wobble.WheelState.PICKUP);
                         }
                         break;
                     }
                     if(index == 3) {
                         wobble.arrived = false;
-                        while(!wobble.arrived) {
-                            wobble.update(robot, Wobble.WheelState.CARRY);
-                        }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(wobble.openpose);
                         }
@@ -290,6 +295,7 @@ public class GOFAutonomous extends MyOpMode {
                         if(robot.wobblewheel != null) {
                             robot.wobblewheel.setPower(0);
                         }
+                        break;
                     }
                 }
                 robot.setDrivePower(0, 0, 0, 0);
@@ -299,7 +305,6 @@ public class GOFAutonomous extends MyOpMode {
                 index++;
                 if(index >= path.size()) {
                     while(opModeIsActive()) {
-                        drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkReadTwo(), odometry.getAngle());
                     }

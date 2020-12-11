@@ -111,7 +111,7 @@ public class Wobble implements Subsystem {
             target = 800;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = 1400;
+            target = 1300;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
