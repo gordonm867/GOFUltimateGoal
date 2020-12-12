@@ -33,22 +33,22 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Obstacle> obstacles = new ArrayList<>();
         obstacles.add(new Obstacle(-3, -2, 1.1));
         if(rings == 0) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0, 90 + offset)));
-            path.add(new Line(new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0), new Point(-3.9575, 1, 0)));
-            path.add(new Line(new Point(-3.9575, 1), new Point(-3.9575, -3.15, 90)));
-            path.add(new Line(new Point(-3.9575, -3.15), new Point(-3.9575, -0.3, -45)));
-            path.add(new Line(new Point(-3.9575, -0.3), new Point(-0.9575, 1, 90)));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/2, Globals.START_Y + 1.0, 90 + offset)));
+            path.add(new Line(new Point(Globals.START_X + 1.0/2, Globals.START_Y + 1.0), new Point(-4.2, .75, 0)));
+            path.add(new Line(new Point(-4.2, .75), new Point(-4.0, -3.1, 90)));
+            path.add(new Line(new Point(-4.0, -3.35), new Point(-4.2, -0.2, -45)));
+            path.add(new Line(new Point(-4.2, -0.2), new Point(-1, 1.0, 90)));
         }
         else if(rings == 1) {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0, 90 + offset), obstacles));
-            path.add(new Line(new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0), new Point(-2.3575, 2.7, 0), obstacles));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/4, Globals.START_Y + 1.0, 90 + offset), obstacles));
+            path.add(new Line(new Point(Globals.START_X + 1.0/4, Globals.START_Y + 1.0), new Point(-2.3575, 2.7, 0), obstacles));
             path.add(new Line(new Point(-2.3575, 2.7), new Point(-3.9575, -3.15, 90), obstacles));
             path.add(new Line(new Point(-3.9575, -3.15), new Point(-1.7575, 1.8, -45), obstacles));
             path.add(new Line(new Point(-1.7575, 1.8), new Point(-0.75, 1, 90), obstacles));
         }
         else {
-            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0, 90 + offset), obstacles));
-            path.add(new Line(new Point(Globals.START_X + 1.0/6, Globals.START_Y + 1.0), new Point(-3.7575, 4.5, 0), obstacles));
+            path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X + 1.0/4, Globals.START_Y + 1.0, 90 + offset), obstacles));
+            path.add(new Line(new Point(Globals.START_X + 1.0/4, Globals.START_Y + 1.0), new Point(-3.7575, 4.5, 0), obstacles));
             path.add(new Line(new Point(-3.7575, 4.5), new Point(-3.9575, -3.15, 90), obstacles));
             path.add(new Line(new Point(-3.9575, -3.15), new Point(-3.2575, 3.4, -45), obstacles));
             path.add(new Line(new Point(-3.2575, 3.4), new Point(-3.2575, 1, 90), obstacles));
