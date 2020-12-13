@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 @Config
 @TeleOp(name="Victory")
+@Disabled
 public class Victory extends MyOpMode {
 
     GOFHardware robot = GOFHardware.getInstance();

@@ -50,8 +50,8 @@ public class OdometryTest extends MyOpMode {
                 subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
-                telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("xraw", robot.getVOmniPos(data));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }

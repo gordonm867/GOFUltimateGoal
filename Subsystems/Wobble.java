@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -11,10 +13,10 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public double closedpose = 0.0;
-    public double openpose = 0.5;
+    public double closedpose = 0.765;
+    public double openpose = 0.4;
 
-    public int target = 100;
+    public int target = -100;
 
     public boolean bumperpressed = false;
     public boolean arrived = false;
@@ -63,32 +65,29 @@ public class Wobble implements Subsystem {
         if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
             if (gamepad2.right_stick_y < -0.5) {
                 wheelstate = WheelState.UP;
-                target = 500;
+                target = -500;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = 1550;
+                target = -1450;
             }
             if (gamepad2.right_stick_x < -0.5) {
                 wheelstate = WheelState.DROP;
-                target = 1250;
+                target = -1025;
             }
             if (gamepad2.right_stick_x > 0.5) {
                 wheelstate = WheelState.IN;
-                target = 100;
+                target = -100;
             }
         }
         else if(gamepad2.left_bumper) {
             wheelstate = WheelState.CARRY;
-            target = 1400;
+            target = -1025;
         }
-        if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
-            if(target - robot.lf.getCurrentPosition() < 0) {
-                robot.wobblewheel.setPower(1);
-            }
-            else {
-                robot.wobblewheel.setPower(-1);
-            }
+        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(dataTwo.getMotorCurrentPosition(robot.wobblewheel))) > 10) {
+            robot.wobblewheel.setTargetPosition(target);
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);
@@ -108,24 +107,21 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = 2000;
+            target = -1450;
         }
         else if(targetstate == WheelState.HIGH) {
-            target = 800;
+            target = -500;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = 1200;
+            target = -1025;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
         }
-        if(robot.lf != null && robot.wobblewheel != null && Math.abs(target - Math.abs(robot.lf.getCurrentPosition())) > 30) {
-            if(target - robot.lf.getCurrentPosition() < 0) {
-                robot.wobblewheel.setPower(0.8);
-            }
-            else {
-                robot.wobblewheel.setPower(-0.8);
-            }
+        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 30) {
+            robot.wobblewheel.setTargetPosition(target);
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);

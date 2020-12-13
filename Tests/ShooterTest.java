@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
@@ -13,7 +15,9 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
+@Config
 @TeleOp(name="ShooterTest")
+@Disabled
 public class ShooterTest extends MyOpMode {
     GOFHardware robot = GOFHardware.getInstance();
     Handler handler = Handler.getInstance();
@@ -48,8 +52,7 @@ public class ShooterTest extends MyOpMode {
             subsystem.setState(Subsystem.State.ON);
         }
 
-        handler.pushData("" +
-                "stv", 0.0);
+        handler.pushData("" + "stv", 0.0);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

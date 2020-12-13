@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
+@Config
 public class Shooter implements Subsystem {
 
     private State state;
@@ -18,15 +20,19 @@ public class Shooter implements Subsystem {
 
     public boolean shot = false;
 
-    boolean shooting = false;
+    public boolean shooting = false;
     Target targ;
 
     double time = 0;
     int step = 0;
-    int attempts = 0;
+    public int attempts = 0;
 
     public double v = 0;
     public double t = 0;
+
+    public static double vel = 21.35;
+
+    public static int thing = 4;
 
     public Shooter(State state) {
         this.state = state;
@@ -44,7 +50,7 @@ public class Shooter implements Subsystem {
             rt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", 19.2);
+            handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
         }
@@ -55,7 +61,7 @@ public class Shooter implements Subsystem {
             lt = true;
             attempts = 0;
             shooting = true;
-            handler.pushData("stv", 19.2);
+            handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.POWER;
         }
@@ -82,7 +88,7 @@ public class Shooter implements Subsystem {
             shoot(targ, robot);
         }
         else if(shooting) {
-            handler.pushData("stv", 19.0);
+            handler.pushData("stv", vel);
         }
         if(!shooting) {
             handler.pushData("stv", 0.0);
@@ -90,7 +96,7 @@ public class Shooter implements Subsystem {
         handler.pushData("gamepad2", g2);
     }
 
-    public void shoot(GOFHardware robot, double velocity) {
+    public void shoot(GOFHardware robot, double velocity, boolean once) {
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null) {
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
@@ -102,7 +108,12 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
         }
         if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.50) {
-            shootonce(targ, robot);
+            if(once) {
+                shootonce(targ, robot);
+            }
+            else {
+                shoot(targ, robot);
+            }
         }
         handler.pushData("gamepad2", g2);
     }
@@ -128,20 +139,20 @@ public class Shooter implements Subsystem {
     public void shoot(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
             attempts++;
-            if(attempts == 4) {
+            if(attempts == thing) {
                 shooting = false;
                 return;
             }
-            robot.flicker.setPosition(0.70);
+            robot.flicker.setPosition(0.45);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > 400) {
-            robot.flicker.setPosition(0.25);
+        if(step == 1 && System.currentTimeMillis() - time > 600) {
+            robot.flicker.setPosition(0.90);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 400) {
+        if(step == 2 && System.currentTimeMillis() - time > 800) {
             step = 0;
             shoot(target, robot);
         }
@@ -149,16 +160,16 @@ public class Shooter implements Subsystem {
 
     public void shootonce(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
-            robot.flicker.setPosition(0.70);
+            robot.flicker.setPosition(0.45);
             time = System.currentTimeMillis();
             step++;
         }
         if(step == 1 && System.currentTimeMillis() - time > 500) {
-            robot.flicker.setPosition(0.2);
+            robot.flicker.setPosition(0.90);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 300) {
+        if(step == 2 && System.currentTimeMillis() - time > 800) {
             step = 0;
             shot = true;
         }

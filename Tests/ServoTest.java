@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
+@Disabled
 public class ServoTest {
     Servo servo;
     String SERVO_NAME = "";

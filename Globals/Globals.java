@@ -16,23 +16,27 @@ public final class Globals {
     public static double MAX_IN_SPEED = 1.0;
     public static double MIN_IN_SPEED = 0.25;
 
+    public static double MAX_WOBBLE = 0.5;
+
     public static double START_Y = -5.25853; // Default starting y position
     public static double START_X = -1.27; // Default starting x position
     public static double START_THETA = 90; // Default starting angle
 
-    public static double xOffset = 7.312;
-    public static double yOffset = 0.946;
+    public static double xOffset = 6.92968749965;
+    public static double yOffset = 1.58984374992;
 
     public static double MIN_B = 0;
     public static double MIN_G = 80;
     public static double MIN_R = 100;
 
-    public static double MAX_B = 255;
+    public static double MAX_B = 50;
     public static double MAX_G = 255;
     public static double MAX_R = 255;
 
     public static double RING_SIZE = 120;
 
     public static double BLUR_CONSTANT = 50;
+
+    //-48º, xraw = -1774, yraw = -407
 
 }
