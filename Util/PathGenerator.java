@@ -31,7 +31,7 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Point[]> optimizedpath = new ArrayList<>();
         ArrayList<Line> path = new ArrayList<>();
         ArrayList<Obstacle> obstacles = new ArrayList<>();
-        //obstacles.add(new Obstacle(-3, -2, 1.1));
+        obstacles.add(new Obstacle(-3, -2, 1.1));
         if(rings == 0) {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(Globals.START_X, Globals.START_Y + 8.0/12.0, 90 + offset)));
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y + 8.0/12), new Point(-4.3, -0.2, -30)));

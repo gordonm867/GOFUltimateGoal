@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
@@ -186,7 +185,12 @@ public class GOFAutonomous extends MyOpMode {
         RevBulkData data = robot.bulkRead();
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
-        Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) / 2.0, 0.5), 1.0);
+        if(index == 2) {
+            Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) / 2.0, 0.5), 1.0);
+        }
+        else {
+            Globals.MAX_SPEED = 1.0;
+        }
         if(subindex >= path.get(index).length - 1) {
             if(displacement > 1.0/20.0) {
                 drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data);
@@ -204,6 +208,7 @@ public class GOFAutonomous extends MyOpMode {
                     robot.setDrivePower(0, 0, 0, 0);
                     odometry.update(robot.bulkRead(), odometry.getAngle());
                     if(index == 0) {
+                        /*
                         Globals.MAX_SPEED = 0.3;
                         double shoottimer = System.currentTimeMillis();
                         shooter.shooting = true;
@@ -216,44 +221,6 @@ public class GOFAutonomous extends MyOpMode {
                                 shooter.shoot(robot, 20.9, false);
                             }
                         }
-                        /*
-                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (8.5 / 12), Globals.START_Y + 1), Unit.FEET);
-                        angle = odometry.getAngle();
-                        while(displacement > 1.0/24.0 || Math.abs(angle - (90 + offset)) > 1) {
-                            angle = odometry.getAngle();
-                            data2 = robot.bulkReadTwo();
-                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (8.5 / 12), Globals.START_Y + 1), Unit.FEET);
-                            drive.update(robot, new Point(Globals.START_X + (8.5/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data2);
-                            wobble.update(robot, state);
-                            telemetry.addData(""Update rate), odometry.updates;                           telemetry.addData("wobble target", wobble.target);
-                            telemetry.update();
-                        }
-                        robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
-                        shoottimer = System.currentTimeMillis();
-                        shooter.shot = false;
-                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
-                            shooter.shoot(robot, 20.5);
-                        }
-                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
-                        angle = odometry.getAngle();
-                        while(displacement > 1.0/24.0 || Math.abs(angle - (90 + offset)) > 1) {
-                            angle = odometry.getAngle();
-                            data2 = robot.bulkReadTwo();
-                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
-                            drive.update(robot, new Point(Globals.START_X + (15.0/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data2);
-                            wobble.update(robot, state);}
-                            telemetry.addData(""Update rate), odometry.updates;                       telemetry.addData("wobble target", wobble.target);
-                            telemetry.update();
-
-                        robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
-                        shoottimer = System.currentTimeMillis();
-                        shooter.shot = false;
-                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
-                            shooter.shoot(robot, 20.3);
-                        }
-                         */
                         if(robot.shoot1 != null && robot.shoot2 != null) {
                             ((DcMotorEx)robot.shoot1).setVelocity(0);
                             ((DcMotorEx)robot.shoot2).setVelocity(0);
@@ -261,6 +228,44 @@ public class GOFAutonomous extends MyOpMode {
                             robot.shoot2.setPower(0);
                         }
                         break;
+                         */
+                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (8.5 / 12), Globals.START_Y + 1), Unit.FEET);
+                        angle = odometry.getAngle();
+                        while(displacement > 1.0/24.0 || Math.abs(angle - (90 + offset)) > 1) {
+                            angle = odometry.getAngle();
+                            data = robot.bulkRead();
+                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (8.5 / 12), Globals.START_Y + 1), Unit.FEET);
+                            drive.update(robot, new Point(Globals.START_X + (8.5/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data);
+                            wobble.update(robot, state);
+                            telemetry.addData("Update rate", odometry.updates);
+                            telemetry.addData("wobble target", wobble.target);
+                            telemetry.update();
+                        }
+                        robot.setDrivePower(0, 0, 0, 0);
+                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                        double shoottimer = System.currentTimeMillis();
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
+                            shooter.shoot(robot, 20.5, true);
+                        }
+                        displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
+                        angle = odometry.getAngle();
+                        while(displacement > 1.0/24.0 || Math.abs(angle - (90 + offset)) > 1) {
+                            angle = odometry.getAngle();
+                            data = robot.bulkRead();
+                            displacement = odometry.getPoint().distance(new Point(Globals.START_X + (15.0 / 12), Globals.START_Y + 1), Unit.FEET);
+                            drive.update(robot, new Point(Globals.START_X + (15.0/12), Globals.START_Y + 1), odometry, 90 + offset, angle, data);
+                            wobble.update(robot, state);}
+                        telemetry.addData("Update rate", odometry.updates);
+                        telemetry.addData("wobble target", wobble.target);
+                        telemetry.update();
+                        robot.setDrivePower(0, 0, 0, 0);
+                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                        shoottimer = System.currentTimeMillis();
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
+                            shooter.shoot(robot, 20.3, true);
+                        }
                     }
                     if(index == 1) {
                         wobble.arrived = false;
@@ -383,8 +388,8 @@ public class GOFAutonomous extends MyOpMode {
             if(path.get(index).length - subindex > 150) {
                 turnto = odometry.getPoint().angle(synthetic, AngleUnit.DEGREES);
                 if(Double.isNaN(path.get(index)[path.get(index).length - 1].getAngle())) {
-                    double error = Math.abs(Functions.normalize(turnto - angle));
-                    double error2 = Math.abs(Functions.normalize(turnto - angle + 180));
+                    double error = Math.abs(Functions.normalize(turnto - path.get(index)[path.get(index).length - 1].getAngle()));
+                    double error2 = Math.abs(Functions.normalize(turnto - path.get(index)[path.get(index).length - 1].getAngle() + 180));
                     if(error2 < error) {
                         turnto = Functions.normalize(turnto + 180);
                     }
