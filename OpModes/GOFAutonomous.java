@@ -242,7 +242,7 @@ public class GOFAutonomous extends MyOpMode {
                             telemetry.update();
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
@@ -260,7 +260,7 @@ public class GOFAutonomous extends MyOpMode {
                         telemetry.addData("wobble target", wobble.target);
                         telemetry.update();
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
