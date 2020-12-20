@@ -229,6 +229,11 @@ public class GOFAutonomous extends MyOpMode {
                         }
                         break;
                          */
+                        double shoottimer = System.currentTimeMillis();
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
+                            shooter.shoot(robot, 20.5, true);
+                        }
                         displacement = odometry.getPoint().distance(new Point(Globals.START_X + (8.5 / 12), Globals.START_Y + 1), Unit.FEET);
                         angle = odometry.getAngle();
                         while(displacement > 1.0/24.0 || Math.abs(angle - (90 + offset)) > 1) {
@@ -243,7 +248,7 @@ public class GOFAutonomous extends MyOpMode {
                         }
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkRead(), odometry.getAngle());
-                        double shoottimer = System.currentTimeMillis();
+                        shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
                             shooter.shoot(robot, 20.5, true);

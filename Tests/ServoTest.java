@@ -129,6 +129,7 @@ public class ServoTest {
         if(gamepad1.dpad_down && !ddpressed && myposes.size() > 0) { // Remove the selected save position
             ddpressed = true;
             myposes.remove(save);
+            save = 0;
         }
         if(!gamepad1.dpad_down) {
             ddpressed = false;

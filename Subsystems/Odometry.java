@@ -364,6 +364,29 @@ public class Odometry implements Subsystem {
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
+        if(gamepad1.x) {
+            angleOffset = Functions.normalize(90 - robot.getAngle());
+            double lf = getPoint().distance(-5.25, -5.25, Unit.FEET);
+            double rf = getPoint().distance(-0.75, -5.25, Unit.FEET);
+            double lb = getPoint().distance(-5.25, 5.25, Unit.FEET);
+            double rb = getPoint().distance(-0.75, 5.25, Unit.FEET);
+            if(Math.abs(lf) <= Math.abs(rf) && Math.abs(lf) <= Math.abs(lb) && Math.abs(lf) <= Math.abs(rb)) {
+                x = -5.25;
+                y = -5.25;
+            }
+            else if(Math.abs(rf) <= Math.abs(lf) && Math.abs(rf) <= Math.abs(lb) && Math.abs(rf) <= Math.abs(rb)) {
+                x = -0.75;
+                y = -5.25;
+            }
+            else if(Math.abs(lb) <= Math.abs(lf) && Math.abs(lb) <= Math.abs(rf) && Math.abs(lb) <= Math.abs(rb)) {
+                x = -5.25;
+                y = 5.25;
+            }
+            else {
+                x = -0.75;
+                y = 5.25;
+            }
+        }
         update(data1);
     }
 

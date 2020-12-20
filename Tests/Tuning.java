@@ -64,7 +64,7 @@ public class Tuning extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
-        drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data2);
+        drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
     }
 
     public void stopOp() {

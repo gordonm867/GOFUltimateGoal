@@ -11,13 +11,13 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Wobble;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.TeleDrive;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
-@TeleOp(name="GOFTeleOp",group="GOF")
-public class GOFTeleOp extends MyOpMode {
+@TeleOp(name="TeleDriveTeleOp",group="GOF")
+public class TeleDriveTeleOp extends TeleDrive {
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();
     private     Drivetrain              drive;
     private     Intake                  intake;
@@ -47,9 +47,11 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
+        super.initOp();
     }
 
     public void loopOp() {
+        super.loopOp();
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
@@ -58,6 +60,7 @@ public class GOFTeleOp extends MyOpMode {
     }
 
     public void stopOp() {
+        super.stopOp();
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.OFF);
         }
