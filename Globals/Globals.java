@@ -37,6 +37,11 @@ public final class Globals {
 
     public static double BLUR_CONSTANT = 50;
 
+    public static double MINCX = 0;
+    public static double MINCY = 0;
+    public static double MAXCX = 100;
+    public static double MAXCY = 100;
+
     //-48º, xraw = -1774, yraw = -407
 
 }

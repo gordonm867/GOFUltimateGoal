@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.openftc.revextensions2.RevBulkData;
 
 @Config
 @TeleOp(name="wobble")
@@ -23,26 +25,31 @@ public class WobbleTuner extends MyOpMode {
         robot.init(hardwareMap);
         robot.wobblewheel.setTargetPosition(pos);
         robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.wobblewheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void loopOp() throws InterruptedException, GOFException {
-        robot.wobblewheel.setTargetPosition(pos);
-        robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
+        robot.wobblewheel.setPower(Math.min(0.6, Math.abs(gamepad1.left_stick_y)) * Math.signum(gamepad1.left_stick_y));
+        if(gamepad1.a) {
+            robot.wobble.setPosition(0.85);
+        }
+        if(gamepad1.b) {
+            robot.wobble.setPosition(0.4);
+        }
         if(gamepad1.x && !xpressed) {
             xpressed = true;
-            pos += 50;
+            robot.wobblewheel.setPower(0);
+            robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if(!gamepad1.x) {
             xpressed = false;
         }
-        if(gamepad1.y && !ypressed) {
-            ypressed = true;
-            pos -= 50;
-        }
-        if(!gamepad1.y) {
-            ypressed = false;
-        }
+        RevBulkData data = robot.bulkRead();
+        telemetry.addData("Voltage", ((DcMotorEx)robot.wobblewheel).getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("Servo", robot.wobble.getPosition());
+        telemetry.addData("Wobble encoder", robot.wobblewheel.getCurrentPosition());
+        telemetry.update();
     }
 }

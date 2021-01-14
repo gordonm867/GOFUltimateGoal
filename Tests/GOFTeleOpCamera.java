@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
+package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
@@ -12,14 +11,14 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Wobble;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.TeleDrive;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.DetectionPipeline;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
-@Disabled
-@TeleOp(name="TeleDriveTeleOp",group="GOF")
-public class TeleDriveTeleOp extends TeleDrive {
+@TeleOp(name="CameraTeleOp",group="GOF")
+public class GOFTeleOpCamera extends MyOpMode {
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();
     private     Drivetrain              drive;
     private     Intake                  intake;
@@ -46,14 +45,17 @@ public class TeleDriveTeleOp extends TeleDrive {
         subsystems.add(shooter);
         subsystems.add(wobble);
 
+        robot.cameraInit(new DetectionPipeline());
+        while(!isStarted() && !isStopRequested() && !robot.pipeline.isProc) {
+            telemetry.addData("Status", "Initializing OpenCV....");
+        }
+
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
-        super.initOp();
     }
 
     public void loopOp() {
-        super.loopOp();
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
@@ -62,7 +64,6 @@ public class TeleDriveTeleOp extends TeleDrive {
     }
 
     public void stopOp() {
-        super.stopOp();
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.OFF);
         }

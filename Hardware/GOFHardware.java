@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.DetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -377,6 +378,13 @@ public class GOFHardware {
     }
 
     public void cameraInit() {
+        phoneCam.openCameraDevice();
+        phoneCam.setPipeline(pipeline);
+        phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+        FtcDashboard.getInstance().startCameraStream(phoneCam, 0);
+    }
+
+    public void cameraInit(OpenCvPipeline pipeline) {
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);

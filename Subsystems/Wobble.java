@@ -13,7 +13,7 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public double closedpose = 0.765;
+    public double closedpose = 0.85;
     public double openpose = 0.4;
 
     public int target = -100;
