@@ -11,7 +11,7 @@ import org.openftc.revextensions2.RevBulkData;
 @Config
 public class Shooter implements Subsystem {
 
-    private State state;
+    private     State state;
 
     boolean apressed = false;
     boolean rt = false;
@@ -30,7 +30,7 @@ public class Shooter implements Subsystem {
     public double v = 0;
     public double t = 0;
 
-    public static double vel = 21.35;
+    public static double vel = 19.0;
 
     public static int thing = 4;
 
@@ -143,12 +143,12 @@ public class Shooter implements Subsystem {
                 shooting = false;
                 return;
             }
-            robot.flicker.setPosition(0.45);
+            robot.flicker.setPosition(0.60);
             time = System.currentTimeMillis();
             step++;
         }
         if(step == 1 && System.currentTimeMillis() - time > 600) {
-            robot.flicker.setPosition(0.90);
+            robot.flicker.setPosition(1.0);
             time = System.currentTimeMillis();
             step++;
         }
@@ -160,12 +160,12 @@ public class Shooter implements Subsystem {
 
     public void shootonce(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
-            robot.flicker.setPosition(0.45);
+            robot.flicker.setPosition(0.60);
             time = System.currentTimeMillis();
             step++;
         }
         if(step == 1 && System.currentTimeMillis() - time > 500) {
-            robot.flicker.setPosition(0.90);
+            robot.flicker.setPosition(1.00);
             time = System.currentTimeMillis();
             step++;
         }

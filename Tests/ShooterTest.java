@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 @Config
 @TeleOp(name="ShooterTest")
-@Disabled
+//@Disabled
 public class ShooterTest extends MyOpMode {
     GOFHardware robot = GOFHardware.getInstance();
     Handler handler = Handler.getInstance();

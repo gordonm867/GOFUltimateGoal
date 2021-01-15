@@ -16,7 +16,7 @@ public class Wobble implements Subsystem {
     public double closedpose = 0.85;
     public double openpose = 0.4;
 
-    public int target = -100;
+    public int target = 50;
 
     public boolean bumperpressed = false;
     public boolean arrived = false;
@@ -65,24 +65,24 @@ public class Wobble implements Subsystem {
         if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
             if (gamepad2.right_stick_y < -0.5) {
                 wheelstate = WheelState.UP;
-                target = -500;
+                target = 200;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = -1450;
+                target = 730;
             }
             if (gamepad2.right_stick_x < -0.5) {
                 wheelstate = WheelState.DROP;
-                target = -1025;
+                target = 160;
             }
             if (gamepad2.right_stick_x > 0.5) {
                 wheelstate = WheelState.IN;
-                target = -100;
+                target = 50;
             }
         }
         else if(gamepad2.left_bumper) {
             wheelstate = WheelState.CARRY;
-            target = -1025;
+            target = 690;
         }
         if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(dataTwo.getMotorCurrentPosition(robot.wobblewheel))) > 10) {
             robot.wobblewheel.setTargetPosition(target);

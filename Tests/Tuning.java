@@ -36,7 +36,7 @@ public class Tuning extends MyOpMode {
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
-        Shooter.thing = 2;
+        Shooter.thing = 4;
         robot.init(hardwareMap);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
@@ -64,7 +64,7 @@ public class Tuning extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
-        drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
+        //drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
     }
 
     public void stopOp() {
