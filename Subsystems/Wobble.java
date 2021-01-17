@@ -13,7 +13,7 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public double closedpose = 0.85;
+    public double closedpose = 1.0;
     public double openpose = 0.4;
 
     public int target = 50;
@@ -64,25 +64,21 @@ public class Wobble implements Subsystem {
         }
         if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
             if (gamepad2.right_stick_y < -0.5) {
-                wheelstate = WheelState.UP;
-                target = 200;
+                wheelstate = WheelState.CARRY;
+                target = 550;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = 730;
+                target = 635;
             }
             if (gamepad2.right_stick_x < -0.5) {
-                wheelstate = WheelState.DROP;
-                target = 160;
+                wheelstate = WheelState.IN;
+                target = -200;
             }
             if (gamepad2.right_stick_x > 0.5) {
-                wheelstate = WheelState.IN;
-                target = 50;
+                wheelstate = WheelState.DROP;
+                target = 100;
             }
-        }
-        else if(gamepad2.left_bumper) {
-            wheelstate = WheelState.CARRY;
-            target = 690;
         }
         if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(dataTwo.getMotorCurrentPosition(robot.wobblewheel))) > 10) {
             robot.wobblewheel.setTargetPosition(target);
@@ -107,13 +103,13 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -1450;
-        }
-        else if(targetstate == WheelState.HIGH) {
-            target = -500;
+            target = 700;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -1025;
+            target = 595;
+        }
+        else if(targetstate == WheelState.IN) {
+            target = -200;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");

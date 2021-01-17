@@ -20,6 +20,8 @@ public class WobbleTuner extends MyOpMode {
     boolean xpressed = false;
     boolean ypressed = false;
 
+    public int post = 0;
+
     @Override
     public void initOp() throws InterruptedException, GOFException {
         robot.init(hardwareMap);
@@ -30,9 +32,18 @@ public class WobbleTuner extends MyOpMode {
 
     @Override
     public void loopOp() throws InterruptedException, GOFException {
-        robot.wobblewheel.setPower(Math.min(0.6, Math.abs(gamepad1.left_stick_y)) * Math.signum(gamepad1.left_stick_y));
+        if(gamepad1.left_stick_y != 0) {
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.wobblewheel.setPower(Math.min(0.6, Math.abs(gamepad1.left_stick_y)) * Math.signum(gamepad1.left_stick_y));
+            post = robot.wobblewheel.getCurrentPosition();
+        }
+        else {
+            robot.wobblewheel.setPower(0.4);
+            robot.wobblewheel.setTargetPosition(post);
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
         if(gamepad1.a) {
-            robot.wobble.setPosition(0.85);
+            robot.wobble.setPosition(0.9);
         }
         if(gamepad1.b) {
             robot.wobble.setPosition(0.4);

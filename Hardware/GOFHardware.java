@@ -223,6 +223,7 @@ public class GOFHardware {
         try {
             wobble = hwMap.get(Servo.class, "w");
             wobble.setDirection(Servo.Direction.FORWARD);
+            wobble.setPosition(1.0);
         }
         catch(Exception p_exception) {
             wobble = null;

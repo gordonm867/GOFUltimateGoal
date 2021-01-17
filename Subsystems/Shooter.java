@@ -107,7 +107,7 @@ public class Shooter implements Subsystem {
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             handler.pushData("sav", v);
         }
-        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.50) {
+        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) {
             if(once) {
                 shootonce(targ, robot);
             }
