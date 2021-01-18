@@ -69,7 +69,7 @@ public class DetectionPipeline extends OpenCvPipeline {
                 double contx = rect.x;
                 double conty = rect.y;
                 double dist = Math.sqrt(Math.pow((myMat.cols() / 2f) - contx, 2) + Math.pow((myMat.rows() / 2f) - conty, 2));
-                if(!(Math.abs(contx) > 400 || Math.abs(conty) > 400) && dist < mindist && rect.height > 25 /* && (Math.abs(myMat.rows() / 2f) - conty) < 60 && (Math.abs(myMat.cols() / 2f) - contx) < 60*/) {
+                if(dist < mindist /* && (Math.abs(myMat.rows() / 2f) - conty) < 60 && (Math.abs(myMat.cols() / 2f) - contx) < 60*/) {
                     mindist = dist;
                     index = l;
                 }

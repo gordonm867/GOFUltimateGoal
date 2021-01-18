@@ -27,6 +27,8 @@ public class GOFTeleOp extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
+    public boolean lt = false;
+
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
@@ -52,7 +54,7 @@ public class GOFTeleOp extends MyOpMode {
     public void loopOp() {
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
-        for(Subsystem subsystem : subsystems) {
+        for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
     }

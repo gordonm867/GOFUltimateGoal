@@ -65,29 +65,37 @@ public class Wobble implements Subsystem {
         if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
             if (gamepad2.right_stick_y < -0.5) {
                 wheelstate = WheelState.CARRY;
-                target = 550;
+                target = -550;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = 635;
+                target = -620;
             }
             if (gamepad2.right_stick_x < -0.5) {
                 wheelstate = WheelState.IN;
-                target = -200;
+                target = 200;
             }
             if (gamepad2.right_stick_x > 0.5) {
                 wheelstate = WheelState.DROP;
-                target = 100;
+                target = -100;
             }
         }
-        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(dataTwo.getMotorCurrentPosition(robot.wobblewheel))) > 10) {
+        if(gamepad2.dpad_down) {
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.wobblewheel.setPower(0.4);
+            target = robot.wobblewheel.getCurrentPosition();
+        }
+        else if(gamepad2.dpad_up) {
+            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.wobblewheel.setPower(-0.4);
+            target = robot.wobblewheel.getCurrentPosition();
+        }
+        else {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
         }
-        else if(robot.wobblewheel != null && robot.lf != null) {
-            robot.wobblewheel.setPower(0);
-        }
+
     }
 
     public void update(GOFHardware robot, WheelState targetstate) {
@@ -103,13 +111,13 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = 700;
+            target = -635;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = 595;
+            target = -585;
         }
         else if(targetstate == WheelState.IN) {
-            target = -200;
+            target = 200;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");

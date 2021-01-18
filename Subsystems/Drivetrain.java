@@ -88,7 +88,7 @@ public class Drivetrain implements Subsystem {
             }
 
             if(turningToPoint) {
-                update(robot, odometry.getPoint(), odometry, odometry.getPoint().angle(new Point(3.5, 6.2), AngleUnit.DEGREES) + shooffset, angle, data2);
+                update(robot, new Point(-3, -1), odometry, 90, angle, data1);
                 return;
             }
 
@@ -117,7 +117,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
                 double Kp = 0.0325;
                 double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
-                turn += (Kp * error);
+                turn += (Kp * error * Globals.MAX_SPEED);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
             else {
@@ -130,14 +130,14 @@ public class Drivetrain implements Subsystem {
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
                 double Kp = 0.0325;
                 double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
-                turn += (Kp * error);
+                turn += (Kp * error * Globals.MAX_SPEED);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
-            if (gamepad1.x && !xpressed) {
+            if (gamepad1.a && !gamepad1.start && !xpressed) {
                 xpressed = true;
                 turningToPoint = true;
             }
-            if(!gamepad1.x) {
+            if(!gamepad1.a && !gamepad1.start) {
                 xpressed = false;
             }
         }
@@ -196,7 +196,7 @@ public class Drivetrain implements Subsystem {
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 0.8) {
-                        double pow = (kp * error);
+                        double pow = (kp * error * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }
                 }
@@ -209,7 +209,7 @@ public class Drivetrain implements Subsystem {
         else if(!Double.isNaN(myAngle)) {
             double error = Functions.normalize(myAngle - current);
             if(Math.abs(error) >= 0.8) {
-                double pow = (kp * error);
+                double pow = (kp * error * Globals.MAX_SPEED);
                 turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
             }
         }
@@ -262,7 +262,7 @@ public class Drivetrain implements Subsystem {
                             error -= 360;
                         }
                         double Kp = 0.0325;
-                        double pow = (Kp * error);
+                        double pow = (Kp * error * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }
@@ -280,7 +280,7 @@ public class Drivetrain implements Subsystem {
                                 error -= 360;
                             }
                             double Kp = 0.0325;
-                            double pow = (Kp * error);
+                            double pow = (Kp * error * Globals.MAX_SPEED);
                             turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                         }
                     }
@@ -361,7 +361,7 @@ public class Drivetrain implements Subsystem {
                         error -= 360;
                     }
                     double Kp = 0.0325;
-                    double pow = (Kp * error);
+                    double pow = (Kp * error * Globals.MAX_SPEED);
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
@@ -380,7 +380,7 @@ public class Drivetrain implements Subsystem {
                         error -= 360;
                     }
                     double Kp = 0.0325 * Globals.MAX_SPEED;
-                    double pow = (Kp * error);
+                    double pow = (Kp * error * Globals.MAX_SPEED);
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
@@ -439,7 +439,7 @@ public class Drivetrain implements Subsystem {
                             error -= 360;
                         }
                         double Kp = 0.0325;
-                        double pow = (Kp * error);
+                        double pow = (Kp * error * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), 0.15) * Math.signum(pow);
                     }
                 }
@@ -457,7 +457,7 @@ public class Drivetrain implements Subsystem {
                                 error -= 360;
                             }
                             double Kp = 0.0325;
-                            double pow = (Kp * error);
+                            double pow = (Kp * error * Globals.MAX_SPEED);
                             turn = Math.max(Math.abs(pow), 0.15) * Math.signum(pow);
                         }
                     }
@@ -515,7 +515,7 @@ public class Drivetrain implements Subsystem {
                             error -= 360;
                         }
                         double Kp = 0.008;
-                        double pow = (Kp * error);
+                        double pow = (Kp * error * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }

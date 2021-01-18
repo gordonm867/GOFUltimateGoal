@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -58,13 +59,20 @@ public class Tuning extends MyOpMode {
     }
 
     public void loopOp() {
-        Globals.MAX_SPEED = 0.2;
+        Globals.MAX_SPEED = 0.5;
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
-        //drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
+        double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
+        double angle = odometry.getAngle() - targA;
+        if(displacement > 0.2 || Math.abs(angle) > 1) {
+            drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
+        }
+        else {
+            robot.setDrivePower(0, 0, 0, 0);
+        }
     }
 
     public void stopOp() {
