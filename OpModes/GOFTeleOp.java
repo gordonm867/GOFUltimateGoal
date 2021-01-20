@@ -14,8 +14,9 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 @TeleOp(name="GOFTeleOp",group="GOF")
 public class GOFTeleOp extends MyOpMode {
@@ -27,13 +28,11 @@ public class GOFTeleOp extends MyOpMode {
     private     Shooter                 shooter;
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
-    private     Scanner                 scan        = new Scanner("odometry.txt");
 
     public boolean lt = false;
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
-        double angle = Double.parseDouble(scan.next());
         robot.init(hardwareMap);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
@@ -53,15 +52,22 @@ public class GOFTeleOp extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
-        odometry.load(angle);
-        telemetry.addData("lastAngle", Odometry.lastAngle);
-        telemetry.addData("handler", handler.getData("Angle"));
-        telemetry.addData("point", odometry.getPoint());
-        telemetry.addData("angle", odometry.getAngle());
-        telemetry.addData("text angle", angle);
-        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-        telemetry.update();
+        try {
+            BufferedReader read = new BufferedReader(new FileReader("odometry.txt"));
+            double angle = Double.parseDouble(read.readLine());
+            odometry.load(angle);
+            telemetry.addData("lastAngle", Odometry.lastAngle);
+            telemetry.addData("Handler angle", handler.getData("Angle"));
+            telemetry.addData("Point", odometry.getPoint());
+            telemetry.addData("Odometry angle", odometry.getAngle());
+            telemetry.addData("Text file angle", angle);
+            telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
+            telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
+            telemetry.update();
+        }
+        catch(Exception e) {
+            telemetry.addData("uh", e.getMessage());
+        }
     }
 
     public void loopOp() {
