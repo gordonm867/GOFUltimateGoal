@@ -34,7 +34,6 @@ public class Wobble implements Subsystem {
     public enum WheelState {
         PICKUP,
         CARRY,
-        HIGH,
         UP,
         DROP,
         IN
@@ -111,13 +110,13 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -635;
+            target = -660;
         }
         else if(targetstate == WheelState.CARRY) {
             target = -585;
         }
         else if(targetstate == WheelState.IN) {
-            target = 200;
+            target = -100;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");

@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerA
 public class Odometry implements Subsystem {
 
     private static GOFHardware robot;
-    private static double lastAngle;
+    public static double lastAngle;
     public double lastXPos = 0;
     public double lastYPos = 0;
     private static double angle;
@@ -179,6 +179,7 @@ public class Odometry implements Subsystem {
         if(update) {
             data = data1;
             updates++;
+            handler.pushData("Angle", angle);
             double dTheta = angle - lastAngle;
             if(dTheta >= 300) {
                 dTheta -= 360;
@@ -403,6 +404,21 @@ public class Odometry implements Subsystem {
         angle = robot.getAngle();
         thismetry = new Odometry(robot);
         robot.resetOmnis();
+    }
+
+    public void load(double angle) {
+        if(handler.contains("Odometry Point")) {
+            if(handler.getData("Odometry Point") instanceof Point) {
+                Point point = (Point)handler.getData("Odometry Point");
+                x = point.getX();
+                y = point.getY();
+            }
+
+            angleOffset = angle - robot.getAngle();
+            data = robot.bulkRead();
+            lastXPos = -data.getMotorCurrentPosition(robot.rb);
+            lastYPos = -data.getMotorCurrentPosition(robot.rf);
+        }
     }
 
     public double getVelocity() {

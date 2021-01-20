@@ -34,23 +34,23 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         //obstacles.add(new Obstacle(-3, -2, 1.1));
         if(rings == 0) {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-1.5, -2, 83)));
-            path.add(new Line(new Point(-1.5, -2), new Point(-3.3, 1, -30)));
-            path.add(new Line(new Point(-3.3, 1), new Point(-4.5, -1.7, 90)));
-            path.add(new Line(new Point(-4.5, -2.5), new Point(-3, -0.1, -45)));
-            path.add(new Line(new Point(-3, -0.1), new Point(-3, 1, 90)));
+            path.add(new Line(new Point(-1.5, -2), new Point(-3.3, .8, -30)));
+            path.add(new Line(new Point(-3.3, .8), new Point(-4.5, -2.1, 90)));
+            path.add(new Line(new Point(-4.5, -2.6), new Point(-3, -0.1, -45)));
+            path.add(new Line(new Point(-3, -0.1), new Point(-1, 1, 30)));
         }
         else if(rings == 1) {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-1.5, -2, 83)));
             path.add(new Line(new Point(-1.5, -2), new Point(-2.5, 1.75, -90), obstacles));
-            path.add(new Line(new Point(-2.5, 1.75), new Point(-4.5, -1.7, 90), obstacles));
-            path.add(new Line(new Point(-4.5, -2.5), new Point(-2.5, 1.9, -45), obstacles));
-            path.add(new Line(new Point(-2.5, 1.9), new Point(-2.5, 1, 90), obstacles));
+            path.add(new Line(new Point(-2.5, 1.75), new Point(-4.7, -2.0, 90), obstacles));
+            path.add(new Line(new Point(-4.7, -2.5), new Point(-2.0, 1.4, -90), obstacles));
+            path.add(new Line(new Point(-2.0, 1.4), new Point(-2.0, 1, 90), obstacles));
         }
         else {
             path.add(new Line(new Point(Globals.START_X, Globals.START_Y), new Point(-1.5, -2, 83)));
             path.add(new Line(new Point(-1.5, -2), new Point(-3.3, 4.7, -30)));
-            path.add(new Line(new Point(-3.3, 4.7), new Point(-4.5, -1.7, 90)));
-            path.add(new Line(new Point(-4.5, -2.5), new Point(-3, 4.1, -45)));
+            path.add(new Line(new Point(-3.3, 4.7), new Point(-4.7, -2.0, 90)));
+            path.add(new Line(new Point(-4.7, -2.5), new Point(-3, 4.1, -45)));
             path.add(new Line(new Point(-3, 4.1), new Point(-3, 1, 90)));
         }
         for(Line line : path) {
