@@ -34,9 +34,9 @@ public class GOFTeleOp extends MyOpMode {
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
+        odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
-        odometry = Odometry.getInstance(robot);
         shooter = new Shooter(Subsystem.State.OFF);
         wobble = new Wobble(Subsystem.State.OFF);
 

@@ -398,6 +398,7 @@ public class Odometry implements Subsystem {
             angle = 90;
             update(data1);
         }
+        update(data1);
     }
 
     public void reset() {

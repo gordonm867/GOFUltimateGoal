@@ -88,7 +88,7 @@ public class Drivetrain implements Subsystem {
             }
 
             if(turningToPoint) {
-                update(robot, new Point(2.25, 0), odometry, 90, odometry.getAngle(), data1);
+                update(robot, new Point(3.0, 0), odometry, 90, odometry.getAngle(), data1);
                 return;
             }
 
