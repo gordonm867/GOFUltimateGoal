@@ -88,7 +88,7 @@ public class Drivetrain implements Subsystem {
             }
 
             if(turningToPoint) {
-                update(robot, new Point(2.25, 0), odometry, 90, odometry.getAngle(), data1);
+                update(robot, new Point(3.1, 0), odometry, 90, odometry.getAngle(), data1);
                 return;
             }
 
@@ -98,6 +98,9 @@ public class Drivetrain implements Subsystem {
             }
             if(changed && !(gamepad1.start && gamepad1.y)) {
                 changed = false;
+            }
+            if(!handler.contains("Angle")) {
+                handler.pushData("Angle", odometry.getAngle());
             }
             if(turn != 0 || (drive == 0 && angle == 0)) {
                 angleToHold = (double)handler.getData("Angle");

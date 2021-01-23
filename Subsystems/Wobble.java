@@ -61,32 +61,19 @@ public class Wobble implements Subsystem {
         if(!gamepad2.right_bumper) {
             bumperpressed = false;
         }
-        if(Math.abs(gamepad2.right_stick_y) > 0.1 || Math.abs(gamepad2.right_stick_x) > 0.1) {
+        if(Math.abs(gamepad2.right_stick_y) > 0.5) {
             if (gamepad2.right_stick_y < -0.5) {
-                wheelstate = WheelState.CARRY;
-                target = -550;
+                wheelstate = WheelState.DROP;
+                target = -100;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
                 target = -620;
             }
-            if (gamepad2.right_stick_x < -0.5) {
-                wheelstate = WheelState.IN;
-                target = 200;
-            }
-            if (gamepad2.right_stick_x > 0.5) {
-                wheelstate = WheelState.DROP;
-                target = -100;
-            }
         }
-        if(gamepad2.dpad_down) {
+        else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.wobblewheel.setPower(0.4);
-            target = robot.wobblewheel.getCurrentPosition();
-        }
-        else if(gamepad2.dpad_up) {
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.wobblewheel.setPower(-0.4);
+            robot.wobblewheel.setPower(gamepad2.right_stick_x);
             target = robot.wobblewheel.getCurrentPosition();
         }
         else {
