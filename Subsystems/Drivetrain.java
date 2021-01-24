@@ -83,12 +83,12 @@ public class Drivetrain implements Subsystem {
                 turn = -0.1; // Slow right turn
             }
 
-            if(turn != 0 || drive != 0 || angle != 0) {
+            if(turn != 0 || drive != 0 || angle != 0 || gamepad1.left_trigger > 0) {
                 turningToPoint = false;
             }
 
             if(turningToPoint) {
-                update(robot, new Point(3.1, 0), odometry, 90, odometry.getAngle(), data1);
+                update(robot, new Point(1.2, 0), odometry, 90, odometry.getAngle(), data1);
                 return;
             }
 

@@ -73,7 +73,7 @@ public class Wobble implements Subsystem {
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.wobblewheel.setPower(gamepad2.right_stick_x);
+            robot.wobblewheel.setPower(Math.min(gamepad2.right_stick_x, Globals.MAX_WOBBLE) * Math.signum(gamepad2.right_stick_x));
             target = robot.wobblewheel.getCurrentPosition();
         }
         else {

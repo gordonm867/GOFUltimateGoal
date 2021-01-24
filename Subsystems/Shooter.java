@@ -49,7 +49,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 4;
             rt = true;
-            vel = 17.0;
+            vel = 17.5;
             attempts = 0;
             shooting = true;
             handler.pushData("stv", vel);
