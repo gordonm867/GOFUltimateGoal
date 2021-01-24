@@ -19,12 +19,7 @@ public class Intake implements Subsystem {
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(state == State.ON) {
             if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0.2) {
-                if(Math.abs(System.currentTimeMillis() - intaketimer) > 1000) {
-                    robot.setIntakePower(-1);
-                }
-                else {
-                    robot.setIntakePower(-Globals.MAX_IN_SPEED);
-                }
+                robot.setIntakePower(-Globals.MAX_IN_SPEED);
             }
             else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0) {
                 robot.setIntakePower(-Globals.MIN_IN_SPEED);
@@ -33,12 +28,7 @@ public class Intake implements Subsystem {
                 robot.setIntakePower(Globals.MIN_IN_SPEED);
             }
             else if(Math.abs(gamepad2.left_stick_y) > 0.05) {
-                if(Math.abs(System.currentTimeMillis() - intaketimer) > 1000) {
-                    robot.setIntakePower(1);
-                }
-                else {
-                    robot.setIntakePower(Globals.MAX_IN_SPEED);
-                }
+                robot.setIntakePower(Globals.MAX_IN_SPEED);
             }
             else {
                 intaketimer = System.currentTimeMillis();
