@@ -30,7 +30,11 @@ public class Shooter implements Subsystem {
     public double v = 0;
     public double t = 0;
 
-    public static double vel = 17.0;
+    public static double shootTime = 50.0;
+    public static double shootIn = 0.35;
+    public static double shootOut = 0.57;
+
+    public static double vel = 17.3;
 
     public static int thing = 4;
 
@@ -150,16 +154,16 @@ public class Shooter implements Subsystem {
                 shooting = false;
                 return;
             }
-            robot.flicker.setPosition(0.41);
+            robot.flicker.setPosition(shootIn);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > 27.5) {
-            robot.flicker.setPosition(0.52);
+        if(step == 1 && System.currentTimeMillis() - time > shootTime) {
+            robot.flicker.setPosition(shootOut);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 27.5) {
+        if(step == 2 && System.currentTimeMillis() - time > shootTime) {
             step = 0;
             shoot(target, robot);
         }
@@ -167,16 +171,16 @@ public class Shooter implements Subsystem {
 
     public void shootonce(Target target, GOFHardware robot) {
         if(step == 0 && robot.flicker != null) {
-            robot.flicker.setPosition(0.41);
+            robot.flicker.setPosition(shootIn);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > 27.5) {
-            robot.flicker.setPosition(0.52);
+        if(step == 1 && System.currentTimeMillis() - time > shootTime) {
+            robot.flicker.setPosition(shootOut);
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > 27.5) {
+        if(step == 2 && System.currentTimeMillis() - time > shootTime) {
             step = 0;
             shot = true;
         }
