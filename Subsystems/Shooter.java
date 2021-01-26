@@ -11,12 +11,14 @@ import org.openftc.revextensions2.RevBulkData;
 @Config
 public class Shooter implements Subsystem {
 
-    private     State state;
+    private State state;
 
     boolean apressed = false;
     boolean rt = false;
     boolean lt = false;
     boolean g2 = true;
+
+    boolean ready = false;
 
     public boolean shot = false;
 
@@ -56,6 +58,7 @@ public class Shooter implements Subsystem {
             vel = 17.5;
             attempts = 0;
             shooting = true;
+            ready = false;
             handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
@@ -69,6 +72,7 @@ public class Shooter implements Subsystem {
             vel = 15.5;
             attempts = 0;
             shooting = true;
+            ready = false;
             handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
@@ -78,6 +82,7 @@ public class Shooter implements Subsystem {
         }
         if(gamepad2.left_bumper) {
             shooting = false;
+            ready = false;
         }
         if(robot.shoot1 != null && handler.contains("stv")) {
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
@@ -95,7 +100,8 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && Math.abs(Math.abs(v) - Math.abs(t)) < 0.25) {
+        if(shooting && (Math.abs(Math.abs(v) - Math.abs(t)) < 0.25 || ready)) {
+            ready = true;
             shoot(targ, robot);
         }
         else if(shooting) {
@@ -118,7 +124,8 @@ public class Shooter implements Subsystem {
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             handler.pushData("sav", v);
         }
-        if(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) {
+        if(ready || Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) {
+            ready = true;
             if(once) {
                 shootonce(targ, robot);
             }
@@ -152,6 +159,7 @@ public class Shooter implements Subsystem {
             attempts++;
             if(attempts == thing) {
                 shooting = false;
+                ready = false;
                 return;
             }
             robot.flicker.setPosition(shootIn);
