@@ -55,7 +55,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 5;
             rt = true;
-            vel = 17.5;
+            vel = 17.8;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -83,6 +83,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.left_bumper) {
             shooting = false;
             ready = false;
+            robot.flicker.setPosition(shootOut);
         }
         if(robot.shoot1 != null && handler.contains("stv")) {
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
@@ -171,7 +172,7 @@ public class Shooter implements Subsystem {
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > shootTime) {
+        if(step == 2 && System.currentTimeMillis() - time > shootTime * 1.5) {
             step = 0;
             shoot(target, robot);
         }

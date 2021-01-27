@@ -16,7 +16,7 @@ public class Wobble implements Subsystem {
     public double closedpose = 1.0;
     public double openpose = 0.4;
 
-    public int target = 50;
+    public int target = 0;
 
     public boolean bumperpressed = false;
     public boolean arrived = false;
@@ -103,15 +103,15 @@ public class Wobble implements Subsystem {
             target = -1060;
         }
         else if(targetstate == WheelState.IN) {
-            target = -611;
+            target = 0;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
         }
-        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 30) {
+        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 15) {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
+            robot.wobblewheel.setPower(1.0);
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);
