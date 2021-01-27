@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
@@ -53,7 +56,7 @@ public class GOFTeleOp extends MyOpMode {
             subsystem.setState(Subsystem.State.ON);
         }
         try {
-            BufferedReader read = new BufferedReader(new FileReader("odometry.txt"));
+            BufferedReader read = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt")));
             double angle = Double.parseDouble(read.readLine());
             odometry.load(angle);
             telemetry.addData("lastAngle", Odometry.lastAngle);

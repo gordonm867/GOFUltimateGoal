@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
 
 import android.content.Context;
+import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -242,10 +243,10 @@ public class GOFAutonomous extends MyOpMode {
                         }
                         break;
                          */
-                        while(Math.abs(angle - 84) > 1) {
+                        while(Math.abs(angle - 81) > 1) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 84, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 81, angle, data);
                             wobble.update(robot, state);
                             telemetry.addData("Update rate", odometry.updates);
                             telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
@@ -263,10 +264,10 @@ public class GOFAutonomous extends MyOpMode {
                             shooter.shoot(robot, 16.2, true);
                         }
                         angle = odometry.getAngle();
-                        while(Math.abs(angle - 87) > 1) {
+                        while(Math.abs(angle - 84) > 1) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 87, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 84, angle, data);
                             wobble.update(robot, state);
                             telemetry.addData("Update rate", odometry.updates);
                             telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
@@ -286,10 +287,10 @@ public class GOFAutonomous extends MyOpMode {
                             shooter.shoot(robot, 16.2, true);
                         }
                         angle = odometry.getAngle();
-                        while(Math.abs(angle - 92) > 1) {
+                        while(Math.abs(angle - 87) > 1) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 92, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 87, angle, data);
                             wobble.update(robot, state);}
                         telemetry.addData("Update rate", odometry.updates);
                         telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
@@ -422,6 +423,35 @@ public class GOFAutonomous extends MyOpMode {
                 ssubindex = 0;
                 subindex = 0;
                 index++;
+                if(index >= path.size()) {
+                    File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+                    try {
+                        file.createNewFile();
+                        PrintWriter something = new PrintWriter(file);
+                        something.print(odometry.getAngle() + "\n");
+                        something.flush();
+                        something.close();
+                    }
+                    catch (Exception p_exception) {}
+                    while(opModeIsActive()) {
+                        angle = odometry.getAngle();
+                        data = robot.bulkRead();
+                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
+                        telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
+                        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
+                        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
+                        lastupdates = odometry.updates;
+                        uptime = System.currentTimeMillis();
+                        telemetry.addData("wobble target", wobble.target);
+                        telemetry.addData("angle", odometry.getAngle());
+                        if(handler.contains("Angle")) {
+                            telemetry.addData("handler", (double)handler.getData("Angle"));
+                        }
+                        telemetry.update();
+                        wobble.update(robot, state);
+                        odometry.update(data, angle);
+                    }
+                }
                 try {
                     findTarget();
                 }
@@ -483,10 +513,10 @@ public class GOFAutonomous extends MyOpMode {
             if(path.get(index)[bestindex].equals(subtarget)) {
                 index++;
                 if(index >= path.size()) {
-                    File file = CreateTextFile(hardwareMap.appContext, "odometry.txt");
+                    File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
                     try {
                         file.createNewFile();
-                        PrintWriter something = new PrintWriter("odometry.txt");
+                        PrintWriter something = new PrintWriter(file);
                         something.print(odometry.getAngle() + "\n");
                         something.flush();
                         something.close();
@@ -495,7 +525,7 @@ public class GOFAutonomous extends MyOpMode {
                     while(opModeIsActive()) {
                         double angle = odometry.getAngle();
                         RevBulkData data = robot.bulkRead();
-                        drive.update(robot, odometry.getPoint(), odometry, 90, angle, data);
+                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
                         telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
                         telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
                         telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
@@ -531,10 +561,5 @@ public class GOFAutonomous extends MyOpMode {
         subtarget = path.get(index)[bestindex];
         ssubindex = subindex;
         subindex = bestindex;
-    }
-
-    public static File CreateTextFile(Context context, String filename) throws IOException {
-        final File root = context.getExternalCacheDir();
-        return new File(root, filename);
     }
 }

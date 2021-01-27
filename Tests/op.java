@@ -18,16 +18,13 @@ public class op extends MyOpMode {
     @Override
     public void initOp() throws InterruptedException, GOFException {
         try {
-            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST");
-            boolean dir;
-            dir = file.mkdir();
+            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
             boolean f;
             f = file.createNewFile();
             PrintWriter writer = new PrintWriter(file);
-            writer.write("hi");
+            writer.write("90");
             writer.flush();
             writer.close();
-            telemetry.addData("dir", dir);
             telemetry.addData("f", f);
             telemetry.update();
         }
@@ -39,7 +36,7 @@ public class op extends MyOpMode {
 
     @Override
     public void loopOp() throws InterruptedException, GOFException, IOException {
-        BufferedReader read = new BufferedReader(new FileReader(new File("odometry.txt")));
+        BufferedReader read = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt")));
         telemetry.addData("txt", read.readLine());
         telemetry.update();
         read.close();
