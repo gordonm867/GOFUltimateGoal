@@ -492,7 +492,7 @@ public class GOFAutonomous extends MyOpMode {
                     File file = new File("odometry.txt");
                     try {
                         file.createNewFile();
-                        PrintWriter something = new PrintWriter("odometry.text");
+                        PrintWriter something = new PrintWriter("odometry.txt");
                         something.print(odometry.getAngle() + "\n");
                         something.flush();
                         something.close();

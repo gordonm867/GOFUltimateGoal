@@ -76,12 +76,12 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
         }
-        /*
+
         telemetry.addData("point", odometry.getPoint());
         telemetry.addData("angle", odometry.getAngle());
         telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
         telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-         */
+
         telemetry.addData("Intake Power", robot.in.getPower());
         telemetry.update();
 
