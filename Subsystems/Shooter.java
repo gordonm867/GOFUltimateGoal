@@ -38,7 +38,7 @@ public class Shooter implements Subsystem {
 
     public static double vel = 17.3;
 
-    public static int thing = 4;
+    public static int thing = 5;
 
     public Shooter(State state) {
         this.state = state;
@@ -53,7 +53,7 @@ public class Shooter implements Subsystem {
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(gamepad2.right_trigger > 0.05 && !rt) {
-            thing = 4;
+            thing = 5;
             rt = true;
             vel = 17.5;
             attempts = 0;

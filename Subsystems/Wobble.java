@@ -64,11 +64,11 @@ public class Wobble implements Subsystem {
         if(Math.abs(gamepad2.right_stick_y) > 0.5) {
             if (gamepad2.right_stick_y < -0.5) {
                 wheelstate = WheelState.DROP;
-                target = -100;
+                target = -611;
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = -620;
+                target = -1111;
             }
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
@@ -79,7 +79,7 @@ public class Wobble implements Subsystem {
         else {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(Globals.MAX_WOBBLE);
+            robot.wobblewheel.setPower(1.0);
         }
 
     }
@@ -97,13 +97,13 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -660;
+            target = -1111;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -585;
+            target = -1060;
         }
         else if(targetstate == WheelState.IN) {
-            target = -100;
+            target = -611;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");

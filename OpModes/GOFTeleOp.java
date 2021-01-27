@@ -67,6 +67,7 @@ public class GOFTeleOp extends MyOpMode {
         }
         catch(Exception e) {
             telemetry.addData("uh", e.getMessage());
+            telemetry.update();
         }
     }
 

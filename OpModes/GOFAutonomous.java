@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
 
+import android.content.Context;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -23,11 +25,9 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.PathGenerator;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
-import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -422,12 +422,6 @@ public class GOFAutonomous extends MyOpMode {
                 ssubindex = 0;
                 subindex = 0;
                 index++;
-                if(index >= path.size()) {
-                    while(opModeIsActive()) {
-                        robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkRead(), odometry.getAngle());
-                    }
-                }
                 try {
                     findTarget();
                 }
@@ -489,10 +483,10 @@ public class GOFAutonomous extends MyOpMode {
             if(path.get(index)[bestindex].equals(subtarget)) {
                 index++;
                 if(index >= path.size()) {
-                    File file = new File("odometry.txt");
+                    File file = CreateTextFile(hardwareMap.appContext, "odometry.txt");
                     try {
                         file.createNewFile();
-                        PrintWriter something = new PrintWriter("odometry.text");
+                        PrintWriter something = new PrintWriter("odometry.txt");
                         something.print(odometry.getAngle() + "\n");
                         something.flush();
                         something.close();
@@ -537,5 +531,10 @@ public class GOFAutonomous extends MyOpMode {
         subtarget = path.get(index)[bestindex];
         ssubindex = subindex;
         subindex = bestindex;
+    }
+
+    public static File CreateTextFile(Context context, String filename) throws IOException {
+        final File root = context.getExternalCacheDir();
+        return new File(root, filename);
     }
 }
