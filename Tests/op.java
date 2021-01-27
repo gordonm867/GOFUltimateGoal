@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
-import org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes.GOFAutonomous;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 
 import java.io.BufferedReader;
@@ -17,12 +18,18 @@ public class op extends MyOpMode {
     @Override
     public void initOp() throws InterruptedException, GOFException {
         try {
-            File file = GOFAutonomous.CreateTextFile(hardwareMap.appContext, "odometry.txt");
-            file.createNewFile();
+            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST");
+            boolean dir;
+            dir = file.mkdir();
+            boolean f;
+            f = file.createNewFile();
             PrintWriter writer = new PrintWriter(file);
             writer.write("hi");
             writer.flush();
             writer.close();
+            telemetry.addData("dir", dir);
+            telemetry.addData("f", f);
+            telemetry.update();
         }
         catch(Exception e) {
             telemetry.addData("uh", e);
