@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
-
+@Disabled
 @TeleOp(name="CameraTeleOp",group="GOF")
 public class GOFTeleOpCamera extends MyOpMode {
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();

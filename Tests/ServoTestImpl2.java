@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
-
+@Disabled
 @TeleOp(name="wobbletest")
 public class ServoTestImpl2 extends MyOpMode {
 

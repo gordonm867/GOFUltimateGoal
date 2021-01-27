@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.MyOpMode;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
-
+@Disabled
 @Config
 @TeleOp(name="ShooterTest")
 //@Disabled

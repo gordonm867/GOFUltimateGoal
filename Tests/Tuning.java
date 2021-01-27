@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
+@Disabled
 
 @Config
 @TeleOp(name="ShootingTune",group="GOF")
