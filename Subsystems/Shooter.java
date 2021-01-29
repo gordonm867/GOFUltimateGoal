@@ -40,7 +40,7 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.35;
     public static double shootOut = 0.57;
 
-    public static double vel = 17.3;
+    public static double vel = 18.8;
 
     public static int thing = 5;
 
@@ -59,7 +59,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 5;
             rt = true;
-            vel = 17.8;
+            vel = 18.0;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -109,7 +109,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 && Math.abs(a) < 0.05) /* || ready */)) {
+        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) || ready )) {
             ready = true;
             shoot(targ, robot);
         }
@@ -137,7 +137,7 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 && Math.abs(a) < 0.05)) {
+        if(ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.1)) {
             ready = true;
             if(once) {
                 shootonce(targ, robot);
