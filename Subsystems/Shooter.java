@@ -31,6 +31,10 @@ public class Shooter implements Subsystem {
 
     public double v = 0;
     public double t = 0;
+    public double a = 0;
+
+    public double lasttime = System.currentTimeMillis();
+    public double lastv = 0;
 
     public static double shootTime = 50.0;
     public static double shootIn = 0.35;
@@ -91,7 +95,11 @@ public class Shooter implements Subsystem {
         if(robot.shoot2 != null && handler.contains("stv")) {
             t = (double)handler.getData("stv");
             ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            lastv = v;
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+            a = (v - lastv) / (deltatime);
+            lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
         if(gamepad2.a && !apressed) {
@@ -101,7 +109,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && (Math.abs(Math.abs(v) - Math.abs(t)) < 0.25 || ready)) {
+        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 && Math.abs(a) < 0.05) /* || ready */)) {
             ready = true;
             shoot(targ, robot);
         }
@@ -122,10 +130,14 @@ public class Shooter implements Subsystem {
         if(robot.shoot2 != null) {
             t = (double)handler.getData("stv");
             ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            lastv = v;
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+            a = (v - lastv) / (deltatime);
+            lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(ready || Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) {
+        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 && Math.abs(a) < 0.05)) {
             ready = true;
             if(once) {
                 shootonce(targ, robot);
@@ -145,7 +157,11 @@ public class Shooter implements Subsystem {
         if(robot.shoot2 != null) {
             t = (double)handler.getData("stv");
             ((DcMotorEx)robot.shoot2).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
+            lastv = v;
             v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+            a = (v - lastv) / (deltatime);
+            lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
     }

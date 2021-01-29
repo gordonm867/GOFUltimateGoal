@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
 
-import android.content.Context;
 import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -38,9 +37,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Config
-@Autonomous(name="GOFAutonomous")
+@Autonomous(name="BLUE")
 
-public class GOFAutonomous extends MyOpMode {
+public class BLUE extends MyOpMode {
 
     public static boolean ready = true;
 
@@ -73,9 +72,9 @@ public class GOFAutonomous extends MyOpMode {
 
     private Handler handler     = Handler.getInstance();
     public static void main(String[] args) throws InterruptedException, ExecutionException {
-        PathGenerator generator0 = new PathGenerator(0);
-        PathGenerator generator1 = new PathGenerator(1);
-        PathGenerator generator4 = new PathGenerator(4);
+        PathGenerator generator0 = new PathGenerator(0, true);
+        PathGenerator generator1 = new PathGenerator(1, true);
+        PathGenerator generator4 = new PathGenerator(4, true);
         ExecutorService myservice = Executors.newCachedThreadPool();
         Future<ArrayList<Point[]>> path0 = myservice.submit(generator0);
         Future<ArrayList<Point[]>> path1 = myservice.submit(generator1);
@@ -92,9 +91,9 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void initOp() {
-        PathGenerator generator0 = new PathGenerator(0);
-        PathGenerator generator1 = new PathGenerator(1);
-        PathGenerator generator4 = new PathGenerator(4);
+        PathGenerator generator0 = new PathGenerator(0, true);
+        PathGenerator generator1 = new PathGenerator(1, true);
+        PathGenerator generator4 = new PathGenerator(4, true);
 
         ExecutorService myservice = Executors.newCachedThreadPool();
 
@@ -122,6 +121,7 @@ public class GOFAutonomous extends MyOpMode {
 
         while(!isStarted() && !isStopRequested() && !robot.pipeline.isProc) {
             telemetry.addData("Status", "Initializing OpenCV....");
+            telemetry.update();
         }
         double sum = 0;
         ArrayList<Integer> thing = new ArrayList<>();
@@ -185,18 +185,7 @@ public class GOFAutonomous extends MyOpMode {
     }
 
     public void loopOp() {
-        telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
-        lastupdates = odometry.updates;
-        uptime = System.currentTimeMillis();
-        telemetry.addData("wobble target", wobble.target);
-        telemetry.addData("angle", odometry.getAngle());
-        if(handler.contains("Angle")) {
-            telemetry.addData("handler", (double)handler.getData("Angle"));
-        }
         RevBulkData data = robot.bulkRead();
-        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-        telemetry.update();
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         if(index == 2) {
@@ -248,16 +237,8 @@ public class GOFAutonomous extends MyOpMode {
                             data = robot.bulkRead();
                             drive.update(robot, odometry.getPoint(), odometry, 81, angle, data);
                             wobble.update(robot, state);
-                            telemetry.addData("Update rate", odometry.updates);
-                            telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                            telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                            telemetry.addData("wobble target", wobble.target);
-                            telemetry.addData("angle", odometry.getAngle());
-                            if(handler.contains("Angle")) {
-                                telemetry.addData("handler", (double)handler.getData("Angle"));
-                            }
-                            telemetry.update();
                         }
+                        robot.setDrivePower(0, 0, 0, 0);
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 2000 && !shooter.shot) {
@@ -269,15 +250,6 @@ public class GOFAutonomous extends MyOpMode {
                             data = robot.bulkRead();
                             drive.update(robot, odometry.getPoint(), odometry, 84, angle, data);
                             wobble.update(robot, state);
-                            telemetry.addData("Update rate", odometry.updates);
-                            telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                            telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                            telemetry.addData("wobble target", wobble.target);
-                            telemetry.addData("angle", odometry.getAngle());
-                            if(handler.contains("Angle")) {
-                                telemetry.addData("handler", (double)handler.getData("Angle"));
-                            }
-                            telemetry.update();
                         }
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkRead(), odometry.getAngle());
@@ -291,16 +263,8 @@ public class GOFAutonomous extends MyOpMode {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
                             drive.update(robot, odometry.getPoint(), odometry, 87, angle, data);
-                            wobble.update(robot, state);}
-                        telemetry.addData("Update rate", odometry.updates);
-                        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                        telemetry.addData("wobble target", wobble.target);
-                        telemetry.addData("angle", odometry.getAngle());
-                        if(handler.contains("Angle")) {
-                            telemetry.addData("handler", (double)handler.getData("Angle"));
+                            wobble.update(robot, state);
                         }
-                        telemetry.update();
                         robot.setDrivePower(0, 0, 0, 0);
                         odometry.update(robot.bulkRead(), odometry.getAngle());
                         shoottimer = System.currentTimeMillis();
@@ -318,9 +282,6 @@ public class GOFAutonomous extends MyOpMode {
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.CARRY);
                             state = Wobble.WheelState.CARRY;
-                            telemetry.addData("Target", robot.wobblewheel.getTargetPosition());
-                            telemetry.addData("Current", robot.wobblewheel.getCurrentPosition());
-                            telemetry.update();
                         }
                         Globals.MAX_WOBBLE = 0.75;
                         double wtime = System.currentTimeMillis();
@@ -356,17 +317,6 @@ public class GOFAutonomous extends MyOpMode {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
                             drive.update(robot, target, odometry, 90, angle, data);
-                            telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
-                            telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                            telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                            lastupdates = odometry.updates;
-                            uptime = System.currentTimeMillis();
-                            telemetry.addData("wobble target", wobble.target);
-                            telemetry.addData("angle", odometry.getAngle());
-                            if(handler.contains("Angle")) {
-                                telemetry.addData("handler", (double)handler.getData("Angle"));
-                            }
-                            telemetry.update();
                             wobble.update(robot, state);
                             displacement = odometry.getPoint().distance(target, Unit.FEET);
                         }
@@ -437,17 +387,6 @@ public class GOFAutonomous extends MyOpMode {
                         angle = odometry.getAngle();
                         data = robot.bulkRead();
                         drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
-                        telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
-                        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                        lastupdates = odometry.updates;
-                        uptime = System.currentTimeMillis();
-                        telemetry.addData("wobble target", wobble.target);
-                        telemetry.addData("angle", odometry.getAngle());
-                        if(handler.contains("Angle")) {
-                            telemetry.addData("handler", (double)handler.getData("Angle"));
-                        }
-                        telemetry.update();
                         wobble.update(robot, state);
                         odometry.update(data, angle);
                     }
@@ -526,17 +465,6 @@ public class GOFAutonomous extends MyOpMode {
                         double angle = odometry.getAngle();
                         RevBulkData data = robot.bulkRead();
                         drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
-                        telemetry.addData("Update rate", ((odometry.updates - lastupdates) / ((System.currentTimeMillis() - uptime) / 1000.0)));
-                        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-                        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-                        lastupdates = odometry.updates;
-                        uptime = System.currentTimeMillis();
-                        telemetry.addData("wobble target", wobble.target);
-                        telemetry.addData("angle", odometry.getAngle());
-                        if(handler.contains("Angle")) {
-                            telemetry.addData("handler", (double)handler.getData("Angle"));
-                        }
-                        telemetry.update();
                         wobble.update(robot, state);
                         odometry.update(data, angle);
                     }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.GOFUltimateGoal.Tests;
 
 import android.os.Environment;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.GOFException;
@@ -13,8 +14,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@Disabled
 @TeleOp(name="filecreator")
-public class op extends MyOpMode {
+public class FileCreator extends MyOpMode {
     @Override
     public void initOp() throws InterruptedException, GOFException {
         try {
