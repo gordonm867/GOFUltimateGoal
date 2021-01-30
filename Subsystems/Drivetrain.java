@@ -95,8 +95,12 @@ public class Drivetrain implements Subsystem {
             if(turningToPoint) {
                 double displacement = odometry.getPoint().distance(new Point(1.2, 0), Unit.FEET);
                 if(displacement < 0.1 && Math.abs(Functions.normalize(robotangle - 90)) < 1) {
-                    robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
-                    turningToPoint = false;
+                    if(handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 45) {
+                        robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
+                    }
+                    else {
+                        turningToPoint = false;
+                    }
                     return;
                 }
                 update(robot, new Point(1.2, 0), odometry, 90, robotangle, data1);
@@ -104,8 +108,12 @@ public class Drivetrain implements Subsystem {
             }
             if(turningToPoint2) {
                 if(Math.abs(Functions.normalize(robotangle - 90)) < 1) {
-                    robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
-                    turningToPoint2 = false;
+                    if(handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 45) {
+                        robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
+                    }
+                    else {
+                        turningToPoint2 = false;
+                    }
                     return;
                 }
                 update(robot, odometry.getPoint(), odometry, 90, robotangle, data1);

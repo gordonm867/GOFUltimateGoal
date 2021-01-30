@@ -37,6 +37,9 @@ public class GOFTeleOp extends MyOpMode {
     public boolean lt = false;
     public boolean red = false;
 
+    public double lastangle = 90;
+    public double lasttime = System.currentTimeMillis();
+
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap);
@@ -100,10 +103,16 @@ public class GOFTeleOp extends MyOpMode {
         RevBulkData data2 = robot.bulkReadTwo();
         ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
+        double angle = odometry.getAngle();
+        double omega  = (odometry.getAngle() - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000.0);
+        handler.pushData("Omega", omega);
+        lastangle = angle;
+        lasttime = System.currentTimeMillis();
         for (Subsystem subsystem : subsystems) {
-            subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(), data, data2, odometry);
+            subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
         telemetry.addData("Angle", odometry.getAngle());
+        telemetry.addData("Omega", omega);
         telemetry.update();
 
     }
