@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Functions;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Math.Point;
+import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
@@ -20,15 +21,18 @@ public class Drivetrain implements Subsystem {
     private boolean backwards = false;
 
     private double angleToHold = 0;
-    private double lasterror = 0;
-    private double lasttime = 0;
+    //private double lasterror = 0;
+    //private double lasttime = 0;
 
-    private double shooffset = 30;
+    //private double shooffset = 30;
 
     public boolean xpressed = false;
     public boolean turningToPoint = false;
+    public boolean turningToPoint2 = false;
+    public boolean turningToPoint3 = false;
 
     public double kp = 0.008;
+    private boolean trigger;
 
     public Drivetrain(State state) {
         this.state = state;
@@ -42,7 +46,7 @@ public class Drivetrain implements Subsystem {
         this.state = state;
     }
 
-    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData data1, RevBulkData data2, Odometry odometry) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double robotangle, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         double drive = gamepad1.left_stick_y;
         double turn = -gamepad1.right_stick_x;
         double angle = -gamepad1.left_stick_x;
@@ -83,15 +87,48 @@ public class Drivetrain implements Subsystem {
                 turn = -0.1; // Slow right turn
             }
 
-            if(turn != 0 || drive != 0 || angle != 0 || gamepad1.left_trigger > 0) {
+            if(turn != 0 || drive != 0 || angle != 0) {
                 turningToPoint = false;
+                turningToPoint2 = false;
+                turningToPoint3 = false;
             }
-
             if(turningToPoint) {
-                update(robot, new Point(1.2, 0), odometry, 90, odometry.getAngle(), data1);
+                double displacement = odometry.getPoint().distance(new Point(1.2, 0), Unit.FEET);
+                if(displacement < 0.1 && Math.abs(Functions.normalize(robotangle - 90)) < 1) {
+                    robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
+                    turningToPoint = false;
+                    return;
+                }
+                update(robot, new Point(1.2, 0), odometry, 90, robotangle, data1);
                 return;
             }
-
+            if(turningToPoint2) {
+                if(Math.abs(Functions.normalize(robotangle - 90)) < 1) {
+                    robot.setDrivePower(Math.signum(-robot.lb.getPower()), Math.signum(-robot.lf.getPower()), Math.signum(-robot.rb.getPower()), Math.signum(-robot.rf.getPower()));
+                    turningToPoint2 = false;
+                    return;
+                }
+                update(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
+                return;
+            }
+            double displacement;
+            if(turningToPoint3) {
+                if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                    displacement = odometry.getPoint().distance(new Point(-1.5, -2), Unit.FEET);
+                    if(displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 81)) > 1) {
+                        update(robot, new Point(-1.5, -2), odometry, 81, robotangle, data1);
+                    }
+                }
+                else {
+                    displacement = odometry.getPoint().distance(new Point(1, -2), Unit.FEET);
+                    if(displacement > 0.1 && Math.abs(robotangle - 81) < 1) {
+                        update(robot, new Point(1, -2), odometry, 81, robotangle, data1);
+                    }
+                }
+                handler.pushData("Power?", displacement < 0.1 && Math.abs(robotangle - 81) < 1);
+                return;
+            }
+            handler.pushData("Power?", false);
             if(gamepad1.start && gamepad1.y && !changed) {
                 field = !field;
                 changed = true;
@@ -100,7 +137,7 @@ public class Drivetrain implements Subsystem {
                 changed = false;
             }
             if(!handler.contains("Angle")) {
-                handler.pushData("Angle", odometry.getAngle());
+                handler.pushData("Angle", robotangle);
             }
             if(turn != 0 || (drive == 0 && angle == 0)) {
                 angleToHold = (double)handler.getData("Angle");
@@ -142,6 +179,14 @@ public class Drivetrain implements Subsystem {
             }
             if(!gamepad1.a && !gamepad1.start) {
                 xpressed = false;
+            }
+
+            if(gamepad1.left_trigger > 0.1 && !trigger) {
+                trigger = true;
+                turningToPoint2 = true;
+            }
+            if(!(gamepad1.left_trigger > 0.1)) {
+                trigger = false;
             }
         }
         else if (state == State.OFF) {
@@ -221,11 +266,14 @@ public class Drivetrain implements Subsystem {
         if(max > 1) {
             scaleFactor = Math.abs(Globals.MAX_SPEED / max);
         } else {
-            if(displacement >= 0.5) {
+            if(Math.abs(current - myAngle) > 45 && displacement <= 0.5) {
+                scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+            }
+            else if(displacement >= 0.5) {
                 scaleFactor = Math.abs(Math.max(displacement * 2, Globals.MIN_SPEED) / max);
             }
             else {
-                scaleFactor = Math.abs(Math.max(displacement / 2.5, Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / 90.0), Globals.MIN_SPEED) / max);
             }
         }
         odometry.update(data, current);

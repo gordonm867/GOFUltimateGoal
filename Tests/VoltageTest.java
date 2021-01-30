@@ -48,7 +48,7 @@ public class VoltageTest extends MyOpMode {
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
-            subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
+            subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
         }
         telemetry.addData("lf", ((ExpansionHubMotor)robot.lf).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
         telemetry.addData("rf", ((ExpansionHubMotor)robot.rf).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));

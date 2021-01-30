@@ -21,8 +21,8 @@ public class Shooter implements Subsystem {
     boolean ready = false;
 
     public boolean shot = false;
-
     public boolean shooting = false;
+    public boolean readying = false;
     Target targ;
 
     double time = 0;
@@ -40,7 +40,12 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.35;
     public static double shootOut = 0.57;
 
-    public static double vel = 18.8;
+    public static double p = 30;
+    public static double i = 10;
+    public static double d = 3;
+    public static double f = 1;
+
+    public static double vel = 18.4;
 
     public static int thing = 5;
 
@@ -55,11 +60,14 @@ public class Shooter implements Subsystem {
     }
 
     @Override
-    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
+        if(handler.contains("Power?") && (boolean)handler.getData("Power?")) {
+
+        }
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 5;
             rt = true;
-            vel = 18.0;
+            vel = 18.4;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -71,15 +79,8 @@ public class Shooter implements Subsystem {
             rt = false;
         }
         if(gamepad2.left_trigger > 0.05 && !lt) {
-            thing = 2;
-            lt = true;
-            vel = 15.5;
-            attempts = 0;
-            shooting = true;
-            ready = false;
-            handler.pushData("stv", vel);
-            t = (double)handler.getData("stv");
-            targ = Target.GOAL;
+            readying = true;
+            start(robot, vel);
         }
         if(gamepad2.left_trigger < 0.05) {
             lt = false;
@@ -87,6 +88,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.left_bumper) {
             shooting = false;
             ready = false;
+            readying = false;
             robot.flicker.setPosition(shootOut);
         }
         if(robot.shoot1 != null && handler.contains("stv")) {
@@ -109,14 +111,14 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) || ready )) {
+        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) /*|| ready*/)) {
             ready = true;
             shoot(targ, robot);
         }
         else if(shooting) {
             handler.pushData("stv", vel);
         }
-        if(!shooting) {
+        if(!shooting && !readying) {
             handler.pushData("stv", 0.0);
         }
         handler.pushData("gamepad2", g2);
@@ -137,7 +139,7 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.1)) {
+        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1)) {
             ready = true;
             if(once) {
                 shootonce(targ, robot);
@@ -176,6 +178,7 @@ public class Shooter implements Subsystem {
             attempts++;
             if(attempts == thing) {
                 shooting = false;
+                readying = false;
                 ready = false;
                 return;
             }

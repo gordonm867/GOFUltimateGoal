@@ -16,15 +16,15 @@ public class Intake implements Subsystem {
     }
 
     @Override
-    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(state == State.ON) {
-            if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0.2) {
+            if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0.6) {
                 robot.setIntakePower(-Globals.MAX_IN_SPEED);
             }
             else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > 0) {
                 robot.setIntakePower(-Globals.MIN_IN_SPEED);
             }
-            else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > -0.2) {
+            else if(Math.abs(gamepad2.left_stick_y) > 0.05 && gamepad2.left_stick_y > -0.6) {
                 robot.setIntakePower(Globals.MIN_IN_SPEED);
             }
             else if(Math.abs(gamepad2.left_stick_y) > 0.05) {

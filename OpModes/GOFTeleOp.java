@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.GOFUltimateGoal.OpModes;
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Globals.Globals;
 import org.firstinspires.ftc.teamcode.GOFUltimateGoal.Hardware.GOFHardware;
@@ -33,6 +35,7 @@ public class GOFTeleOp extends MyOpMode {
     private     Handler                 handler     = Handler.getInstance();
 
     public boolean lt = false;
+    public boolean red = false;
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
@@ -59,6 +62,8 @@ public class GOFTeleOp extends MyOpMode {
             BufferedReader read = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt")));
             double angle = Double.parseDouble(read.readLine());
             odometry.load(angle);
+            //10, 3, 0, 0
+            telemetry.addData("PIDF", ((DcMotorEx)robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
             telemetry.addData("lastAngle", Odometry.lastAngle);
             telemetry.addData("Handler angle", handler.getData("Angle"));
             telemetry.addData("Point", odometry.getPoint());
@@ -66,6 +71,22 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("Text file angle", angle);
             telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
             telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
+            try {
+                BufferedReader read2 = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt")));
+                String color = read2.readLine();
+                if(color.equalsIgnoreCase("blue")) {
+                    red = false;
+                }
+                else {
+                    red = true;
+                }
+                handler.pushData("Color", red ? "Red" : "Blue");
+                telemetry.addData("Color", red ? "Red" : "Blue");
+            }
+            catch(Exception e) {
+                handler.pushData("Color", red ? "Red" : "Blue");
+                telemetry.addData("Color", red ? "Red" : "Blue");
+            }
             telemetry.update();
         }
         catch(Exception e) {
@@ -77,16 +98,12 @@ public class GOFTeleOp extends MyOpMode {
     public void loopOp() {
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         for (Subsystem subsystem : subsystems) {
-            subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
+            subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(), data, data2, odometry);
         }
-
-        telemetry.addData("point", odometry.getPoint());
-        telemetry.addData("angle", odometry.getAngle());
-        telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
-        telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
-
-        telemetry.addData("Intake Power", robot.in.getPower());
+        telemetry.addData("Angle", odometry.getAngle());
         telemetry.update();
 
     }

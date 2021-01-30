@@ -47,7 +47,7 @@ public class OdometryTest extends MyOpMode {
         if(!running) {
             Globals.MAX_SPEED = 1.0;
             for (Subsystem subsystem : subsystems) {
-                subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
+                subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data));

@@ -60,7 +60,7 @@ public class GOFTeleOpCamera extends MyOpMode {
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
-            subsystem.update(gamepad1, gamepad2, robot, data, data2, odometry);
+            subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(), data, data2, odometry);
         }
     }
 

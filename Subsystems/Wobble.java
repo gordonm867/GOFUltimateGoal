@@ -40,7 +40,7 @@ public class Wobble implements Subsystem {
     }
 
     @Override
-    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
+    public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(parent == Subsystem.State.ON) {
             if(child == State.OPEN && robot.wobble != null) {
                 robot.wobble.setPosition(openpose);
@@ -73,7 +73,7 @@ public class Wobble implements Subsystem {
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.wobblewheel.setPower(Math.min(gamepad2.right_stick_x, Globals.MAX_WOBBLE) * Math.signum(gamepad2.right_stick_x));
+            robot.wobblewheel.setPower(Math.min(gamepad2.right_stick_x / 2, Globals.MAX_WOBBLE) * Math.signum(gamepad2.right_stick_x));
             target = robot.wobblewheel.getCurrentPosition();
         }
         else {

@@ -70,7 +70,7 @@ public class BLUE extends MyOpMode {
     private int lastupdates = 0;
     private double uptime = System.currentTimeMillis();
 
-    private Handler handler     = Handler.getInstance();
+    private Handler handler = Handler.getInstance();
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         PathGenerator generator0 = new PathGenerator(0, true);
         PathGenerator generator1 = new PathGenerator(1, true);
@@ -375,12 +375,18 @@ public class BLUE extends MyOpMode {
                 index++;
                 if(index >= path.size()) {
                     File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+                    File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
                     try {
                         file.createNewFile();
+                        file2.createNewFile();
                         PrintWriter something = new PrintWriter(file);
+                        PrintWriter somethingelse = new PrintWriter(file2);
                         something.print(odometry.getAngle() + "\n");
+                        somethingelse.print("blue");
                         something.flush();
+                        somethingelse.flush();
                         something.close();
+                        somethingelse.close();
                     }
                     catch (Exception p_exception) {}
                     while(opModeIsActive()) {
@@ -453,12 +459,18 @@ public class BLUE extends MyOpMode {
                 index++;
                 if(index >= path.size()) {
                     File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+                    File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
                     try {
                         file.createNewFile();
+                        file2.createNewFile();
                         PrintWriter something = new PrintWriter(file);
+                        PrintWriter somethingelse = new PrintWriter(file2);
                         something.print(odometry.getAngle() + "\n");
+                        somethingelse.print("blue");
                         something.flush();
+                        somethingelse.flush();
                         something.close();
+                        somethingelse.close();
                     }
                     catch (Exception p_exception) {}
                     while(opModeIsActive()) {

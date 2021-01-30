@@ -37,8 +37,8 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         //obstacles.add(new Obstacle(-3, -2, 1.1));
         if(rings == 0) {
             path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(blue ? -1.5 : -1, -2, 83)));
-            path.add(new Line(new Point(blue ? -1.5 : -1, -2), new Point(-3.3, .8, -30)));
-            path.add(new Line(new Point(-3.3, .8), new Point(-4.5, -2.1, 90)));
+            path.add(new Line(new Point(blue ? -1.5 : -1, -2), new Point(-3.3, 0.8, -30)));
+            path.add(new Line(new Point(-3.3, 0.8), new Point(-4.5, -2.1, 90)));
             path.add(new Line(new Point(-4.5, -2.6), new Point(-3, -0.1, -45)));
             path.add(new Line(new Point(-3, -0.1), new Point(-1, 1, 30)));
         }
