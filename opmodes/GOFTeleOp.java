@@ -114,6 +114,8 @@ public class GOFTeleOp extends MyOpMode {
         }
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("Omega", omega);
+        telemetry.addData("g0", robot.gyro.getAngularOrientation().firstAngle);
+        telemetry.addData("g1", robot.gyroone.getAngularOrientation().firstAngle);
         telemetry.update();
 
     }

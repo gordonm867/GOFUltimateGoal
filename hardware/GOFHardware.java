@@ -64,6 +64,7 @@ import org.openftc.revextensions2.RevBulkData;
 public class GOFHardware {
     /* Declare OpMode members */
     public BNO055IMU gyro;
+    public BNO055IMU gyroone;
 
     public DcMotor rf;
     public DcMotor rb;
@@ -132,6 +133,21 @@ public class GOFHardware {
             gyro.initialize(parameters);
         } catch (Exception p_exception) {
             gyro = null;
+        }
+        try { // Gyro
+            gyroone = hwMap.get(BNO055IMU.class, "imu");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            if (ex2 != null) {
+                gyroone = LynxOptimizedI2cFactory.createLynxEmbeddedImu(ex2.getStandardModule(), 0);
+            }
+            gyroone.initialize(parameters);
+        } catch (Exception p_exception) {
+            gyroone = null;
         }
         try { // Left rear wheel
             lb = hwMap.get(DcMotor.class, "lb");

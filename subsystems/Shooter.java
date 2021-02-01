@@ -36,7 +36,7 @@ public class Shooter implements Subsystem {
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
-    public static double shootTime = 50.0;
+    public static double shootTime = 70.0;
     public static double shootIn = 0.35;
     public static double shootOut = 0.57;
 
