@@ -200,8 +200,11 @@ public class RED extends MyOpMode {
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         if(index == 0) {
             Globals.MIN_SPEED = 0.05;
-            if(displacement < 1) {
-                Globals.MAX_SPEED = 0.25;
+            if(displacement < 1 && Math.abs(odometry.getVelocity()) > 0.2) {
+                Globals.MAX_SPEED = 0.1;
+            }
+            else {
+                Globals.MAX_SPEED = 1.0;
             }
         }
         if(rings == 1 && index == 2) {

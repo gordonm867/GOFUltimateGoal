@@ -34,6 +34,8 @@ public class Drivetrain implements Subsystem {
     public double kp = 0.008;
     private boolean trigger;
 
+    private Powerstate powerstate = Powerstate.IDLE;
+
     public Drivetrain(State state) {
         this.state = state;
     }
@@ -44,6 +46,21 @@ public class Drivetrain implements Subsystem {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public enum Powerstate {
+        IDLE,
+        FIRSTTRANSIT,
+        WAIT,
+        FIRST,
+        SECONDTRANSIT,
+        SECOND,
+        THIRDTRANSIT,
+        THIRD
+    }
+
+    public void setpowerstate(Powerstate state) {
+        this.powerstate = state;
     }
 
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double robotangle, RevBulkData data1, RevBulkData data2, Odometry odometry) {
@@ -153,25 +170,90 @@ public class Drivetrain implements Subsystem {
                 return;
             }
             Globals.MAX_SPEED = 1.0;
-            Globals.MIN_SPEED = 0.15;
+            Globals.MIN_SPEED = 0.25;
+            handler.pushData("Power State", powerstate);
             double displacement;
             if(turningToPoint3) {
-                if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                    displacement = odometry.getPoint().distance(new Point(-1.5, -2), Unit.FEET);
-                    if(displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 81)) > 1) {
-                        update(robot, new Point(-1.5, -2), odometry, 81, robotangle, data1);
+                if(powerstate == Powerstate.FIRSTTRANSIT) {
+                    if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 85)) > 1) {
+                            update(robot, new Point(-1, 0), odometry, 85, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.WAIT;
+                        }
                     }
-                }
-                else {
-                    displacement = odometry.getPoint().distance(new Point(1, -2), Unit.FEET);
-                    if(displacement > 0.1 && Math.abs(robotangle - 81) < 1) {
-                        update(robot, new Point(1, -2), odometry, 81, robotangle, data1);
+                    else {
+                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(robotangle - 85) < 1) {
+                            update(robot, new Point(1, 0), odometry, 85, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.WAIT;
+                        }
                     }
+                    return;
                 }
-                handler.pushData("Power?", displacement < 0.1 && Math.abs(robotangle - 81) < 1);
-                return;
+                else if(powerstate == Powerstate.WAIT) {
+                    if(gamepad2.b) {
+                        powerstate = Powerstate.FIRST;
+                    }
+                    return;
+                }
+                else if(powerstate == Powerstate.FIRST) {
+                   // if(handler.contains("Shooter Data") &&)
+                }
+                else if(powerstate == Powerstate.SECONDTRANSIT) {
+                    if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 89)) > 1) {
+                            update(robot, new Point(-1, 0), odometry, 89, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.SECOND;
+                        }
+                    }
+                    else {
+                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(robotangle - 89) < 1) {
+                            update(robot, new Point(1, 0), odometry, 89, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.SECOND;
+                        }
+                    }
+                    return;
+                }
+                else if(powerstate == Powerstate.THIRDTRANSIT) {
+                    if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 95)) > 1) {
+                            update(robot, new Point(-1, 0), odometry, 95, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.THIRD;
+                        }
+                    }
+                    else {
+                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(robotangle - 95) < 1) {
+                            update(robot, new Point(1, 0), odometry, 95, robotangle, data1);
+                        }
+                        else {
+                            robot.setDrivePower(0, 0, 0, 0);
+                            powerstate = Powerstate.THIRD;
+                        }
+                    }
+                    return;
+                }
+
             }
-            handler.pushData("Power?", false);
             if(gamepad1.start && gamepad1.y && !changed) {
                 field = !field;
                 changed = true;
@@ -306,17 +388,17 @@ public class Drivetrain implements Subsystem {
         }
         double scaleFactor;
         double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
-        if(max > 1) {
+        if(max > Globals.MAX_SPEED) {
             scaleFactor = Math.abs(Globals.MAX_SPEED / max);
         } else {
-            if(Math.abs(current - myAngle) > 45 && displacement <= 0.5) {
+            if(Math.abs(current - myAngle) > 15 && displacement <= 0.5) {
                 scaleFactor = Math.abs(Globals.MAX_SPEED / max);
             }
             else if(displacement >= 0.5) {
                 scaleFactor = Math.abs(Math.max(displacement * 2, Globals.MIN_SPEED) / max);
             }
             else {
-                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / 90.0), Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / 15.0), Globals.MIN_SPEED) / max);
             }
         }
         odometry.update(data, current);

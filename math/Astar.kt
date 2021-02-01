@@ -52,7 +52,7 @@ class Astar {
     }
 
     @Suppress("NAME_SHADOWING")
-    private fun recur(grid: Array<IntArray>, start: Point?, target: Point, path: ArrayList<Point?>?, totaldist: Double, blue: Boolean): Boolean {
+    private tailrec fun recur(grid: Array<IntArray>, start: Point?, target: Point, path: ArrayList<Point?>?, totaldist: Double, blue: Boolean): Boolean {
         var path = path
         if (path == null) {
             path = ArrayList()
@@ -102,12 +102,7 @@ class Astar {
         }
         var points = Arrays.copyOf(connected.toTypedArray(), connected.size, Array<Point>::class.java)
         points = mergeSortByDistance(points, target, start)
-        for (point in points) {
-            if (recur(grid, point, target, path, totaldist + point!!.distance(start, Unit.FEET), blue)) {
-                return true
-            }
-        }
-        return false
+        return recur(grid, points[0], target, path, totaldist + points[0]!!.distance(start, Unit.FEET), blue)
     }
 
     private fun mergeSortByDistance(toSort: Array<Point?>, target: Point?, start: Point?): Array<Point?> {

@@ -59,6 +59,13 @@ public class Shooter implements Subsystem {
         POWER
     }
 
+    public enum Powerstate {
+        IDLE,
+        FIRST,
+        FIRSTDONE,
+        SECOND,
+    }
+
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         if(handler.contains("Power?") && (boolean)handler.getData("Power?")) {

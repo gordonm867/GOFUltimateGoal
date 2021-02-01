@@ -35,13 +35,14 @@ public class GOFTeleOp extends MyOpMode {
     private     Handler                 handler     = Handler.getInstance();
 
     public boolean lt = false;
-    public boolean red = false;
+    public boolean red = true;
 
     public double lastangle = 90;
     public double lasttime = System.currentTimeMillis();
 
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
+        Globals.MIN_SPEED = 0.25;
         robot.init(hardwareMap);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
