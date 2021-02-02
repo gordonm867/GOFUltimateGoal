@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
-
+@Config
 public class Drivetrain implements Subsystem {
 
     private State state;
@@ -21,6 +22,7 @@ public class Drivetrain implements Subsystem {
     private boolean backwards = false;
 
     private double angleToHold = 0;
+    public static double degRemaining = 35;
     //private double lasterror = 0;
     //private double lasttime = 0;
 
@@ -90,9 +92,9 @@ public class Drivetrain implements Subsystem {
                     angle = angle * 0.15; // Slow down joystick side movement
                 } else {
                     if (gamepad1.dpad_left) {
-                        angle = -0.15; // Slow leftwards
+                        angle = 0.15; // Slow leftwards
                     } else {
-                        angle = 0.15; // Slow rightwards
+                        angle = -0.15; // Slow rightwards
                     }
                 }
             }
@@ -171,7 +173,7 @@ public class Drivetrain implements Subsystem {
                 return;
             }
             Globals.MAX_SPEED = 1.0;
-            Globals.MIN_SPEED = 0.25;
+            //Globals.MIN_SPEED = 0.25;
             handler.pushData("Power State", powerstate);
             double displacement;
             if(turningToPoint3) {
@@ -417,14 +419,14 @@ public class Drivetrain implements Subsystem {
         if(max > Globals.MAX_SPEED) {
             scaleFactor = Math.abs(Globals.MAX_SPEED / max);
         } else {
-            if(Math.abs(current - myAngle) > 15 && displacement <= 0.5) {
+            if(Math.abs(Functions.normalize(myAngle - current)) > degRemaining && displacement <= 0.5) {
                 scaleFactor = Math.abs(Globals.MAX_SPEED / max);
             }
             else if(displacement >= 0.5) {
                 scaleFactor = Math.abs(Math.max(displacement * 2, Globals.MIN_SPEED) / max);
             }
             else {
-                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / 15.0), Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max);
             }
         }
         odometry.update(data, current);
