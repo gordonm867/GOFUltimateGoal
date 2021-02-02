@@ -49,6 +49,9 @@ public class Shooter implements Subsystem {
 
     public static int thing = 5;
 
+    public boolean uh = false;
+    public int powershots = 0;
+
     public Shooter(State state) {
         this.state = state;
         handler.pushData("gamepad2", g2);
@@ -68,8 +71,22 @@ public class Shooter implements Subsystem {
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
-        if(handler.contains("Power?") && (boolean)handler.getData("Power?")) {
-
+        handler.pushData("Power Shots", powershots);
+        if(!uh && handler.contains("Power State") && (handler.getData("Power State") == Drivetrain.Powerstate.FIRST || handler.getData("Power State") == Drivetrain.Powerstate.SECOND || handler.getData("Power State") == Drivetrain.Powerstate.THIRD)) {
+            uh = true;
+            thing = 2;
+            rt = true;
+            vel = 16.5;
+            attempts = 0;
+            shooting = true;
+            ready = false;
+            handler.pushData("stv", vel);
+            t = (double)handler.getData("stv");
+            targ = Target.GOAL;
+        }
+        if(handler.contains("Power State") && !(handler.getData("Power State") == Drivetrain.Powerstate.FIRST || handler.getData("Power State") == Drivetrain.Powerstate.SECOND || handler.getData("Power State") == Drivetrain.Powerstate.THIRD)) {
+            powershots++;
+            uh = false;
         }
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 5;

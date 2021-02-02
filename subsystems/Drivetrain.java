@@ -26,13 +26,14 @@ public class Drivetrain implements Subsystem {
 
     //private double shooffset = 30;
 
+    private boolean trigger;
+    public boolean bpressed = false;
     public boolean xpressed = false;
     public boolean turningToPoint = false;
     public boolean turningToPoint2 = false;
     public boolean turningToPoint3 = false;
 
     public double kp = 0.008;
-    private boolean trigger;
 
     private Powerstate powerstate = Powerstate.IDLE;
 
@@ -56,7 +57,7 @@ public class Drivetrain implements Subsystem {
         SECONDTRANSIT,
         SECOND,
         THIRDTRANSIT,
-        THIRD
+        THIRD,
     }
 
     public void setpowerstate(Powerstate state) {
@@ -204,7 +205,13 @@ public class Drivetrain implements Subsystem {
                     return;
                 }
                 else if(powerstate == Powerstate.FIRST) {
-                   // if(handler.contains("Shooter Data") &&)
+                    robot.setDrivePower(0, 0, 0, 0);
+                    if(handler.contains("Power Shots") && (int)handler.getData("Power Shots") > 0) {
+                        powerstate = Powerstate.SECONDTRANSIT;
+                    }
+                    else {
+                        return;
+                    }
                 }
                 else if(powerstate == Powerstate.SECONDTRANSIT) {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
@@ -229,6 +236,12 @@ public class Drivetrain implements Subsystem {
                     }
                     return;
                 }
+                else if(powerstate == Powerstate.SECOND) {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    if(handler.contains("Power Shots") && (int)handler.getData("Power Shots") > 1) {
+                        powerstate = Powerstate.THIRDTRANSIT;
+                    }
+                }
                 else if(powerstate == Powerstate.THIRDTRANSIT) {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
@@ -251,6 +264,12 @@ public class Drivetrain implements Subsystem {
                         }
                     }
                     return;
+                }
+                else if(powerstate == Powerstate.THIRD) {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    if(handler.contains("Power Shots") && (int)handler.getData("Power Shots") > 2) {
+                        powerstate = Powerstate.IDLE;
+                    }
                 }
 
             }
@@ -312,6 +331,13 @@ public class Drivetrain implements Subsystem {
             }
             if(!(gamepad1.left_trigger > 0.1)) {
                 trigger = false;
+            }
+            if(gamepad1.b && !bpressed) {
+                bpressed = true;
+                turningToPoint3 = true;
+            }
+            if(!gamepad1.b) {
+                turningToPoint3 = false;
             }
         }
         else if (state == State.OFF) {
