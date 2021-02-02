@@ -111,6 +111,7 @@ public class Drivetrain implements Subsystem {
                 turningToPoint = false;
                 turningToPoint2 = false;
                 turningToPoint3 = false;
+                powerstate = Powerstate.IDLE;
             }
             if(turningToPoint) {
                 double displacement = odometry.getPoint().distance(new Point(1.2, 0), Unit.FEET);
@@ -271,6 +272,10 @@ public class Drivetrain implements Subsystem {
                     robot.setDrivePower(0, 0, 0, 0);
                     if(handler.contains("Power Shots") && (int)handler.getData("Power Shots") > 2) {
                         powerstate = Powerstate.IDLE;
+                        turningToPoint3 = false;
+                    }
+                    else {
+                        return;
                     }
                 }
 
@@ -337,6 +342,7 @@ public class Drivetrain implements Subsystem {
             if(gamepad1.b && !bpressed) {
                 bpressed = true;
                 turningToPoint3 = true;
+                powerstate = Powerstate.FIRSTTRANSIT;
             }
             if(!gamepad1.b) {
                 turningToPoint3 = false;
