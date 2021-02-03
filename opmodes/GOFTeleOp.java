@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
@@ -114,8 +117,7 @@ public class GOFTeleOp extends MyOpMode {
         }
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("Omega", omega);
-        telemetry.addData("g0", robot.gyro.getAngularOrientation().firstAngle);
-        telemetry.addData("g1", robot.gyroone.getAngularOrientation().firstAngle);
+        telemetry.addData("g0", robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         telemetry.update();
 
     }
