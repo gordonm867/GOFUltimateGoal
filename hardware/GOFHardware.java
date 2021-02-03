@@ -121,8 +121,9 @@ public class GOFHardware {
         } catch (Exception p_exception) {
             ex3 = null;
         }
-        try { // g0
-            gyro = hwMap.get(BNO055IMU.class, "g0");
+
+         try { // Gyro
+            gyro = hwMap.get(BNO055IMU.class, "imu");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             gyro.initialize(parameters);
             parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -131,10 +132,13 @@ public class GOFHardware {
             parameters.loggingEnabled      = true;
             parameters.loggingTag          = "IMU";
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            gyro.initialize(parameters);
+            gyro = LynxOptimizedI2cFactory.createLynxEmbeddedImu((LynxModule)gyro, 0);
         } catch (Exception p_exception) {
             gyro = null;
             telemetry.addData("error", p_exception);
         }
+
         try { // Left rear wheel
             lb = hwMap.get(DcMotor.class, "lb");
             lb.setDirection(DcMotor.Direction.REVERSE);
@@ -251,7 +255,7 @@ public class GOFHardware {
      * @return Robot angle
      */
     public double getAngle() {
-        return Functions.normalize(gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle + Globals.START_THETA);
+        return Functions.normalize(gyro.getAngularOrientation().firstAngle + Globals.START_THETA);
     }
 
     /**
