@@ -71,6 +71,13 @@ public class RED extends MyOpMode {
 
     private Handler handler = Handler.getInstance();
 
+    double avgsum = 0;
+    double iters = 0;
+    double avg = 0;
+
+    boolean ring = false;
+    double ringtimer = System.currentTimeMillis();
+
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         Globals.START_X = Math.abs(Globals.START_X);
         PathGenerator generator0 = new PathGenerator(0, false);
@@ -199,13 +206,13 @@ public class RED extends MyOpMode {
         double angle = odometry.getAngle();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         if(index == 0) {
-            Globals.MIN_SPEED = 0.05;
+            Globals.MIN_SPEED = 0.25;
             if(displacement < 1 && Math.abs(odometry.getVelocity()) > 0.2) {
                 Globals.MAX_SPEED = 0.1;
             }
-            else {
-                Globals.MAX_SPEED = 1.0;
-            }
+        }
+        else {
+            Globals.MAX_SPEED = 0.75;
         }
         if(rings == 1 && index == 2) {
             robot.setIntakePower(-1);
@@ -216,8 +223,11 @@ public class RED extends MyOpMode {
         if(index == 2 && rings != 1 || index == 3 && rings == 1) {
             Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) / 2.5, 0.5), 1.0);
         }
-        else {
+        else if(rings == 1 && index == 2) {
             Globals.MAX_SPEED = 1.0;
+        }
+        else if(index != 0) {
+            Globals.MAX_SPEED = 0.8;
             Globals.MIN_SPEED = 0.25;
         }
         if(subindex >= path.get(index).length - 1) {
@@ -258,10 +268,10 @@ public class RED extends MyOpMode {
                         }
                         break;
                          */
-                        while(Math.abs(angle - 85) > 1) {
+                        while(Math.abs(angle - 86) > 0.5) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 85, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 86, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
@@ -272,10 +282,10 @@ public class RED extends MyOpMode {
                             shooter.shoot(robot, 16.5, true);
                         }
                         angle = odometry.getAngle();
-                        while(Math.abs(angle - 89) > 1) {
+                        while(Math.abs(angle - 91) > 0.5) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 89, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 90, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
@@ -286,10 +296,10 @@ public class RED extends MyOpMode {
                             shooter.shoot(robot, 16.5, true);
                         }
                         angle = odometry.getAngle();
-                        while(Math.abs(angle - 95) > 1) {
+                        while(Math.abs(angle - 96) > 0.5) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            drive.update(robot, odometry.getPoint(), odometry, 95, angle, data);
+                            drive.update(robot, odometry.getPoint(), odometry, 96, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
@@ -316,7 +326,7 @@ public class RED extends MyOpMode {
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
-                            robot.wobble.setPosition(wobble.openpose);
+                            robot.wobble.setPosition(Wobble.openpose);
                         }
                         wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 200) {
@@ -354,7 +364,7 @@ public class RED extends MyOpMode {
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
-                            robot.wobble.setPosition(wobble.closedpose);
+                            robot.wobble.setPosition(Wobble.closedpose);
                         }
                         double wobbletime = System.currentTimeMillis();
                         while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 600) {
@@ -382,7 +392,7 @@ public class RED extends MyOpMode {
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
-                            robot.wobble.setPosition(wobble.openpose);
+                            robot.wobble.setPosition(Wobble.openpose);
                         }
                         wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 200) {
@@ -408,7 +418,7 @@ public class RED extends MyOpMode {
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
-                            shooter.shoot(robot, 18.4, true);
+                            shooter.shoot(robot, Shooter.vel - 2.0, true);
                         }
                         robot.shoot1.setPower(0);
                         robot.shoot2.setPower(0);

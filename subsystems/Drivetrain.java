@@ -35,7 +35,7 @@ public class Drivetrain implements Subsystem {
     public boolean turningToPoint2 = false;
     public boolean turningToPoint3 = false;
 
-    public double kp = 0.008;
+    public static double kp = 0.01;
 
     private Powerstate powerstate = Powerstate.IDLE;
 

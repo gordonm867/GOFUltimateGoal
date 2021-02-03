@@ -68,7 +68,7 @@ public class Wobble implements Subsystem {
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = -950;
+                target = -1050;
             }
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
@@ -97,10 +97,10 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -950;
+            target = -1050;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -585;
+            target = -950;
         }
         else if(targetstate == WheelState.IN) {
             target = 0;

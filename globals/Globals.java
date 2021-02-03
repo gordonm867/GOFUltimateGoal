@@ -13,7 +13,7 @@ public final class Globals {
     public static double MAX_SPEED = 1.0; // Maximum proportion of speed allowed
     public static double MIN_SPEED = 0.18;
 
-    public static double MAX_IN_SPEED = 0.7;
+    public static double MAX_IN_SPEED = 1.0;
     public static double MIN_IN_SPEED = 0.45;
 
     public static double MAX_WOBBLE = 0.3;

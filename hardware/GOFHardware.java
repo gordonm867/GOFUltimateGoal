@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -122,21 +121,22 @@ public class GOFHardware {
             ex3 = null;
         }
 
-         try { // Gyro
-            gyro = hwMap.get(BNO055IMU.class, "imu");
+        try { // Gyro
+            gyro = hwMap.get(BNO055IMU.class, "g0");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            gyro.initialize(parameters);
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-            parameters.loggingEnabled      = true;
-            parameters.loggingTag          = "IMU";
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            if (ex2 != null) {
+                gyro = LynxOptimizedI2cFactory.createLynxEmbeddedImu(ex2.getStandardModule(), 0);
+            }
             gyro.initialize(parameters);
-            gyro = LynxOptimizedI2cFactory.createLynxEmbeddedImu((LynxModule)gyro, 0);
         } catch (Exception p_exception) {
+            telemetry.addData("Warning", "Gyro no work :(");
+            telemetry.update();
             gyro = null;
-            telemetry.addData("error", p_exception);
         }
 
         try { // Left rear wheel
