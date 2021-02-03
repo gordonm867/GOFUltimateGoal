@@ -35,7 +35,7 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
     private Odometry odometry;
 
     public void runOpMode() throws InterruptedException {
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);

@@ -24,7 +24,7 @@ public class WobbleTuner extends MyOpMode {
 
     @Override
     public void initOp() throws InterruptedException, GOFException {
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         robot.wobblewheel.setTargetPosition(pos);
         robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.wobblewheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

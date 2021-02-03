@@ -103,7 +103,7 @@ public class RED extends MyOpMode {
         Future<ArrayList<Point[]>> path1 = myservice.submit(generator1);
         Future<ArrayList<Point[]>> path4 = myservice.submit(generator4);
 
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         if (robot.wobblewheel != null){
             robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

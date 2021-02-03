@@ -46,7 +46,7 @@ public class GOFTeleOp extends MyOpMode {
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
@@ -117,6 +117,7 @@ public class GOFTeleOp extends MyOpMode {
         }
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("Omega", omega);
+        telemetry.addData("shot", robot.shoot1.getCurrentPosition());
         telemetry.addData("g0", robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         telemetry.update();
 

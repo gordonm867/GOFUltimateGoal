@@ -44,7 +44,7 @@ public class Victory extends MyOpMode {
 
     @Override
     public void initOp() throws InterruptedException, GOFException {
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.ON);
         handler = Handler.getInstance();

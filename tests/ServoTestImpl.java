@@ -14,7 +14,7 @@ public class ServoTestImpl extends MyOpMode {
 
     @Override
     public void initOp() throws InterruptedException, GOFException {
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         servoTest = new ServoTest(robot.flicker, telemetry);
     }
 

@@ -40,7 +40,7 @@ public class Tuning extends MyOpMode {
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         Shooter.thing = 4;
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);

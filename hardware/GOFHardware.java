@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.DetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -107,7 +110,7 @@ public class GOFHardware {
      *
      * @param hwMap OpMode's internal HardwareMap
      */
-    public void init(HardwareMap hwMap) {
+    public void init(HardwareMap hwMap, Telemetry telemetry) {
         try {
             ex2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         } catch (Exception p_exception) {
@@ -118,9 +121,10 @@ public class GOFHardware {
         } catch (Exception p_exception) {
             ex3 = null;
         }
-        try { // Gyro
+        try { // g0
             gyro = hwMap.get(BNO055IMU.class, "g0");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            gyro.initialize(parameters);
             parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
             parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
             parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
@@ -129,6 +133,7 @@ public class GOFHardware {
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         } catch (Exception p_exception) {
             gyro = null;
+            telemetry.addData("error", p_exception);
         }
         try { // Left rear wheel
             lb = hwMap.get(DcMotor.class, "lb");
@@ -223,7 +228,7 @@ public class GOFHardware {
         try {
             wobble = hwMap.get(Servo.class, "w");
             wobble.setDirection(Servo.Direction.FORWARD);
-            wobble.setPosition(1.0);
+            wobble.setPosition(Wobble.closedpose);
         }
         catch(Exception p_exception) {
             wobble = null;
