@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -62,7 +63,7 @@ import org.openftc.revextensions2.RevBulkData;
 
 public class GOFHardware {
     /* Declare OpMode members */
-    public NavxMicroNavigationSensor gyro;
+    public BNO055IMU gyro;
 
     public DcMotor rf;
     public DcMotor rb;
@@ -118,11 +119,14 @@ public class GOFHardware {
             ex3 = null;
         }
         try { // Gyro
-            gyro = hwMap.get(NavxMicroNavigationSensor.class, "g0");
-            while(gyro.isCalibrating()) {
-                Thread.sleep(50);
-            }
-            gyro.initialize();
+            gyro = hwMap.get(BNO055IMU.class, "g0");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         } catch (Exception p_exception) {
             gyro = null;
         }
