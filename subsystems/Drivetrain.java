@@ -416,8 +416,14 @@ public class Drivetrain implements Subsystem {
         else if(!Double.isNaN(myAngle)) {
             double error = Functions.normalize(myAngle - current);
             if(Math.abs(error) >= 0.8) {
-                double pow = (kp * error * Globals.MAX_SPEED);
-                turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
+                if(odometry.getVelocity() != 0) {
+                    double pow = (kp * error * Globals.MAX_SPEED * (1.0 / Math.abs(odometry.getVelocity())));
+                    turn = Math.max(Math.abs(pow), ((Globals.MIN_SPEED * (1.0 / Math.abs(odometry.getVelocity()))) * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
+                }
+                else {
+                    double pow = (kp * error * Globals.MAX_SPEED);
+                    turn = Math.max(Math.abs(pow), ((Globals.MIN_SPEED) * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
+                }
             }
         }
         double scaleFactor;

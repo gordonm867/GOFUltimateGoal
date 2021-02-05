@@ -214,7 +214,7 @@ public class RED extends MyOpMode {
         else {
             Globals.MAX_SPEED = 0.75;
         }
-        if(rings == 1 && index == 2) {
+        if(rings == 1 && index == 2 || rings == 4 && index == 3) {
             robot.setIntakePower(-1);
         }
         else {
@@ -376,9 +376,28 @@ public class RED extends MyOpMode {
                             state = Wobble.WheelState.IN;
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
+                        if(rings == 4) {
+                            shooter.start(robot, Shooter.vel);
+                        }
                         break;
                     }
-                    if(index == 3 || index == 4 && rings == 1) {
+                    if(index == 3 && rings == 4) {
+                        while(opModeIsActive() && odometry.getY() < -2.2) {
+                            robot.setIntakePower(-1);
+                            Globals.MAX_SPEED = 0.3;
+                            Point target = new Point(odometry.getX(), odometry.getY() + 0.25);
+                            angle = odometry.getAngle();
+                            data = robot.bulkRead();
+                            drive.update(robot, target, odometry, 90, angle, data);
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
+                            shooter.shoot(robot, Shooter.vel, true);
+                        }
+                        Globals.MAX_SPEED = 0.75;
+                        robot.shoot1.setPower(0);
+                        robot.shoot2.setPower(0);
+                        break;
+                    }
+                    if(index == 3 && rings == 0 || index == 4 && rings > 0) {
                         wobble.arrived = false;
                         Globals.MAX_WOBBLE = 1.0;
                         while(!wobble.arrived) {
@@ -418,7 +437,7 @@ public class RED extends MyOpMode {
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
-                            shooter.shoot(robot, Shooter.vel - 2.0, true);
+                            shooter.shoot(robot, Shooter.vel, true);
                         }
                         robot.shoot1.setPower(0);
                         robot.shoot2.setPower(0);

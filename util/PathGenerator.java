@@ -32,7 +32,8 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Point[]> optimizedpath = new ArrayList<>();
         ArrayList<Line> path = new ArrayList<>();
         ArrayList<Obstacle> obstacles = new ArrayList<>();
-        //obstacles.add(new Obstacle(-3, -2, 1.1));
+        ArrayList<Obstacle> fullobstacles = new ArrayList<>();
+        fullobstacles.add(new Obstacle(-3, -2, 1.1));
         if(rings == 0) {
             path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1, -0.2, 85)));
             path.add(new Line(new Point(-1, -0.2), new Point(-3.3, 0.8, -30)));
@@ -51,13 +52,21 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         }
         else {
             path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1, -0.2, 85)));
-            path.add(new Line(new Point(-1, -0.2), new Point(-3.3, 4.7, -30)));
-            path.add(new Line(new Point(-3.3, 4.7), new Point(-3.25, -2.1, 90)));
-            path.add(new Line(new Point(-3.25, -2.9), new Point(-3, 4.1, -45)));
-            path.add(new Line(new Point(-3, 4.1), new Point(-3, 1, 90)));
+            path.add(new Line(new Point(-1, -0.2), new Point(-4.8, 3.5, -90), fullobstacles));
+            path.add(new Line(new Point(-4.8, 3.5), new Point(-2.3, -4.5, 180), fullobstacles));
+            path.add(new Line(new Point(-2.1, -4.5), new Point(-3, -3, 90)));
+            path.add(new Line(new Point(-3, -2.2), new Point(-4.5, 3.5, -90), obstacles));
+            path.add(new Line(new Point(-4.5, 3.5), new Point(-2, -0.75, 90), obstacles));
         }
         if (!blue) {
             for (int x = 0; x < path.size(); x++) {
+                if(path.get(x).obstacles != null) {
+                    for (int y = 0; y < path.get(x).obstacles.size(); y++) {
+                        if (path.get(x).obstacles.get(y).x < 0) {
+                            path.get(x).obstacles.set(y, new Obstacle(-path.get(x).obstacles.get(y).x, path.get(x).obstacles.get(y).y, path.get(x).obstacles.get(y).radius));
+                        }
+                    }
+                }
                 path.set(x, new Line(new Point(-path.get(x).getPoint1().getX(), path.get(x).getPoint1().getY(), path.get(x).getPoint1().getAngle()), new Point(-path.get(x).getPoint2().getX(), path.get(x).getPoint2().getY(), path.get(x).getPoint2().getAngle()), path.get(x).obstacles));
             }
         }
