@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -45,9 +46,9 @@ public class Shooter implements Subsystem {
     public static double d = 3;
     public static double f = 1;
 
-    public static double vel = 18.4;
+    public static double vel = 17.6;
 
-    public static int thing = 5;
+    public static int thing = 4;
 
     public boolean uh = false;
     public int powershots = 0;
@@ -89,9 +90,9 @@ public class Shooter implements Subsystem {
             uh = false;
         }
         if(gamepad2.right_trigger > 0.05 && !rt) {
-            thing = 5;
+            thing = 4;
             rt = true;
-            vel = 18.4;
+            vel = 17.6;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -163,7 +164,7 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1)) {
+        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) {
             ready = true;
             if(once) {
                 shootonce(targ, robot);
