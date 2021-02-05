@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -46,7 +45,7 @@ public class Shooter implements Subsystem {
     public static double d = 3;
     public static double f = 1;
 
-    public static double vel = 17.6;
+    public static double vel = 17.0;
 
     public static int thing = 4;
 
@@ -77,7 +76,7 @@ public class Shooter implements Subsystem {
             uh = true;
             thing = 2;
             rt = true;
-            vel = 16.5;
+            vel = 15.0;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -92,7 +91,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger > 0.05 && !rt) {
             thing = 4;
             rt = true;
-            vel = 17.6;
+            vel = 17.0;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -105,7 +104,8 @@ public class Shooter implements Subsystem {
         }
         if(gamepad2.left_trigger > 0.05 && !lt) {
             readying = true;
-            start(robot, vel);
+            vel = 17.0;
+            start(robot, vel - 1.0);
         }
         if(gamepad2.left_trigger < 0.05) {
             lt = false;
@@ -127,6 +127,7 @@ public class Shooter implements Subsystem {
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             a = (v - lastv) / (deltatime);
             lasttime = System.currentTimeMillis();
+            handler.pushData("saa", a);
             handler.pushData("sav", v);
         }
         if(gamepad2.a && !apressed) {
@@ -136,7 +137,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) /*|| ready*/)) {
+        if(shooting && ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) && Math.abs(a) < 0.5)) {
             ready = true;
             shoot(targ, robot);
         }
@@ -164,7 +165,7 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) {
+        if(/*ready ||*/ Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 && Math.abs(a) < 1) {
             ready = true;
             if(once) {
                 shootonce(targ, robot);

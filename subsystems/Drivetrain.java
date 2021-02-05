@@ -402,7 +402,7 @@ public class Drivetrain implements Subsystem {
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     double error = Functions.normalize(myAngle - current);
-                    if(Math.abs(error) >= 0.8) {
+                    if(Math.abs(error) >= 0.45) {
                         double pow = (kp * error * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }

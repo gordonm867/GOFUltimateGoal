@@ -13,8 +13,8 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public static double closedpose = 0.4;
-    public static double openpose = 1.0;
+    public static double closedpose = 0.35;
+    public static double openpose = 0.8;
 
     public int target = 0;
 
@@ -68,7 +68,7 @@ public class Wobble implements Subsystem {
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = -1050;
+                target = -1080;
             }
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
@@ -97,7 +97,7 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -1050;
+            target = -1080;
         }
         else if(targetstate == WheelState.CARRY) {
             target = -950;

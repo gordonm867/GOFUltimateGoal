@@ -28,7 +28,7 @@ public class Intake implements Subsystem {
                 robot.setIntakePower(Globals.MIN_IN_SPEED);
             }
             else if(Math.abs(gamepad2.left_stick_y) > 0.05) {
-                robot.setIntakePower(Globals.MAX_IN_SPEED);
+                robot.setIntakePower(Globals.MAX_IN_SPEED / 2.0);
             }
             else {
                 intaketimer = System.currentTimeMillis();

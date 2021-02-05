@@ -6,10 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
@@ -101,27 +97,21 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("uh", e.getMessage());
             telemetry.update();
         }
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
     }
 
     public void loopOp() {
+        double angle = odometry.getAngle();
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
-        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
-        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
-        double angle = odometry.getAngle();
-        double omega  = (odometry.getAngle() - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000.0);
-        handler.pushData("Omega", omega);
-        lastangle = angle;
-        lasttime = System.currentTimeMillis();
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
-        telemetry.addData("Angle", odometry.getAngle());
-        telemetry.addData("Omega", omega);
-        telemetry.addData("shot", robot.shoot1.getCurrentPosition());
-        telemetry.addData("Intake Current", ((DcMotorEx)robot.in).getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("g0", robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-        telemetry.update();
+        if(handler.contains("saa")) {
+            telemetry.addData("saa", handler.getData("saa"));
+            telemetry.update();
+        }
 
     }
 
