@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
+
 @Config
 public class Drivetrain implements Subsystem {
 
@@ -35,7 +36,12 @@ public class Drivetrain implements Subsystem {
     public boolean turningToPoint2 = false;
     public boolean turningToPoint3 = false;
 
-    public static double kp = 0.01;
+    private double error = 0;
+    private double lasterror = 0;
+    private double lasttime = 0;
+
+    public static double kp = 0.008;
+    public static double kd = 0.01;
 
     private Powerstate powerstate = Powerstate.IDLE;
 
@@ -68,7 +74,13 @@ public class Drivetrain implements Subsystem {
 
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double robotangle, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         double drive = gamepad1.left_stick_y;
-        double turn = -gamepad1.right_stick_x;
+        double turn;
+        if(Math.abs(gamepad1.right_stick_y) > 0.35) {
+            turn = -gamepad1.right_stick_x * (1 - (gamepad1.right_stick_y * 0.5));
+        }
+        else {
+            turn = -gamepad1.right_stick_x;
+        }
         double angle = -gamepad1.left_stick_x;
         angle = Math.abs(angle) < 0.15 && Math.abs(drive) > 0.75 ? 0 : angle;
         drive = Math.abs(drive) < 0.15 && Math.abs(angle) > 0.75 ? 0 : drive;
@@ -114,26 +126,23 @@ public class Drivetrain implements Subsystem {
                 powerstate = Powerstate.IDLE;
             }
             if(turningToPoint) {
-                double displacement = odometry.getPoint().distance(new Point(1.2, 0), Unit.FEET);
-                if(displacement < 0.1) {
-                    if(Math.abs(Functions.normalize(robotangle - 90)) < 1 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 60))) {
-                        robot.setDrivePower(0, 0, 0, 0);
-                        turningToPoint = false;
-                    }
-                    if(Math.abs(Functions.normalize(robotangle - 90)) < 20 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 60))) {
-                        if(Math.abs(Functions.normalize(robotangle - 90)) > 1) {
-                            if (handler.contains("Omega") && Math.abs((double) handler.getData("Omega")) > 60) {
-                                double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
-                                robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
-                            } else {
-                                turningToPoint = false;
-                            }
-                        }
-                        robot.setDrivePower(0, 0, 0, 0);
-                        return;
-                    }
+                double targetangle;
+                if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                    targetangle = odometry.getPoint().angle(new Point(-3, 6), AngleUnit.DEGREES) - 1.5;
                 }
-                update(robot, new Point(1.2, 0), odometry, 90, robotangle, data1);
+                else {
+                    targetangle = odometry.getPoint().angle(new Point(3, 6), AngleUnit.DEGREES) - 1.5;
+                }
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 70) {
+                    double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
+                    robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
+                }
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 /* && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 60)) */)  {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    turningToPoint = false;
+                    return;
+                }
+                update(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
                 return;
             }
             if(turningToPoint2) {
@@ -147,9 +156,10 @@ public class Drivetrain implements Subsystem {
                 }
 
                  */
-                if(Math.abs(Functions.normalize(robotangle - 90)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 115) {
+                if(Math.abs(Functions.normalize(robotangle - 90)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 70) {
                     double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
                     robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
+                    return;
                 }
                 if(Math.abs(Functions.normalize(robotangle - 90)) < 1 /* && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 60)) */)  {
                     robot.setDrivePower(0, 0, 0, 0);
@@ -180,9 +190,12 @@ public class Drivetrain implements Subsystem {
             if(turningToPoint3) {
                 if(powerstate == Powerstate.FIRSTTRANSIT) {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 85)) > 1) {
-                            update(robot, new Point(-1, 0), odometry, 85, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-1.728715, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) {
+                            update(robot, new Point(-1.728715, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -190,9 +203,12 @@ public class Drivetrain implements Subsystem {
                         }
                     }
                     else {
-                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(robotangle - 85) < 1) {
-                            update(robot, new Point(1, 0), odometry, 85, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(1.728715, 0), Unit.FEET);
+                        if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
+                            update(robot, new Point(1.728715, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -202,7 +218,7 @@ public class Drivetrain implements Subsystem {
                     return;
                 }
                 else if(powerstate == Powerstate.WAIT) {
-                    if(gamepad2.b) {
+                    if(gamepad2.b && !gamepad2.start) {
                         powerstate = Powerstate.FIRST;
                     }
                     return;
@@ -218,9 +234,13 @@ public class Drivetrain implements Subsystem {
                 }
                 else if(powerstate == Powerstate.SECONDTRANSIT) {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 89)) > 1) {
-                            update(robot, new Point(-1, 0), odometry, 89, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-1.35, 0), Unit.FEET);
+                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) {
+                            update(robot, new Point(-1.35, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MAX_SPEED = 1.0;
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -228,9 +248,13 @@ public class Drivetrain implements Subsystem {
                         }
                     }
                     else {
-                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(robotangle - 89) < 1) {
-                            update(robot, new Point(1, 0), odometry, 89, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(1.35, 0), Unit.FEET);
+                        if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
+                            update(robot, new Point(1.35, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MAX_SPEED = 1.0;
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -247,9 +271,12 @@ public class Drivetrain implements Subsystem {
                 }
                 else if(powerstate == Powerstate.THIRDTRANSIT) {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                        displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 95)) > 1) {
-                            update(robot, new Point(-1, 0), odometry, 95, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-0.7, 0), Unit.FEET);
+                        if ((displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
+                            update(robot, new Point(-0.7, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -257,9 +284,12 @@ public class Drivetrain implements Subsystem {
                         }
                     }
                     else {
-                        displacement = odometry.getPoint().distance(new Point(1, 0), Unit.FEET);
-                        if (displacement > 0.1 || Math.abs(robotangle - 95) < 1) {
-                            update(robot, new Point(1, 0), odometry, 95, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(0.7, 0), Unit.FEET);
+                        if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
+                            update(robot, new Point(0.7, 0), odometry, 90, robotangle, data1);
+                            if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
+                                Globals.MIN_SPEED += 0.05;
+                            }
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -306,9 +336,8 @@ public class Drivetrain implements Subsystem {
                     scaleFactor = Globals.MAX_SPEED;
                 }
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
-                double Kp = 0.0325;
-                double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
-                //turn += (Kp * error * Globals.MAX_SPEED);
+                error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
+                //turn += (kp * error * Globals.MAX_SPEED);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
             else {
@@ -319,9 +348,8 @@ public class Drivetrain implements Subsystem {
                 angle = Math.sin(relAngle);
                 double scaleFactor = maxspeed / Math.max(Math.abs(drive + angle), Math.abs(drive - angle));
                 scaleFactor *= Math.max(Math.abs(1 - gamepad1.right_trigger), 0.2);
-                double Kp = 0.0325;
-                double error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
-                turn += (Kp * error * Globals.MAX_SPEED);
+                error = Functions.normalize(angleToHold - (double)handler.getData("Angle"));
+                turn += (kp * error * Globals.MAX_SPEED);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
             if (gamepad1.a && !gamepad1.start && !xpressed) {
@@ -339,12 +367,12 @@ public class Drivetrain implements Subsystem {
             if(!(gamepad1.left_trigger > 0.1)) {
                 trigger = false;
             }
-            if(gamepad1.b && !bpressed) {
+            if(gamepad1.b && !gamepad1.start && !bpressed) {
                 bpressed = true;
                 turningToPoint3 = true;
                 powerstate = Powerstate.FIRSTTRANSIT;
             }
-            if(!gamepad1.b) {
+            if(gamepad1.b) {
                 turningToPoint3 = false;
             }
         }
@@ -401,22 +429,28 @@ public class Drivetrain implements Subsystem {
                 angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
-                    double error = Functions.normalize(myAngle - current);
+                    error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 0.45) {
-                        double pow = (kp * error * Globals.MAX_SPEED);
+                        double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                        lasttime = System.currentTimeMillis();
+                        lasterror = error;
+                        double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= 1.0/24.0) {
+                if(Math.abs(displacement) <= 1.0/96.0) {
                     drive = 0;
                     angle = 0;
                 }
             }
         }
         else if(!Double.isNaN(myAngle)) {
-            double error = Functions.normalize(myAngle - current);
-            if(Math.abs(error) >= 0.8) {
-                double pow = (kp * error * Globals.MAX_SPEED);
+            error = Functions.normalize(myAngle - current);
+            if(Math.abs(error) >= 0.4) {
+                double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                lasttime = System.currentTimeMillis();
+                lasterror = error;
+                double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                 turn = Math.max(Math.abs(pow), ((Globals.MIN_SPEED) * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
             }
         }
@@ -429,10 +463,10 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Math.abs(Globals.MAX_SPEED / max);
             }
             else if(displacement >= 0.5) {
-                scaleFactor = Math.abs(Math.max(displacement * 2, Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs((Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED)) / max);
             }
             else {
-                scaleFactor = Math.abs(Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
             }
         }
         odometry.update(data, current);
@@ -462,7 +496,7 @@ public class Drivetrain implements Subsystem {
                 angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
-                    double error = Functions.normalize(myAngle - current);
+                    error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 1.0) {
                         error = Functions.normalize(myAngle - current);
                         if (Math.abs(error + 360) < Math.abs(error)) {
@@ -471,16 +505,18 @@ public class Drivetrain implements Subsystem {
                         if (Math.abs(error - 360) < Math.abs(error)) {
                             error -= 360;
                         }
-                        double Kp = 0.0325;
-                        double pow = (Kp * error * Globals.MAX_SPEED);
+                        double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                        lasttime = System.currentTimeMillis();
+                        lasterror = error;
+                        double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= (1.0/24.0) || (Math.abs(angle) < 0.001 && Math.abs(drive) < 0.001)) {
+                if(Math.abs(displacement) <= (1.0/96.0) || (Math.abs(angle) < 0.00001 && Math.abs(drive) < 0.00001)) {
                     drive = 0;
                     angle = 0;
                     if(!Double.isNaN(myAngle)) {
-                        double error = Functions.normalize(myAngle - current);
+                        error = Functions.normalize(myAngle - current);
                         if(Math.abs(error) >= 1.0) {
                             error = Functions.normalize(myAngle - current);
                             if (Math.abs(error + 360) < Math.abs(error)) {
@@ -489,8 +525,10 @@ public class Drivetrain implements Subsystem {
                             if (Math.abs(error - 360) < Math.abs(error)) {
                                 error -= 360;
                             }
-                            double Kp = 0.0325;
-                            double pow = (Kp * error * Globals.MAX_SPEED);
+                            double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                            lasttime = System.currentTimeMillis();
+                            lasterror = error;
+                            double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                             turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                         }
                     }
@@ -561,7 +599,7 @@ public class Drivetrain implements Subsystem {
             }
              */
             if (!Double.isNaN(myAngle)) {
-                double error = Functions.normalize(myAngle - current);
+                error = Functions.normalize(myAngle - current);
                 if (Math.abs(error) >= 1.0) {
                     error = Functions.normalize(myAngle - current);
                     if (Math.abs(error + 360) < Math.abs(error)) {
@@ -570,8 +608,10 @@ public class Drivetrain implements Subsystem {
                     if (Math.abs(error - 360) < Math.abs(error)) {
                         error -= 360;
                     }
-                    double Kp = 0.0325;
-                    double pow = (Kp * error * Globals.MAX_SPEED);
+                    double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                    lasttime = System.currentTimeMillis();
+                    lasterror = error;
+                    double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
@@ -580,7 +620,7 @@ public class Drivetrain implements Subsystem {
             drive = 0;
             angle = 0;
             if (!Double.isNaN(myAngle)) {
-                double error = Functions.normalize(myAngle - current);
+                error = Functions.normalize(myAngle - current);
                 if (Math.abs(error) >= 1.0) {
                     error = Functions.normalize(myAngle - current);
                     if (Math.abs(error + 360) < Math.abs(error)) {
@@ -589,8 +629,10 @@ public class Drivetrain implements Subsystem {
                     if (Math.abs(error - 360) < Math.abs(error)) {
                         error -= 360;
                     }
-                    double Kp = 0.0325 * Globals.MAX_SPEED;
-                    double pow = (Kp * error * Globals.MAX_SPEED);
+                    double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                    lasttime = System.currentTimeMillis();
+                    lasterror = error;
+                    double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                     turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                 }
             }
@@ -603,12 +645,12 @@ public class Drivetrain implements Subsystem {
         } else {
             if(displacement >= 0.5) {
                 backwards = false;
-                scaleFactor = Math.abs(Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED) / max);
+                scaleFactor = Math.abs((Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED)) / max);
             }
             else {
                 if(delta < 0 || Math.abs(velocity) < 1) {
                     backwards = false;
-                    scaleFactor = Math.abs((Globals.MIN_SPEED / max));
+                    scaleFactor = Math.min(Globals.MAX_SPEED / max, Math.abs((Globals.MIN_SPEED / max)));
                 }
                 else {
                     backwards = true;
@@ -639,22 +681,28 @@ public class Drivetrain implements Subsystem {
                 angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
-                    double error = Functions.normalize(myAngle - current);
+                    error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 0.8) {
-                        double pow = (kp * error * Globals.MAX_SPEED);
+                        double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                        lasttime = System.currentTimeMillis();
+                        lasterror = error;
+                        double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
                     }
                 }
-                if(Math.abs(displacement) <= 1.0/24.0) {
+                if(Math.abs(displacement) <= 1.0/96.0) {
                     drive = 0;
                     angle = 0;
                 }
             }
         }
         else if(!Double.isNaN(myAngle)) {
-            double error = Functions.normalize(myAngle - current);
+            error = Functions.normalize(myAngle - current);
             if(Math.abs(error) >= 0.8) {
-                double pow = (kp * error * Globals.MAX_SPEED);
+                double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                lasttime = System.currentTimeMillis();
+                lasterror = error;
+                double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                 turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
             }
         }
@@ -697,7 +745,7 @@ public class Drivetrain implements Subsystem {
                 angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
-                    double error = Functions.normalize(myAngle - current);
+                    error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 1.0) {
                         error = Functions.normalize(myAngle - current);
                         if (Math.abs(error + 360) < Math.abs(error)) {
@@ -706,8 +754,10 @@ public class Drivetrain implements Subsystem {
                         if (Math.abs(error - 360) < Math.abs(error)) {
                             error -= 360;
                         }
-                        double Kp = 0.008;
-                        double pow = (Kp * error * Globals.MAX_SPEED);
+                        double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                        lasttime = System.currentTimeMillis();
+                        lasterror = error;
+                        double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
                         turn = Math.max(Math.abs(pow), Globals.MIN_SPEED) * Math.signum(pow);
                     }
                 }

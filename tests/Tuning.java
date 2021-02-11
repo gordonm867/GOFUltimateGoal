@@ -65,14 +65,17 @@ public class Tuning extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
         }
+        telemetry.addData("Point", odometry.getPoint());
+        telemetry.addData("Angle", odometry.getAngle());
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         double angle = odometry.getAngle() - targA;
-        if(displacement > 0.2 || Math.abs(angle) > 1) {
+        if(displacement > 3.0/96.0 || Math.abs(angle) > 0.5) {
             drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }
         else {
             robot.setDrivePower(0, 0, 0, 0);
         }
+        telemetry.update();
     }
 
     public void stopOp() {

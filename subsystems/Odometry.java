@@ -33,6 +33,8 @@ public class Odometry implements Subsystem {
     private static double angleOffset = 0;
     private double velocity = 0;
 
+    public double angleOfMovement = 0;
+
     RevBulkData data;
 
     private State state = State.ON;
@@ -107,6 +109,7 @@ public class Odometry implements Subsystem {
             yDist -= ((Globals.yOffset / 12f) * Math.toRadians(dTheta));
             double displacement = Math.hypot(xDist, yDist);
             angle += Math.toDegrees(Math.atan2(yDist, xDist)) - (dTheta / 2);
+            angleOfMovement = angle;
             if (dTheta != 0 && displacement > 0) {
                 double radius = Math.abs((((360.0 / dTheta) * displacement) / (2.0 * Math.PI)));
                 Circle myCircle = new Circle(new Point(x, y), (((2 * radius * Math.sin(Math.toRadians(dTheta) / 2)))));
@@ -201,6 +204,7 @@ public class Odometry implements Subsystem {
             yDist -= ((Globals.yOffset / 12f) * Math.toRadians(dTheta));
             double displacement = Math.hypot(xDist, yDist);
             angle += Math.toDegrees(Math.atan2(yDist, xDist)) - (dTheta / 2);
+            angleOfMovement = angle;
             // double arcAngle = Math.toRadians(angle + Math.toDegrees(Math.atan2(yDist, xDist)));
             double x1 = displacement * Math.cos(Math.toRadians(angle));
             double y1 = displacement * Math.sin(Math.toRadians(angle));
@@ -390,8 +394,8 @@ public class Odometry implements Subsystem {
             }
         }
              */
-            x = 5.25;
-            y = 5.25;
+            x = 5.26;
+            y = 1;
             lastXPos = -data.getMotorCurrentPosition(robot.rb);
             lastYPos = -data.getMotorCurrentPosition(robot.rf);
             lastAngle = 90;
@@ -414,6 +418,23 @@ public class Odometry implements Subsystem {
         angle = robot.getAngle();
         thismetry = new Odometry(robot);
         robot.resetOmnis();
+    }
+
+    public void shootreset() {
+        Point[] points = new Point[] {new Point(2, 0), new Point(4, 0), new Point(2, -2), new Point(2, -4), new Point(4, -2), new Point(4, -4), new Point(0, 0), new Point(0, -2), new Point(0, -4)};
+        Point best = getPoint();
+        double min = Double.MAX_VALUE;
+        for(Point test : points) {
+            double thing = Math.abs(getPoint().distance(test, Unit.FEET));
+            if(thing < min) {
+                min = thing;
+                best = test;
+            }
+        }
+        x = best.getX();
+        y = best.getY();
+        lastXPos = -data.getMotorCurrentPosition(robot.rb);
+        lastYPos = -data.getMotorCurrentPosition(robot.rf);
     }
 
     public void load(double angle) {

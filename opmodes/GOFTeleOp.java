@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.opmodes;
 
 import android.os.Environment;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Handler;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Intake;
@@ -34,16 +38,18 @@ public class GOFTeleOp extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
-    public boolean lt = false;
+    public ArrayList<Double> averageterms = new ArrayList<>();
+
     public boolean red = true;
 
-    public double lastangle = 90;
-    public double lasttime = System.currentTimeMillis();
+    public double sum = 0;
 
     public void initOp() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
         robot.init(hardwareMap, telemetry);
+        robot.wobble.setPosition(Wobble.openpose);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
         intake = new Intake(Subsystem.State.OFF);
@@ -108,11 +114,10 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
-        if(handler.contains("saa")) {
-            telemetry.addData("saa", handler.getData("saa"));
-            telemetry.update();
-        }
-
+        telemetry.addData("Point", odometry.getPoint());
+        telemetry.addData("Angle", odometry.getAngle());
+        telemetry.addData("Intended Angle", odometry.getPoint().angle(new Point(3, 6), AngleUnit.DEGREES) - 1.5);
+        telemetry.update();
     }
 
     public void stopOp() {

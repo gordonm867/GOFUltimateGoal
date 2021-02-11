@@ -194,7 +194,7 @@ public class GOFHardware {
             shoot1.setDirection(DcMotor.Direction.REVERSE);
             shoot1.setPower(0);
             shoot1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            ((DcMotorEx)shoot1).setVelocityPIDFCoefficients(30, 10, 3, 1);
+            ((DcMotorEx)shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         }
         catch(Exception p_exception) {
             shoot1 = null;
@@ -205,7 +205,7 @@ public class GOFHardware {
             shoot2.setDirection(DcMotor.Direction.REVERSE);
             shoot2.setPower(0);
             shoot2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            ((DcMotorEx)shoot2).setVelocityPIDFCoefficients(30, 10, 3, 1);
+            ((DcMotorEx)shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         }
         catch(Exception p_exception) {
             shoot2 = null;

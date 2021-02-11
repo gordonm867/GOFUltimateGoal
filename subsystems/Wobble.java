@@ -14,7 +14,7 @@ public class Wobble implements Subsystem {
     public WheelState wheelstate = WheelState.UP;
 
     public static double closedpose = 0.35;
-    public static double openpose = 0.8;
+    public static double openpose = 0.75;
 
     public int target = 0;
 
@@ -36,7 +36,8 @@ public class Wobble implements Subsystem {
         CARRY,
         UP,
         DROP,
-        IN
+        IN,
+        DESTROY
     }
 
     @Override
@@ -68,7 +69,7 @@ public class Wobble implements Subsystem {
             }
             if (gamepad2.right_stick_y > 0.5) {
                 wheelstate = WheelState.PICKUP;
-                target = -1080;
+                target = -1100;
             }
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
@@ -97,13 +98,16 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -1080;
+            target = -1100;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -950;
+            target = -750;
         }
         else if(targetstate == WheelState.IN) {
-            target = 0;
+            target = -200;
+        }
+        else if(targetstate == WheelState.DESTROY) {
+            target = -1200;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
@@ -111,7 +115,12 @@ public class Wobble implements Subsystem {
         if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 15) {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(1.0);
+            if(targetstate == WheelState.IN) {
+                robot.wobblewheel.setPower(0.5);
+            }
+            else {
+                robot.wobblewheel.setPower(1.0);
+            }
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);

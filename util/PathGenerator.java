@@ -35,28 +35,27 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Obstacle> fullobstacles = new ArrayList<>();
         fullobstacles.add(new Obstacle(-3, -2, 0.75));
         if(rings == 0) {
-            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1.825, -0.4, 90))); // Start-power shots
-            path.add(new Line(new Point(-1.825, -0.4), new Point(-3.5, 0.45, 180))); // Power shots-wobble drop off
-            path.add(new Line(new Point(-3.5, 0.45), new Point(-3.7, -2.4, 90))); // Wobble drop off-Wobble pickup
-            path.add(new Line(new Point(-3.7, -2.6), new Point(-3.2, -0.1, -170))); // Wobble pickup-wobble drop off
-            path.add(new Line(new Point(-3, -0.1), new Point(-1, 0.75, 90))); // Wobble drop off-parking
+            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1.728715 + (3.0/12), 0, 90))); // Start-power shots
+            path.add(new Line(new Point(-1.728715 + (3.0/12), 0), new Point(-3.7, 0.7, 180))); // Power shots-wobble drop off
+            path.add(new Line(new Point(-3.2, 0.7), new Point(-3.5, -2.25, 90))); // Wobble drop off-Wobble pickup
+            path.add(new Line(new Point(-3.5, -2.45), new Point(-3.4, -0.1, -170))); // Wobble pickup-wobble drop off
+            path.add(new Line(new Point(-3.4, -0.1), new Point(-1, 0.75, 90))); // Wobble drop off-parking
         }
         else if(rings == 1) {
-            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1, -0.4, 85)));
-            path.add(new Line(new Point(-1, -0.4), new Point(-3.3, 1.5, -90), obstacles));
-            path.add(new Line(new Point(-3.3, 1.5), new Point(-2.6, -1.25), obstacles));
-            path.add(new Line(new Point(-2.6, -1.25), new Point(-2.2, -4.15, 180)));
-            path.add(new Line(new Point(-2.6, -4.15), new Point(-3.75, 1.2, -90), obstacles));
-            path.add(new Line(new Point(-3.75, 1.2), new Point(-2.75, -1, 90), obstacles));
-            path.add(new Line(new Point(-2.75, -1), new Point(-2, 0.75, 90), obstacles));
+            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1.728715 + (3.0/12), 0, 90)));
+            path.add(new Line(new Point(-1.728715 + (3.0/12), 0), new Point(-3, 1.5, -95), obstacles));
+            path.add(new Line(new Point(-3, 1.5), new Point(-3 - (2.0/12), -1.8, -95), obstacles));
+            path.add(new Line(new Point(-3 - (2.0/12), -1.8), new Point(-3.55, -2.23, 90)));
+            path.add(new Line(new Point(-3.55, -2.63), new Point(-2.75, -1, 90), obstacles));
+            path.add(new Line(new Point(-2.75, -1), new Point(-3.75, 1, -90), obstacles));
+            path.add(new Line(new Point(-3.75, 1), new Point(-2, 0.75, 90), obstacles));
         }
         else {
-            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1, -0.4, 85)));
-            path.add(new Line(new Point(-1, -0.4), new Point(-4.75, 3.4, -95), fullobstacles));
-            path.add(new Line(new Point(-4.75, 3.4), new Point(-4.4, -2.5, 49.405495844), fullobstacles));
-            path.add(new Line(new Point(-4.4, -2.7), new Point(-3, -3, 90)));
-            path.add(new Line(new Point(-3, -2.2), new Point(-4.5, 3.5, -90), obstacles));
-            path.add(new Line(new Point(-4.5, 3.5), new Point(-2, -0.75, 90), obstacles));
+            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1.728715 + (3.0/12), 0, 90)));
+            path.add(new Line(new Point(-1.728715 + (3.0/12), 0), new Point(-4, 3.4, -135), obstacles));
+            path.add(new Line(new Point(-4, 3.4), new Point(-3.8, -2.23, 90), obstacles));
+            path.add(new Line(new Point(-3.8, -2.63), new Point(-4.5, 3, -135), obstacles));
+            path.add(new Line(new Point(-4.5, 3), new Point(-4.5, 0.75, 90), obstacles));
         }
         if (!blue) {
             for (int x = 0; x < path.size(); x++) {
