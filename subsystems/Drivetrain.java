@@ -128,21 +128,21 @@ public class Drivetrain implements Subsystem {
             if(turningToPoint) {
                 double targetangle;
                 if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                    targetangle = odometry.getPoint().angle(new Point(-3, 6), AngleUnit.DEGREES) - 1.5;
+                    targetangle = odometry.getPoint().angle(new Point(-3 + ((odometry.getX() + 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5;
                 }
                 else {
-                    targetangle = odometry.getPoint().angle(new Point(3, 6), AngleUnit.DEGREES) - 1.5;
+                    targetangle = odometry.getPoint().angle(new Point(3 + ((odometry.getX() - 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5;
                 }
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 70) {
-                    double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 5) {
+                    double[] pows = calcupdate(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
                     robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
                 }
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 /* && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 60)) */)  {
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 3)))  {
                     robot.setDrivePower(0, 0, 0, 0);
                     turningToPoint = false;
                     return;
                 }
-                update(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
+                update(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1, data2);
                 return;
             }
             if(turningToPoint2) {
@@ -156,7 +156,7 @@ public class Drivetrain implements Subsystem {
                 }
 
                  */
-                if(Math.abs(Functions.normalize(robotangle - 90)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 70) {
+                if(Math.abs(Functions.normalize(robotangle - 90)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 5) {
                     double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
                     robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
                     return;
@@ -167,9 +167,9 @@ public class Drivetrain implements Subsystem {
                     return;
                 }
                 /*
-                if(Math.abs(Functions.normalize(robotangle - 90)) < 20 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 60))) {
+                if(Math.abs(Functions.normalize(robotangle - 90)) < 20 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 5))) {
                     if(Math.abs(Functions.normalize(robotangle - 90)) > 1) {
-                        if (handler.contains("Omega") && Math.abs((double) handler.getData("Omega")) > 60) {
+                        if (handler.contains("Omega") && Math.abs((double) handler.getData("Omega")) > 5) {
                             double[] pows = calcupdate(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
                             robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
                         } else {
@@ -180,7 +180,7 @@ public class Drivetrain implements Subsystem {
                     return;
                 }
                  */
-                update(robot, odometry.getPoint(), odometry, 90, robotangle, data1);
+                update(robot, odometry.getPoint(), odometry, 90, robotangle, data1, data2);
                 return;
             }
             Globals.MAX_SPEED = 1.0;
@@ -192,7 +192,7 @@ public class Drivetrain implements Subsystem {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         displacement = odometry.getPoint().distance(new Point(-1.728715, 0), Unit.FEET);
                         if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) {
-                            update(robot, new Point(-1.728715, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(-1.728715, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MIN_SPEED += 0.05;
                             }
@@ -205,7 +205,7 @@ public class Drivetrain implements Subsystem {
                     else {
                         displacement = odometry.getPoint().distance(new Point(1.728715, 0), Unit.FEET);
                         if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
-                            update(robot, new Point(1.728715, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(1.728715, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MIN_SPEED += 0.05;
                             }
@@ -236,7 +236,7 @@ public class Drivetrain implements Subsystem {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         displacement = odometry.getPoint().distance(new Point(-1.35, 0), Unit.FEET);
                         if (displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) {
-                            update(robot, new Point(-1.35, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(-1.35, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MAX_SPEED = 1.0;
                                 Globals.MIN_SPEED += 0.05;
@@ -250,7 +250,7 @@ public class Drivetrain implements Subsystem {
                     else {
                         displacement = odometry.getPoint().distance(new Point(1.35, 0), Unit.FEET);
                         if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
-                            update(robot, new Point(1.35, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(1.35, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MAX_SPEED = 1.0;
                                 Globals.MIN_SPEED += 0.05;
@@ -273,7 +273,7 @@ public class Drivetrain implements Subsystem {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         displacement = odometry.getPoint().distance(new Point(-0.7, 0), Unit.FEET);
                         if ((displacement > 0.1 || Math.abs(Functions.normalize(robotangle - 90)) > 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
-                            update(robot, new Point(-0.7, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(-0.7, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MIN_SPEED += 0.05;
                             }
@@ -286,7 +286,7 @@ public class Drivetrain implements Subsystem {
                     else {
                         displacement = odometry.getPoint().distance(new Point(0.7, 0), Unit.FEET);
                         if ((displacement > 0.1 || Math.abs(robotangle - 90) < 1) && !(displacement < 0.3 && Math.abs(odometry.getVelocity()) < 0.1)) {
-                            update(robot, new Point(0.7, 0), odometry, 90, robotangle, data1);
+                            update(robot, new Point(0.7, 0), odometry, 90, robotangle, data1, data2);
                             if(displacement < 0.5 && Math.abs(odometry.getVelocity()) < 0.1 && Globals.MIN_SPEED < 0.3) {
                                 Globals.MIN_SPEED += 0.05;
                             }
@@ -417,7 +417,7 @@ public class Drivetrain implements Subsystem {
      * @param current Current angle (we don't want to read again)
      * @param data Bulk data from REV hub
      */
-    public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data) {
+    public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data, RevBulkData data2) {
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
         double angle = 0;
@@ -469,7 +469,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
             }
         }
-        odometry.update(data, current);
+        odometry.update(data, data2, current);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -484,7 +484,7 @@ public class Drivetrain implements Subsystem {
      * @param current Current angle (we don't want to read again)
      * @param data Bulk data from REV hub
      */
-    public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double velocity, double delta, double current, RevBulkData data) {
+    public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double velocity, double delta, double current, RevBulkData data, RevBulkData data2) {
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
         double angle = 0;
@@ -559,7 +559,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Globals.MIN_SPEED * Math.signum(scaleFactor); // Move it higher to ensure that we will not stall the robot
             }
         }
-        odometry.update(data, current); // Update the odometry pose estimate
+        odometry.update(data, data2, current); // Update the odometry pose estimate
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Power the motors
     }
 
@@ -574,7 +574,7 @@ public class Drivetrain implements Subsystem {
      * @param current Current angle (we don't want to read again)
      * @param data Bulk data from REV hub
      */
-    public void clupdate(GOFHardware robot, Point target, Odometry odometry, double myAngle, double velocity, double delta, double current, RevBulkData data) {
+    public void clupdate(GOFHardware robot, Point target, Odometry odometry, double myAngle, double velocity, double delta, double current, RevBulkData data, RevBulkData data2) {
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
         double angle = 0;
@@ -665,7 +665,7 @@ public class Drivetrain implements Subsystem {
         telemetry.addData("Backwards", backwards);
         telemetry.update();
          */
-        odometry.update(data, current);
+        odometry.update(data, data2, current);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -733,7 +733,7 @@ public class Drivetrain implements Subsystem {
      * @param current Current angle (we don't want to read again)
      * @param data Bulk data from REV hub
      */
-    public void fastupdate(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data) {
+    public void fastupdate(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data, RevBulkData data2) {
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
         double angle = 0;
@@ -773,7 +773,7 @@ public class Drivetrain implements Subsystem {
         }
         max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
         scaleFactor = Globals.MAX_SPEED / max;
-        odometry.update(data, current);
+        odometry.update(data, data2, current);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
     }
 

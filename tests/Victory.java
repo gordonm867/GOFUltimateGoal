@@ -84,13 +84,13 @@ public class Victory extends MyOpMode {
             data = robot.bulkRead();
             data2 = robot.bulkReadTwo();
             displacement = odometry.getPoint().distance(target, Unit.FEET);
-            drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data);
+            drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data, data2);
             lastDisplacement = displacement;
         }
         robot.setDrivePower(0,0,0,0);
         double time = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - time <= 2000) {
-            odometry.update(data2);
+            odometry.update(data, data2);
             telemetry.addData("Status", "Waiting.... ( " + ((Math.round(2000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
             telemetry.update();
             if(!opModeIsActive()) {
@@ -125,7 +125,7 @@ public class Victory extends MyOpMode {
             data = robot.bulkRead();
             data2 = robot.bulkReadTwo();
             double current = odometry.getAngle();
-            drive.fastupdate(robot, target, odometry, current + 72, current, data);
+            drive.fastupdate(robot, target, odometry, current + 72, current, data, data2);
         }
     }
 }

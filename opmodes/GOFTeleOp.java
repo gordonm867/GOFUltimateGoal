@@ -43,6 +43,8 @@ public class GOFTeleOp extends MyOpMode {
     public boolean red = true;
 
     public double sum = 0;
+    private double lastangle = 0;
+    private double lasttime = 0;
 
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -105,10 +107,17 @@ public class GOFTeleOp extends MyOpMode {
         }
         ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
+        lastangle = odometry.getAngle();
+        lasttime = System.currentTimeMillis();
     }
 
     public void loopOp() {
         double angle = odometry.getAngle();
+        if(System.currentTimeMillis() - lasttime >= 15) {
+            double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
+            handler.pushData("Omega", omega);
+            lasttime = System.currentTimeMillis();
+        }
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for (Subsystem subsystem : subsystems) {
@@ -117,7 +126,11 @@ public class GOFTeleOp extends MyOpMode {
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("Intended Angle", odometry.getPoint().angle(new Point(3, 6), AngleUnit.DEGREES) - 1.5);
+        if(handler.contains("Omega")) {
+            telemetry.addData("Omega", (double)handler.getData("Omega"));
+        }
         telemetry.update();
+        lastangle = angle;
     }
 
     public void stopOp() {

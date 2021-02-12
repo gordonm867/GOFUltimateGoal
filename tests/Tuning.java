@@ -70,7 +70,7 @@ public class Tuning extends MyOpMode {
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         double angle = odometry.getAngle() - targA;
         if(displacement > 3.0/96.0 || Math.abs(angle) > 0.5) {
-            drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
+            drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data, data2);
         }
         else {
             robot.setDrivePower(0, 0, 0, 0);

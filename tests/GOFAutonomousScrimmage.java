@@ -113,6 +113,7 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
         */
         waitForStart();
         RevBulkData data2 = robot.bulkReadTwo();
+        RevBulkData data1 = robot.bulkRead();
         while(opModeIsActive()) {
             Globals.MIN_SPEED = 0.25;
             Globals.MAX_SPEED = 0.85;
@@ -122,14 +123,15 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
             double angle;
             while(opModeIsActive() && displacement > 0.5) {
                 data2 = robot.bulkReadTwo();
+                data1 = robot.bulkRead();
                 displacement = odometry.getPoint().distance(target, Unit.FEET);
                 angle = odometry.getAngle();
-                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1, data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data1));
                 telemetry.addData("angle", angle);
                 telemetry.update();
             }
@@ -140,14 +142,15 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
             lastDisplacement = displacement;
             while(opModeIsActive() && displacement > 0.5) {
                 data2 = robot.bulkReadTwo();
+                data1 = robot.bulkRead();
                 displacement = odometry.getPoint().distance(target, Unit.FEET);
                 angle = odometry.getAngle();
-                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1, data2);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data1));
                 telemetry.addData("angle", angle);
                 telemetry.update();
             }
@@ -159,14 +162,15 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
                     telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data1));
                     telemetry.addData("angle", angle);
                     telemetry.update();
                 }
@@ -177,9 +181,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while (opModeIsActive() && (displacement > 0.1 || Math.abs(angle + 66) > 4)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, -66, angle, data2);
+                    drive.update(robot, target, odometry, -66, angle,data1, data2);
                 }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
@@ -188,17 +193,18 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.1) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
                     if(displacement < 0.34) {
                         Globals.MAX_SPEED = 0.3;
                     }
-                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
                     telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data1));
                     telemetry.addData("angle", angle);
                     telemetry.update();
                 }
@@ -208,8 +214,9 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && Math.abs(angle - 45) > 4) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, 45, angle, data2);
+                    drive.update(robot, target, odometry, 45, angle,data1, data2);
                 }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
@@ -218,14 +225,15 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
                     telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data1));
                     telemetry.addData("angle", angle);
                     telemetry.update();
                 }
@@ -236,21 +244,22 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                     telemetry.addData("x", odometry.getX());
                     telemetry.addData("y", odometry.getY());
                     telemetry.addData("xraw", robot.getVOmniPos(data2));
-                    telemetry.addData("yraw", robot.getHOmniPos(data2));
+                    telemetry.addData("yraw", robot.getHOmniPos(data1));
                     telemetry.addData("angle", angle);
                     telemetry.update();
                 }
                 robot.setDrivePower(0,0,0,0);
                 double time = System.currentTimeMillis();
                 while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
-                    odometry.update(data2);
+                    odometry.update(data1, data2);
                     if(!opModeIsActive()) {
                         throw new InterruptedException();
                     }
@@ -261,9 +270,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -273,9 +283,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -285,9 +296,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -299,15 +311,16 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.2) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
                 double time = System.currentTimeMillis();
                 while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
-                    odometry.update(data2);
+                    odometry.update(data1, data2);
                     if(!opModeIsActive()) {
                         throw new InterruptedException();
                     }
@@ -318,9 +331,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -330,9 +344,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle + 66) > 5)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, -66, angle, data2);
+                    drive.update(robot, target, odometry, -66, angle,data1, data2);
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
@@ -341,12 +356,13 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.1) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
                     if(displacement < 0.34) {
                         Globals.MAX_SPEED = 0.3;
                     }
-                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -355,8 +371,9 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && Math.abs(angle - 45) > 4) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, 45, angle, data2);
+                    drive.update(robot, target, odometry, 45, angle,data1, data2);
                 }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
@@ -365,9 +382,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -377,15 +395,16 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.2) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
                 time = System.currentTimeMillis();
                 while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
-                    odometry.update(data2);
+                    odometry.update(data1, data2);
                     if(!opModeIsActive()) {
                         throw new InterruptedException();
                     }
@@ -396,9 +415,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.2) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -410,15 +430,16 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.2) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
                 double time = System.currentTimeMillis();
                 while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
-                    odometry.update(data2);
+                    odometry.update(data1, data2);
                     if(!opModeIsActive()) {
                         throw new InterruptedException();
                     }
@@ -429,9 +450,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -441,9 +463,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && (displacement > 0.5 || Math.abs(angle + 66) > 5)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, -66, angle, data2);
+                    drive.update(robot, target, odometry, -66, angle,data1, data2);
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.85;
@@ -452,12 +475,13 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && displacement > 0.1) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
                     if(displacement < 0.34) {
                         Globals.MAX_SPEED = 0.3;
                     }
-                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, -66, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -466,8 +490,9 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && Math.abs(angle - 45) > 4) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     angle = odometry.getAngle();
-                    drive.update(robot, target, odometry, 45, angle, data2);
+                    drive.update(robot, target, odometry, 45, angle,data1, data2);
                 }
                 robot.setDrivePower(0, 0, 0, 0);
                 Globals.MAX_SPEED = 0.85;
@@ -476,9 +501,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while (opModeIsActive() && (displacement > 0.5 || Math.abs(angle - 90) > 4)) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -488,8 +514,9 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
-                    drive.update(robot, target, odometry, 90, angle, data2);
+                    drive.update(robot, target, odometry, 90, angle,data1, data2);
                 }
                 robot.setDrivePower(0,0,0,0);
                 Globals.MAX_SPEED = 0.6;
@@ -498,13 +525,14 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 angle = odometry.getAngle();
                 while(opModeIsActive() && displacement > 0.5 ) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
-                    drive.update(robot, target, odometry, 90, angle, data2);
+                    drive.update(robot, target, odometry, 90, angle,data1, data2);
                 }
                 robot.setDrivePower(0,0,0,0);
                 time = System.currentTimeMillis();
                 while(opModeIsActive() && System.currentTimeMillis() - time <= 250) {
-                    odometry.update(data2);
+                    odometry.update(data1, data2);
                     if(!opModeIsActive()) {
                         throw new InterruptedException();
                     }
@@ -515,9 +543,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.5) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);
@@ -527,9 +556,10 @@ public class GOFAutonomousScrimmage extends LinearOpMode {
                 lastDisplacement = displacement;
                 while(opModeIsActive() && displacement > 0.2) {
                     data2 = robot.bulkReadTwo();
+                    data1 = robot.bulkRead();
                     displacement = odometry.getPoint().distance(target, Unit.FEET);
                     angle = odometry.getAngle();
-                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data2);
+                    drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, angle, data1,data2);
                     lastDisplacement = displacement;
                 }
                 robot.setDrivePower(0,0,0,0);

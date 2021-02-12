@@ -358,9 +358,9 @@ public class GOFHardware {
      */
     public void resetOmnis() {
         rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
@@ -388,8 +388,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getHOmniPos(RevBulkData rev) {
-        if (rf != null) {
-            return -rev.getMotorCurrentPosition(rf);
+        if (lb != null) {
+            return rev.getMotorCurrentPosition(lb);
         }
         return 0;
     }

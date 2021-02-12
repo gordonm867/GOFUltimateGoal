@@ -51,7 +51,7 @@ public class OdometryTest extends MyOpMode {
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data));
-                telemetry.addData("yraw", robot.getHOmniPos(data));
+                telemetry.addData("yraw", robot.getHOmniPos(data2));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
@@ -65,24 +65,24 @@ public class OdometryTest extends MyOpMode {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target, Unit.FEET);
-                drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
+                drive.clupdate(robot, target, odometry, 120, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2, data);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
             robot.setDrivePower(0,0,0,0);
             double time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 5000) {
-                odometry.update(data2);
+                odometry.update(data, data2);
                 telemetry.addData("Status", "Waiting.... ( " + (((5000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
                 if(!opModeIsActive()) {
@@ -97,12 +97,12 @@ public class OdometryTest extends MyOpMode {
                 data = robot.bulkRead();
                 data2 = robot.bulkReadTwo();
                 displacement = odometry.getPoint().distance(target, Unit.FEET);
-                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2);
+                drive.clupdate(robot, target, odometry, 90, odometry.getVelocity(), displacement - lastDisplacement, odometry.getAngle(), data2, data);
                 lastDisplacement = displacement;
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data2));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
@@ -110,12 +110,12 @@ public class OdometryTest extends MyOpMode {
             telemetry.addData("x", odometry.getX());
             telemetry.addData("y", odometry.getY());
             telemetry.addData("xraw", robot.getVOmniPos(data2));
-            telemetry.addData("yraw", robot.getHOmniPos(data2));
+            telemetry.addData("yraw", robot.getHOmniPos(data));
             telemetry.addData("angle", odometry.getAngle());
             telemetry.update();
             time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 3000) {
-                odometry.update(data2);
+                odometry.update(data, data2);
                 if(!opModeIsActive()) {
                     throw new InterruptedException();
                 }
