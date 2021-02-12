@@ -133,7 +133,7 @@ public class Drivetrain implements Subsystem {
                 else {
                     targetangle = odometry.getPoint().angle(new Point(3 + ((odometry.getX() - 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5;
                 }
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 5) {
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 10) {
                     double[] pows = calcupdate(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
                     robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
                 }
