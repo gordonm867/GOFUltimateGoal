@@ -23,7 +23,7 @@ public class Drivetrain implements Subsystem {
     private boolean backwards = false;
 
     private double angleToHold = 0;
-    public static double degRemaining = 35;
+    public static double degRemaining = 40;
     //private double lasterror = 0;
     //private double lasttime = 0;
 
@@ -41,7 +41,10 @@ public class Drivetrain implements Subsystem {
     private double lasttime = 0;
 
     public static double kp = 0.008;
-    public static double kd = 0.01;
+    public static double kd = 0.005;
+
+    public static double minturn = 0.12;
+    public double lastsign = 0;
 
     private Powerstate powerstate = Powerstate.IDLE;
 
@@ -126,6 +129,8 @@ public class Drivetrain implements Subsystem {
                 powerstate = Powerstate.IDLE;
             }
             if(turningToPoint) {
+                double old = Globals.MIN_SPEED;
+                Globals.MIN_SPEED = minturn;
                 double targetangle;
                 if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                     targetangle = odometry.getPoint().angle(new Point(-3 + ((odometry.getX() + 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5;
@@ -133,16 +138,27 @@ public class Drivetrain implements Subsystem {
                 else {
                     targetangle = odometry.getPoint().angle(new Point(3 + ((odometry.getX() - 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5;
                 }
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 15 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 10) {
-                    double[] pows = calcupdate(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
-                    robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
-                }
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 3)))  {
+                /*
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 3 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) > 20 && Math.signum((double)handler.getData("Omega")) == Math.signum(Functions.normalize(targetangle - robotangle))) {
+                    //double[] pows = calcupdate(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
+                    //robot.setDrivePower(Math.signum(-pows[0]), Math.signum(-pows[1]), Math.signum(-pows[2]), Math.signum(-pows[3]));
                     robot.setDrivePower(0, 0, 0, 0);
-                    turningToPoint = false;
+                }
+                 */
+                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 20)))  {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    //turningToPoint = false;
                     return;
                 }
+                if(Math.signum(Functions.normalize(robotangle - targetangle)) == -lastsign) {
+                    minturn -= 0.01;
+                }
+                else if(Math.abs(Functions.normalize(robotangle - targetangle)) > 0.5 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 0.1) {
+                    minturn += 0.01;
+                }
                 update(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1, data2);
+                Globals.MIN_SPEED = old;
+                lastsign = Math.signum(Functions.normalize(robotangle - targetangle));
                 return;
             }
             if(turningToPoint2) {

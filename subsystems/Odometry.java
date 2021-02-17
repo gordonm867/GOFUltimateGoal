@@ -33,6 +33,8 @@ public class Odometry implements Subsystem {
     private static double angleOffset = 0;
     private double velocity = 0;
 
+    //private double roboangle = Globals.START_THETA;
+
     public double angleOfMovement = 0;
 
     private State state = State.ON;
@@ -65,6 +67,7 @@ public class Odometry implements Subsystem {
     }
 
     public double getAngle() {
+        //return roboangle;
         return Functions.normalize(robot.getAngle() + angleOffset);
     }
 
@@ -86,6 +89,7 @@ public class Odometry implements Subsystem {
             angle = Functions.normalize(robot.getAngle() + angleOffset);
             handler.pushData("Angle", angle);
             double dTheta = angle - lastAngle;
+            //roboangle += ((∆encoder #1 - ∆encoder #2) / (2 * ticks per rotation)) * 360 degrees
             if(dTheta >= 300) {
                 dTheta -= 360;
             }
@@ -176,6 +180,7 @@ public class Odometry implements Subsystem {
     }
 
     public void update(RevBulkData data1, RevBulkData data2, double angle) {
+        //comment out
         if(update) {
             updates++;
             handler.pushData("Angle", angle);
@@ -396,6 +401,7 @@ public class Odometry implements Subsystem {
             lastYPos = data2.getMotorCurrentPosition(robot.lb);
             lastAngle = 90;
             angle = 90;
+            //roboangle = 90;
             update(data1, data2);
         }
         update(data1, data2, myangle);

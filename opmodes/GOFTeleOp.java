@@ -125,7 +125,8 @@ public class GOFTeleOp extends MyOpMode {
         }
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
-        telemetry.addData("Intended Angle", odometry.getPoint().angle(new Point(3, 6), AngleUnit.DEGREES) - 1.5);
+        telemetry.addData("wheel", robot.lb.getPower());
+        telemetry.addData("Intended Angle", odometry.getPoint().angle(new Point(3 + ((odometry.getX() - 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5);
         if(handler.contains("Omega")) {
             telemetry.addData("Omega", (double)handler.getData("Omega"));
         }

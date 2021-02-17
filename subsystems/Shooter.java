@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
-import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
 import org.openftc.revextensions2.RevBulkData;
 
 @Config
@@ -103,7 +102,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger > 0.05 && !rt) {
             shots++;
             if(shots % 3 == 0) {
-                odometry.shootreset();
+                //odometry.shootreset();
             }
             thing = oldthing;
             rt = true;
@@ -114,7 +113,8 @@ public class Shooter implements Subsystem {
             else {
                 target = new Point(3, 6);
             }
-            vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
+            //vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
+            vel = oldvel;
             attempts = 0;
             shooting = true;
             ready = false;
