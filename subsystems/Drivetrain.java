@@ -485,7 +485,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
             }
         }
-        odometry.update(data, data2, current);
+        odometry.update(data, data2);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -575,7 +575,7 @@ public class Drivetrain implements Subsystem {
                 scaleFactor = Globals.MIN_SPEED * Math.signum(scaleFactor); // Move it higher to ensure that we will not stall the robot
             }
         }
-        odometry.update(data, data2, current); // Update the odometry pose estimate
+        odometry.update(data, data2); // Update the odometry pose estimate
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Power the motors
     }
 
@@ -681,7 +681,7 @@ public class Drivetrain implements Subsystem {
         telemetry.addData("Backwards", backwards);
         telemetry.update();
          */
-        odometry.update(data, data2, current);
+        odometry.update(data, data2);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
     }
 
@@ -789,7 +789,7 @@ public class Drivetrain implements Subsystem {
         }
         max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
         scaleFactor = Globals.MAX_SPEED / max;
-        odometry.update(data, data2, current);
+        odometry.update(data, data2);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
     }
 

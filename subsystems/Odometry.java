@@ -22,6 +22,7 @@ public class Odometry implements Subsystem {
     public static double lastAngle;
     public double lastXPos = 0;
     public double lastYPos = 0;
+    public double lastXPos2 = 0;
     private static double angle;
     private double x = Globals.START_X;
     private double y = Globals.START_Y;
@@ -32,8 +33,6 @@ public class Odometry implements Subsystem {
     private static Odometry thismetry = null;
     private static double angleOffset = 0;
     private double velocity = 0;
-
-    //private double roboangle = Globals.START_THETA;
 
     public double angleOfMovement = 0;
 
@@ -67,8 +66,8 @@ public class Odometry implements Subsystem {
     }
 
     public double getAngle() {
-        //return roboangle;
-        return Functions.normalize(robot.getAngle() + angleOffset);
+        return Functions.normalize(lastAngle);
+        //return Functions.normalize(robot.getAngle() + angleOffset);
     }
 
     public Point getPoint() {
@@ -86,27 +85,24 @@ public class Odometry implements Subsystem {
     public void update(RevBulkData data1, RevBulkData data2) {
         if(update) {
             updates++;
-            angle = Functions.normalize(robot.getAngle() + angleOffset);
-            handler.pushData("Angle", angle);
-            double dTheta = angle - lastAngle;
-            //roboangle += ((∆encoder #1 - ∆encoder #2) / (2 * ticks per rotation)) * 360 degrees
-            if(dTheta >= 300) {
-                dTheta -= 360;
-            }
-            if(dTheta <= -300) {
-                dTheta += 360;
-            }
-            lastAngle = angle;
             double xDist;
             double yDist;
             if(data1 != null && data2 != null && robot.rb != null && robot.lb != null) {
-                xDist = (-data1.getMotorCurrentPosition(robot.rb) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
+                //xDist = (-data1.getMotorCurrentPosition(robot.rb) - lastXPos) * Globals.OMNI_FEET_PER_TICK;
+                xDist = (((-data1.getMotorCurrentPosition(robot.rb) - lastXPos) + (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * Globals.OMNI_FEET_PER_TICK;
                 yDist = (data2.getMotorCurrentPosition(robot.lb) - lastYPos) * Globals.OMNI_FEET_PER_TICK;
+                //yDist = (((data2.getMotorCurrentPosition(robot.lb) - lastXPos) + (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * Globals.OMNI_FEET_PER_TICK;
             }
             else {
                 return;
             }
-            xDist -= ((Globals.xOffset / 12f) * Math.toRadians(dTheta));
+            //angle += (((data2.getMotorCurrentPosition(robot.lb) - lastXPos) - (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * 360 / Globals.TPR;
+            angle += (((-data1.getMotorCurrentPosition(robot.rb) - lastXPos) - (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * 360 / Globals.TPR;
+            //angle = Functions.normalize(robot.getAngle() + angleOffset);
+            handler.pushData("Angle", angle);
+            double dTheta = Functions.normalize(angle - lastAngle);
+            lastAngle = angle;
+            //xDist -= ((Globals.xOffset / 12f) * Math.toRadians(dTheta));
             yDist -= ((Globals.yOffset / 12f) * Math.toRadians(dTheta));
             double displacement = Math.hypot(xDist, yDist);
             angle += Math.toDegrees(Math.atan2(yDist, xDist)) - (dTheta / 2);
@@ -167,6 +163,7 @@ public class Odometry implements Subsystem {
             if(robot.rb != null && robot.lb != null) {
                 lastXPos = -data1.getMotorCurrentPosition(robot.rb);
                 lastYPos = data2.getMotorCurrentPosition(robot.lb);
+                lastXPos2 = data1.getMotorCurrentPosition(robot.in);
             }
             else {
                 return;
@@ -179,6 +176,7 @@ public class Odometry implements Subsystem {
         }
     }
 
+    @Deprecated
     public void update(RevBulkData data1, RevBulkData data2, double angle) {
         //comment out
         if(update) {
@@ -404,7 +402,7 @@ public class Odometry implements Subsystem {
             //roboangle = 90;
             update(data1, data2);
         }
-        update(data1, data2, myangle);
+        update(data1, data2);
     }
 
     public void reset() {
@@ -448,7 +446,7 @@ public class Odometry implements Subsystem {
                 x = point.getX();
                 y = point.getY();
             }
-
+            Odometry.angle = angle;
             angleOffset = angle - robot.getAngle();
             RevBulkData data1 = robot.bulkRead();
             RevBulkData data2 = robot.bulkReadTwo();
