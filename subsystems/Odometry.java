@@ -31,7 +31,6 @@ public class Odometry implements Subsystem {
     public int updates = 0;
     private boolean update = true;
     private static Odometry thismetry = null;
-    private static double angleOffset = 0;
     private double velocity = 0;
 
     public double angleOfMovement = 0;
@@ -51,7 +50,6 @@ public class Odometry implements Subsystem {
             thismetry = new Odometry(myRobot);
         }
         else {
-            angleOffset = Functions.normalize(lastAngle - Globals.START_THETA);
         }
         thismetry.setState(State.ON);
         return thismetry;
@@ -369,7 +367,6 @@ public class Odometry implements Subsystem {
 
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double myangle, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         if(gamepad1.x) {
-            angleOffset = Functions.normalize(90 - robot.getAngle());
             /*
             double lf = getPoint().distance(-5.25, -5.25, Unit.FEET);
             double rf = getPoint().distance(-0.75, -5.25, Unit.FEET);
@@ -406,7 +403,6 @@ public class Odometry implements Subsystem {
     }
 
     public void reset() {
-        angleOffset = 0;
         robot.resetOmnis();
         lastXPos = 0;
         lastYPos = 0;
@@ -447,7 +443,6 @@ public class Odometry implements Subsystem {
                 y = point.getY();
             }
             Odometry.angle = angle;
-            angleOffset = angle - robot.getAngle();
             RevBulkData data1 = robot.bulkRead();
             RevBulkData data2 = robot.bulkReadTwo();
             lastXPos = -data1.getMotorCurrentPosition(robot.rb);
