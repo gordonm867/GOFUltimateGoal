@@ -49,8 +49,6 @@ public class Odometry implements Subsystem {
             robot.resetOmnis();
             thismetry = new Odometry(myRobot);
         }
-        else {
-        }
         thismetry.setState(State.ON);
         return thismetry;
     }
