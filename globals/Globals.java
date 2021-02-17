@@ -24,7 +24,7 @@ public final class Globals {
 
     public static double xOffset = 6.92968749965;
     public static double yOffset = 1.58984374992;
-    public static double TPR = 0;
+    public static double TPR = 26610;
 
     public static double MIN_B = 0;
     public static double MIN_G = 80;
