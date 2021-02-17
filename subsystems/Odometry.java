@@ -94,6 +94,7 @@ public class Odometry implements Subsystem {
             }
             //angle += (((data2.getMotorCurrentPosition(robot.lb) - lastXPos) - (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * 360 / Globals.TPR;
             angle += (((-data1.getMotorCurrentPosition(robot.rb) - lastXPos) - (data1.getMotorCurrentPosition(robot.in) - lastXPos2)) / 2.0) * 360 / Globals.TPR;
+            angle = Functions.normalize(angle);
             //angle = Functions.normalize(robot.getAngle() + angleOffset);
             handler.pushData("Angle", angle);
             double dTheta = Functions.normalize(angle - lastAngle);
