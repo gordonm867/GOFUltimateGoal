@@ -266,7 +266,7 @@ public class GOFHardware {
      * @return Robot angle
      */
     public double getAngle() {
-        return Functions.normalize(navx.getYaw() + Globals.START_THETA);
+        return Functions.normalize(-navx.getYaw() + Globals.START_THETA);
     }
 
     /**
@@ -401,8 +401,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getHOmniPos(RevBulkData rev) {
-        if (lf != null) {
-            return -rev.getMotorCurrentPosition(lf);
+        if (lb != null) {
+            return -rev.getMotorCurrentPosition(lb);
         }
         return 0;
     }
