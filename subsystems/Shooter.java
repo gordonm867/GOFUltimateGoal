@@ -42,17 +42,19 @@ public class Shooter implements Subsystem {
     public double lastv = 0;
     public double lastv2 = 0;
 
-    public static double shootTime = 750.0/9.0;
+    public static double shootTime = 60.0;
     public static double shootIn = 0.34;
     public static double shootOut = 0.55;
 
-    public static double p = 60;
-    public static double i = 3;
-    public static double d = 40;
+    public static double p = 240;
+    public static double i = 1;
+    public static double d = -24;
     public static double f = 0;
 
-    public static double vel = 16.8;
-    public static double oldvel = 16.8;
+    public static double vel = 16.1;
+    public static double firstshotvel = 16.1;
+    public static double secondshotvel = 16.1;
+    public static double thirdshotvel = 16.1;
 
     public static int thing = 4;
     public static int oldthing = 4;
@@ -114,7 +116,7 @@ public class Shooter implements Subsystem {
                 target = new Point(3, 6);
             }
             //vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
-            vel = oldvel;
+            vel = firstshotvel;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -140,8 +142,8 @@ public class Shooter implements Subsystem {
         }
         if(gamepad2.left_trigger > 0.05 && !lt) {
             readying = true;
-            vel = oldvel;
-            start(robot, vel - 0.15);
+            vel = firstshotvel;
+            start(robot, vel);
         }
         if(gamepad2.left_trigger < 0.05) {
             lt = false;
@@ -186,7 +188,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && (ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.5)) {
+        if(shooting && (/*ready || */(Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) && Math.abs(a) < 0.25)) {
             ready = true;
             shoot(targ, robot);
         }
@@ -200,7 +202,7 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(GOFHardware robot, double velocity, boolean once) {
-        if(Math.abs(velocity) < Math.abs(oldvel)) {
+        if(Math.abs(velocity) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
             ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
             ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
         }
@@ -241,7 +243,7 @@ public class Shooter implements Subsystem {
     }
 
     public void start(GOFHardware robot, double velocity) {
-        if(Math.abs(velocity) < Math.abs(oldvel)) {
+        if(Math.abs(velocity) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
             ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
             ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
         }
@@ -269,14 +271,14 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target target, GOFHardware robot) {
-        if(Math.abs(vel) < Math.abs(oldvel) || target == Target.POWER) {
+        if(Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel)) || target == Target.POWER) {
             ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
             ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
         }
         if(step == 0 && robot.flicker != null) {
             attempts++;
             if(attempts == thing) {
-                if(Math.abs(vel) < Math.abs(oldvel)) {
+                if(Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
                     uh = false;
                     powershots++;
                 }
@@ -287,6 +289,18 @@ public class Shooter implements Subsystem {
                 ready = false;
                 return;
             }
+            if(attempts == 1) {
+                vel = firstshotvel;
+                handler.pushData("stv", vel);
+            }
+            else if(attempts == 2) {
+                vel = secondshotvel;
+                handler.pushData("stv", vel);
+            }
+            else {
+                vel = thirdshotvel;
+                handler.pushData("stv", vel);
+            }
             robot.flicker.setPosition(shootIn);
             time = System.currentTimeMillis();
             step++;
@@ -296,7 +310,7 @@ public class Shooter implements Subsystem {
             time = System.currentTimeMillis();
             step++;
         }
-        if(step == 2 && System.currentTimeMillis() - time > shootTime * 2) {
+        if(step == 2 && System.currentTimeMillis() - time > shootTime * 1.5) {
             step = 0;
             shoot(target, robot);
         }

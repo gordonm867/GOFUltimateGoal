@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -67,8 +65,6 @@ import org.openftc.revextensions2.RevBulkData;
 
 public class GOFHardware {
     /* Declare OpMode members */
-    public AHRS navx;
-
     public BNO055IMU gyro;
 
     public DcMotor rf;
@@ -123,13 +119,6 @@ public class GOFHardware {
             ex3 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 173");
         } catch (Exception p_exception) {
             ex3 = null;
-        }
-
-        try {
-            navx = AHRS.getInstance(hwMap.get(NavxMicroNavigationSensor.class, "n0"), AHRS.DeviceDataType.kProcessedData);
-        }
-        catch(Exception p_exception) {
-            navx = null;
         }
 
         try { // Gyro
@@ -266,7 +255,7 @@ public class GOFHardware {
      * @return Robot angle
      */
     public double getAngle() {
-        return Functions.normalize(-navx.getYaw() + Globals.START_THETA);
+        return Functions.normalize(-gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle + Globals.START_THETA);
     }
 
     /**

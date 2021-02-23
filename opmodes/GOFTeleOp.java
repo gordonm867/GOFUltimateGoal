@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
-import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Handler;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Intake;
@@ -45,6 +44,8 @@ public class GOFTeleOp extends MyOpMode {
     public double sum = 0;
     private double lastangle = 0;
     private double lasttime = 0;
+
+    private double maxsofar = 0;
 
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -123,6 +124,20 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
+        if(gamepad2.right_trigger > 0.5) {
+            maxsofar = 0;
+        }
+        double hi = Math.abs(((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES)) * 99.5 * 4 * Math.PI * 0.0254 / 360.0;
+        telemetry.addData("Shooter velocity", hi);
+        if(hi > maxsofar) {
+            maxsofar = hi;
+        }
+        if(handler.contains("stv")) {
+            telemetry.addData("Shooter target velocity", (double)handler.getData("stv"));
+        }
+        telemetry.addData("Max vel", maxsofar);
+        telemetry.update();
+        /*
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("wheel", robot.lb.getPower());
@@ -131,6 +146,7 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("Omega", (double)handler.getData("Omega"));
         }
         telemetry.update();
+         */
         lastangle = angle;
     }
 
