@@ -255,7 +255,7 @@ public class GOFHardware {
      * @return Robot angle
      */
     public double getAngle() {
-        return Functions.normalize(-gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle + Globals.START_THETA);
+        return Functions.normalize(gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle + Globals.START_THETA);
     }
 
     /**

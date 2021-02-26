@@ -101,7 +101,7 @@ public class Wobble implements Subsystem {
             target = -1100;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -750;
+            target = -979;
         }
         else if(targetstate == WheelState.IN) {
             target = -200;

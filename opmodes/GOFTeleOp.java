@@ -136,6 +136,7 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("Shooter target velocity", (double)handler.getData("stv"));
         }
         telemetry.addData("Max vel", maxsofar);
+        telemetry.addData("Feed forward", ((DcMotorEx)robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
         telemetry.update();
         /*
         telemetry.addData("Point", odometry.getPoint());
