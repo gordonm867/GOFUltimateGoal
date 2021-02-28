@@ -127,16 +127,14 @@ public class GOFTeleOp extends MyOpMode {
         if(gamepad2.right_trigger > 0.5) {
             maxsofar = 0;
         }
+        telemetry.addData("Flicker", robot.flicker.getPosition() < 0.5 ? "Shooting" : "Rest");
         double hi = Math.abs(((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES)) * 99.5 * 4 * Math.PI * 0.0254 / 360.0;
         telemetry.addData("Shooter velocity", hi);
-        if(hi > maxsofar) {
-            maxsofar = hi;
-        }
         if(handler.contains("stv")) {
             telemetry.addData("Shooter target velocity", (double)handler.getData("stv"));
         }
         telemetry.addData("Max vel", maxsofar);
-        telemetry.addData("Feed forward", ((DcMotorEx)robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
+        telemetry.addData("Encoders", robot.shoot1.getCurrentPosition() + ", " + robot.shoot2.getCurrentPosition());
         telemetry.update();
         /*
         telemetry.addData("Point", odometry.getPoint());

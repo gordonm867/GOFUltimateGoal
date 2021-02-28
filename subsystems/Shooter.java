@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
@@ -17,15 +15,25 @@ public class Shooter implements Subsystem {
     private State state;
 
     boolean apressed = false;
+    boolean rightpressed = false;
     boolean rt = false;
     boolean lt = false;
     boolean g2 = true;
-
+    boolean uh = false;
+    boolean xpressed = false;
+    boolean dpadup = false;
+    boolean dpaddown = false;
+    boolean b = false;
+    boolean bpressed = true;
     boolean ready = false;
+    boolean b1pressed = false;
 
     public boolean shot = false;
     public boolean shooting = false;
     public boolean readying = false;
+
+    public int powershots = 0;
+
     Target targ;
 
     double time = 0;
@@ -48,26 +56,36 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.36;
     public static double shootOut = 0.55;
 
-    public static double p = 170;
-    public static double i = 2;
-    public static double d = 10;
-    public static double f = 0;
+    public static double p = 70;
+    public static double i = 1.5;
+    public static double d = 0;
+    public static double f = 13;
+    public static double IP = 75;
 
-    public static double vel = 16.08;
-    public static double firstshotvel = 16.08;
-    public static double secondshotvel = 16.04;
-    public static double thirdshotvel = 15.9;
+    public static double PP = 30;
+    public static double PI = 2;
+    public static double PD = 0;
+    public static double PF = 0;
+
+    public static double vel = 16.14;
+    public static double firstshotvel = 16.14;
+    public static double secondshotvel = 16.14;
+    public static double thirdshotvel = 16.14;
+
+    public static double oldfirstshotvel = 16.14;
+    public static double oldsecondshotvel = 16.14;
+    public static double oldthirdshotvel = 16.14;
 
     public static int thing = 4;
     public static int oldthing = 4;
 
-    public boolean uh = false;
-    public boolean xpressed = false;
-    public int powershots = 0;
+    public static double powershotvel = 14.5;
 
     public double cycles = 0;
 
     public int shots = 0;
+
+    public static boolean waitingForDrive = false;
 
     public Shooter(State state) {
         this.state = state;
@@ -89,11 +107,10 @@ public class Shooter implements Subsystem {
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         handler.pushData("Power Shots", powershots);
-        if(!uh && (handler.contains("Power State") && (handler.getData("Power State") == Drivetrain.Powerstate.FIRST || handler.getData("Power State") == Drivetrain.Powerstate.SECOND || handler.getData("Power State") == Drivetrain.Powerstate.THIRD) || gamepad2.y)) {
+        if(!uh && (handler.contains("Power State") && (handler.getData("Power State") == Drivetrain.Powerstate.FIRST || handler.getData("Power State") == Drivetrain.Powerstate.SECOND || handler.getData("Power State") == Drivetrain.Powerstate.THIRD) || (gamepad2.y || Drivetrain.waitingForShoot))) {
             uh = true;
             thing = 2;
-            rt = true;
-            vel = 14.25;
+            vel = powershotvel;
             attempts = 0;
             shooting = true;
             ready = false;
@@ -104,7 +121,28 @@ public class Shooter implements Subsystem {
         if(uh && !gamepad1.y) {
             uh = false;
         }
-        if(gamepad2.right_trigger > 0.05 && !rt) {
+        if(gamepad2.b && !bpressed) {
+            bpressed = true;
+            b = !b;
+        }
+        if(!gamepad2.b) {
+            bpressed = false;
+        }
+        if(gamepad1.b && !b1pressed) {
+            b1pressed = true;
+            readying = true;
+            ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+            ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+            start(robot, 14.8);
+        }
+        if(!gamepad1.b) {
+            b1pressed = false;
+        }
+        if(gamepad2.dpad_right && !rightpressed) {
+            rightpressed = true;
+            firstshotvel = 16.0;
+            secondshotvel = 16.0;
+            thirdshotvel = 15.8;
             shots++;
             if(shots % 3 == 0) {
                 //odometry.shootreset();
@@ -127,14 +165,45 @@ public class Shooter implements Subsystem {
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
         }
+        if(!gamepad2.dpad_right) {
+            rightpressed = false;
+        }
+        if(gamepad2.right_trigger > 0.05 && !rt) {
+            shots++;
+            if(shots % 3 == 0) {
+                //odometry.shootreset();
+            }
+            thing = oldthing;
+            rt = true;
+            /*
+            Point target;
+            if(handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                target = new Point(-3, 6);
+            }
+            else {
+                target = new Point(3, 6);
+            }
+            //vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
+             */
+            vel = firstshotvel;
+            attempts = 0;
+            shooting = true;
+            ready = false;
+            handler.pushData("stv", vel);
+            t = (double)handler.getData("stv");
+            targ = Target.GOAL;
+        }
         if(gamepad2.x && !xpressed) {
+            thing = 2;
             xpressed = true;
             if(readying) {
                 readying = false;
             }
             else {
                 readying = true;
-                start(robot, 14.25);
+                ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+                ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+                start(robot, 14.5);
             }
         }
         if(!gamepad2.x) {
@@ -145,7 +214,7 @@ public class Shooter implements Subsystem {
         }
         if(gamepad2.left_trigger > 0.05 && !lt) {
             readying = true;
-            vel = 13.7;
+            vel = firstshotvel;
             start(robot, vel);
         }
         if(gamepad2.left_trigger < 0.05) {
@@ -157,11 +226,28 @@ public class Shooter implements Subsystem {
             readying = false;
             robot.flicker.setPosition(shootOut);
         }
+        if(gamepad2.dpad_up && !dpadup) {
+            dpadup = true;
+            firstshotvel += 0.08;
+            secondshotvel += 0.08;
+            //thirdshotvel += 0.08;
+        }
+        if(!gamepad2.dpad_up) {
+            dpadup = false;
+        }
+        if(gamepad2.dpad_down && !dpaddown) {
+            dpaddown = true;
+            firstshotvel -= 0.08;
+            secondshotvel -= 0.08;
+            //thirdshotvel -= 0.08;
+        }
+        if(!gamepad2.dpad_down) {
+            dpaddown = false;
+        }
         if(!handler.contains("stv")) {
             handler.pushData("stv", 0.0);
         }
         if(robot.shoot1 != null) {
-            PIDFCoefficients pid = ((DcMotorEx)robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
             t = (double)handler.getData("stv");
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
             v2 = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
@@ -192,24 +278,51 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(shooting && (ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.5)) {
+        if(robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.5)) {
+            if(handler.contains("stv") && Math.abs((double)handler.getData("stv")) > Math.min(Math.min(Math.abs(firstshotvel), Math.abs(secondshotvel)), Math.abs(thirdshotvel)) - 0.7) {
+                ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, 0, Shooter.d, Shooter.f);
+                ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, 0, Shooter.d, Shooter.f);
+            }
+            else {
+                ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+                ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+            }
             ready = true;
             shoot(targ, robot);
         }
-        else if(shooting) {
+        else if(shooting && robot.shoot1 != null && robot.shoot2 != null) {
             handler.pushData("stv", vel);
+            if(handler.contains("stv") && Math.abs((double)handler.getData("stv")) > Math.min(Math.min(Math.abs(firstshotvel), Math.abs(secondshotvel)), Math.abs(thirdshotvel)) - 0.7) {
+                ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+            }
+            else {
+                ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+                ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+            }
+        }
+        else if(robot.shoot1 != null && robot.shoot2 != null) {
+            if(handler.contains("stv") && Math.abs((double)handler.getData("stv")) > Math.min(Math.min(Math.abs(firstshotvel), Math.abs(secondshotvel)), Math.abs(thirdshotvel)) - 0.7) {
+                ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+            }
+            else {
+                ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+                ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(PP, PI, PD, PF);
+            }
         }
         if(!shooting && !readying) {
-            handler.pushData("stv", 0.0);
+            if(targ == Target.POWER) {
+                handler.pushData("stv", powershotvel);
+            }
+            else {
+                handler.pushData("stv", b ? 0 : firstshotvel);
+            }
         }
         handler.pushData("gamepad2", g2);
     }
 
     public void shoot(GOFHardware robot, double velocity, boolean once) {
-        if(Math.abs(velocity) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
-            ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
-            ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
-        }
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null) {
             t = (double)handler.getData("stv");
@@ -246,10 +359,6 @@ public class Shooter implements Subsystem {
     }
 
     public void start(GOFHardware robot, double velocity) {
-        if(Math.abs(velocity) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
-            ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
-            ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
-        }
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null) {
             ((DcMotorEx)robot.shoot1).setVelocity((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5), AngleUnit.DEGREES);
@@ -274,25 +383,29 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target target, GOFHardware robot) {
-        if(Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel)) || target == Target.POWER) {
-            ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(120, 5, 10, 0);
-            ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(120, 5, 10, 0);
+        if(targ == Target.POWER) {
+            shootonce(target, robot);
+            return;
         }
         if(step == 0 && robot.flicker != null) {
             attempts++;
             if (attempts == thing) {
-                if (Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel))) {
+                if(Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel)) - 0.7) {
                     uh = false;
                     powershots++;
+                }
+                else {
+                    firstshotvel = oldfirstshotvel;
+                    secondshotvel = oldsecondshotvel;
+                    thirdshotvel = oldthirdshotvel;
                 }
                 shooting = false;
                 if (target != Target.POWER) {
                     readying = false;
                 }
                 ready = false;
-                PIDFCoefficients pid = ((DcMotorEx) robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-                ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(pid.p, pid.i, pid.d, 0);
-                ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(pid.p, pid.i, pid.d, 0);
+                ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, 0);
+                ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, 0);
                 return;
             }
             if (targ == Target.GOAL) {
@@ -307,7 +420,6 @@ public class Shooter implements Subsystem {
                     handler.pushData("stv", vel);
                 }
             }
-
             //PIDFCoefficients pid = ((DcMotorEx)robot.shoot1).getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
             //((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(pid.p, pid.i, pid.d, 100);
             //((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(pid.p, pid.i, pid.d, 100);
@@ -341,6 +453,9 @@ public class Shooter implements Subsystem {
         if(step == 2 && System.currentTimeMillis() - time > shootTime) {
             step = 0;
             shot = true;
+            shooting = false;
+            waitingForDrive = true;
+            Drivetrain.waitingForShoot = false;
         }
     }
 }

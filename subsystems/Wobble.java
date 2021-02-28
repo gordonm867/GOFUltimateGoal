@@ -14,7 +14,7 @@ public class Wobble implements Subsystem {
     public WheelState wheelstate = WheelState.UP;
 
     public static double closedpose = 0.35;
-    public static double openpose = 0.75;
+    public static double openpose = 0.80;
 
     public int target = 0;
 
@@ -98,10 +98,10 @@ public class Wobble implements Subsystem {
             }
         }
         if(targetstate == WheelState.PICKUP) {
-            target = -1100;
+            target = -1080;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -979;
+            target = -750;
         }
         else if(targetstate == WheelState.IN) {
             target = -200;
