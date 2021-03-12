@@ -80,7 +80,24 @@ public class Wobble implements Subsystem {
         else {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(1.0);
+            try {
+                if (dataOne.getMotorCurrentPosition(robot.wobblewheel) > target) {
+                    robot.wobblewheel.setPower(1);
+                }
+                else {
+                    robot.wobblewheel.setPower(0.75);
+                }
+            }
+            catch(Exception e) {
+                try {
+                    if (dataTwo.getMotorCurrentPosition(robot.wobblewheel) > target) {
+                        robot.wobblewheel.setPower(1);
+                    } else {
+                        robot.wobblewheel.setPower(0.75);
+                    }
+                }
+                catch(Exception ex) {}
+            }
         }
 
     }
@@ -101,7 +118,7 @@ public class Wobble implements Subsystem {
             target = -1100;
         }
         else if(targetstate == WheelState.CARRY) {
-            target = -750;
+            target = -820;
         }
         else if(targetstate == WheelState.IN) {
             target = -200;

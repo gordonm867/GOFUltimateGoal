@@ -31,7 +31,7 @@ public class Tuning extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
-    public static double targX = Globals.START_X;
+    public static double targX = -Math.abs(Globals.START_X);
     public static double targY = Globals.START_Y;
     public static double targA = Globals.START_THETA;
 

@@ -66,6 +66,7 @@ import org.openftc.revextensions2.RevBulkData;
 public class GOFHardware {
     /* Declare OpMode members */
     public BNO055IMU gyro;
+    public BNO055IMU gyro1;
 
     public DcMotor rf;
     public DcMotor rb;
@@ -111,12 +112,12 @@ public class GOFHardware {
      */
     public void init(HardwareMap hwMap, Telemetry telemetry) {
         try {
-            ex2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+            ex2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 3");
         } catch (Exception p_exception) {
             ex2 = null;
         }
         try {
-            ex3 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 173");
+            ex3 = hwMap.get(ExpansionHubEx.class, "Control Hub");
         } catch (Exception p_exception) {
             ex3 = null;
         }
@@ -137,6 +138,24 @@ public class GOFHardware {
             telemetry.addData("Warning", "Gyro no work :(");
             telemetry.update();
             gyro = null;
+        }
+
+        try { // Gyro
+            gyro1 = hwMap.get(BNO055IMU.class, "g1");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+            if (ex2 != null) {
+                gyro1 = LynxOptimizedI2cFactory.createLynxEmbeddedImu(ex2.getStandardModule(), 0);
+            }
+            gyro1.initialize(parameters);
+        } catch (Exception p_exception) {
+            telemetry.addData("Warning", "Gyro no work :(");
+            telemetry.update();
+            gyro1 = null;
         }
 
         try { // Left rear wheel
@@ -369,8 +388,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getVOmniPos(RevBulkData rev) {
-        if (rb != null) {
-            return -rev.getMotorCurrentPosition(rb);
+        if (lf != null) {
+            return -rev.getMotorCurrentPosition(lf);
         }
         return 0;
     }
