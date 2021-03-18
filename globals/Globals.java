@@ -33,7 +33,7 @@ public final class Globals {
     public static double MAX_G = 255;
     public static double MAX_R = 255;
 
-    public static double RING_SIZE = 40;
+    public static double RING_SIZE = 90;
 
     public static double BLUR_CONSTANT = 50;
 

@@ -23,6 +23,8 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.PathGenerator;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.revextensions2.RevBulkData;
 
 import java.io.File;
@@ -47,11 +49,16 @@ public class RED extends MyOpMode {
 
     Point subtarget;
 
-    double radius = 0.375;
+    double radius = 0.368;
 
     private Drivetrain drive;
     private GOFHardware robot = GOFHardware.getInstance();
     private Odometry odometry;
+
+    private File file;
+    private File file2;
+    private PrintWriter something;
+    private PrintWriter somethingelse;
 
     public int rings = 0;
 
@@ -86,7 +93,7 @@ public class RED extends MyOpMode {
 
     public void initOp() {
         Globals.START_X = Math.abs(Globals.START_X);
-        Globals.MAX_SPEED = 0.9;
+        Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.3;
         PathGenerator generator0 = new PathGenerator(0, false);
         PathGenerator generator1 = new PathGenerator(1, false);
@@ -113,6 +120,13 @@ public class RED extends MyOpMode {
         odometry.reset();
         robot.enabled = true;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+        try {
+            file.createNewFile();
+            something = new PrintWriter(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         robot.cameraInit();
 
@@ -177,7 +191,7 @@ public class RED extends MyOpMode {
     }
 
     public void startOp() {
-        shooter.start(robot, 14.8);
+        shooter.start(robot, 14.72);
         try {
             findTarget();
         }
@@ -191,15 +205,24 @@ public class RED extends MyOpMode {
 
     public void loopOp() {
         telemetry.addData("Point", odometry.getPoint());
+        telemetry.addData("wheel", robot.rb.getPower());
+        telemetry.addData("disp", odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET));
+        telemetry.addData("absvel", Math.abs(odometry.getVelocity()));
         telemetry.update();
         RevBulkData data = robot.bulkRead();
-        RevBulkData data2 = robot.bulkReadTwo();
         double angle = odometry.getAngle();
+        something.print(angle);
+        something.flush();
         double displacement = odometry.getPoint().distance(subtarget, Unit.FEET);
         if((odometry.getY() < 0 && index == 0)) {
-            Globals.MIN_SPEED = 0.3;
-            if(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 2) {
-                Globals.MAX_SPEED = 0.35;
+            Globals.MIN_SPEED = 0.2;
+            if(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 0.5) {
+                Globals.MAX_SPEED = 0.23;
+                if(Math.abs(odometry.getVelocity()) > 1.0 / 1000.0) {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    odometry.update(data, angle);
+                    return;
+                }
             }
         }
         else if(index == 2 && rings != 1) {
@@ -211,7 +234,7 @@ public class RED extends MyOpMode {
                 if(Globals.MAX_SPEED > 0.4) {
                     Globals.MAX_SPEED -= 0.05;
                 }
-                drive.update(robot, new Point(path.get(index)[path.get(index).length - 1].getX(), odometry.getY()), odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getAngle(), robot.bulkRead(), robot.bulkReadTwo());
+                drive.update(robot, new Point(path.get(index)[path.get(index).length - 1].getX(), odometry.getY()), odometry, path.get(index)[path.get(index).length - 1].getAngle(), odometry.getAngle(), robot.bulkRead());
                 return;
             }
             Globals.MAX_SPEED = Math.min(Math.max(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) / 2.5, 0.5), 1.0);
@@ -226,10 +249,10 @@ public class RED extends MyOpMode {
         else {
             Globals.MAX_SPEED = 1.0;
         }
-        if(rings == 1 && index >= 2 && index < 4) {
+        if((rings == 1 && index >= 2 && index < 4) || (rings == 4 && index == 3)) {
             robot.setIntakePower(-1);
         }
-        else {
+        else if(rings != 0){
             robot.setIntakePower(0);
         }
         if(rings == 4 && index == 2 && odometry.getY() < 1) {
@@ -264,7 +287,7 @@ public class RED extends MyOpMode {
                         }
                     }
                 }
-                drive.update(robot, subtarget, odometry, index == 0 ? Double.NaN : path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data, data2);
+                drive.update(robot, subtarget, odometry, index == 0 ? Double.NaN : path.get(index)[path.get(index).length - 1].getAngle(), odometry.getVelocity(), displacement - lastDisplacement, angle, data);
                 wobble.update(robot, state);
             }
             else if(Math.abs(Functions.normalize(path.get(index)[(path.get(index).length - 1)].getAngle() - angle)) > 2 && index != 0 && !(rings == 1 && index == 2 && odometry.getY() < path.get(index)[path.get(index).length - 1].getY())) {
@@ -287,7 +310,7 @@ public class RED extends MyOpMode {
                         }
                     }
                 }
-                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data, data2);
+                drive.update(robot, subtarget, odometry, path.get(index)[path.get(index).length - 1].getAngle(), angle, data);
                 wobble.update(robot, state);
             }
             else {
@@ -297,21 +320,21 @@ public class RED extends MyOpMode {
                     while(Math.abs(angle - 90) > 1) {
                         Globals.MAX_SPEED = 1.0;
                         angle = odometry.getAngle();
-                        drive.update(robot, path.get(index)[path.get(index).length - 1], odometry, 90, angle, robot.bulkRead(), robot.bulkReadTwo());
+                        drive.update(robot, path.get(index)[path.get(index).length - 1], odometry, 90, angle, robot.bulkRead());
                     }
                 }
                 while(opModeIsActive() && System.currentTimeMillis() - timer <= 500) {
                     telemetry.addData("Point", odometry.getPoint());
                     telemetry.update();
                     robot.setDrivePower(0, 0, 0, 0);
-                    odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                    odometry.update(robot.bulkRead(), odometry.getAngle());
                     if(index == 0) {
                         /*
                         Globals.MAX_SPEED = 0.35;
                         double shoottimer = System.currentTimeMillis();
                         shooter.shooting = true;
                         while (opModeIsActive() && System.currentTimeMillis() - shoottimer <= 7000 && shooter.shooting) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             if(shooter.attempts >= 2) {
                                 shooter.shoot(robot, 21, false);
                             }
@@ -328,6 +351,7 @@ public class RED extends MyOpMode {
                         break;
                          */
                         Globals.MIN_SPEED = 0.3;
+                        Globals.MAX_SPEED = 0.4;
                         double lastangle;
                         double lasttime = System.currentTimeMillis();
                         double omega = Double.MAX_VALUE;
@@ -338,33 +362,22 @@ public class RED extends MyOpMode {
                             omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000.0);
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            data2 = robot.bulkReadTwo();
                             displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
-                            if(odometry.getY() < 0 && index == 0) {
-                                Globals.MIN_SPEED = 0.3;
-                                if(odometry.getPoint().distance(path.get(0)[path.get(index).length - 1], Unit.FEET) < 2) {
-                                    Globals.MAX_SPEED = 0.45;
-                                }
-                            }
-                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 87, angle, data, data2);
+                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 87, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             angle = odometry.getAngle();
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), angle);
-                            shooter.shoot(robot, 14.8, true);
-                        }
-                        double waittime = System.currentTimeMillis();
-                        while(opModeIsActive() && System.currentTimeMillis() - waittime <= 50) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), angle);
+                            shooter.shoot(robot, 14.72, true);
                         }
                         displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
                         angle = odometry.getAngle();
-                        odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         lasttime = System.currentTimeMillis();
                         omega = Double.MAX_VALUE;
                         cycles = 0;
@@ -373,7 +386,6 @@ public class RED extends MyOpMode {
                             angle = odometry.getAngle();
                             omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000.0);
                             data = robot.bulkRead();
-                            data2 = robot.bulkReadTwo();
                             displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
                             if((odometry.getY() < 0 && index == 0) || index > 0) {
                                 Globals.MIN_SPEED = 0.3;
@@ -384,21 +396,17 @@ public class RED extends MyOpMode {
                                     Globals.MAX_SPEED = 0.45;
                                 }
                             }
-                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 93, angle, data, data2);
+                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 93, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             angle = odometry.getAngle();
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), angle);
-                            shooter.shoot(robot, 14.6, true);
-                        }
-                        waittime = System.currentTimeMillis();
-                        while(opModeIsActive() && System.currentTimeMillis() - waittime <= 50) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), angle);
+                            shooter.shoot(robot, 14.52, true);
                         }
                         angle = odometry.getAngle();
                         displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
@@ -410,7 +418,6 @@ public class RED extends MyOpMode {
                             angle = odometry.getAngle();
                             omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000.0);
                             data = robot.bulkRead();
-                            data2 = robot.bulkReadTwo();
                             displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
                             if((odometry.getY() < 0 && index == 0) || index > 0) {
                                 Globals.MIN_SPEED = 0.3;
@@ -421,17 +428,17 @@ public class RED extends MyOpMode {
                                     Globals.MAX_SPEED = 0.45;
                                 }
                             }
-                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 99, angle, data, data2);
+                            drive.update(robot, new Point(1.35 - (5.0/12), 0), odometry, 99, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             angle = odometry.getAngle();
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), angle);
-                            shooter.shoot(robot, 14.6, true);
+                            odometry.update(robot.bulkRead(), angle);
+                            shooter.shoot(robot, 14.52, true);
                         }
                         robot.shoot1.setPower(0);
                         robot.shoot2.setPower(0);
@@ -440,25 +447,25 @@ public class RED extends MyOpMode {
                         wobble.arrived = false;
                         Globals.MAX_WOBBLE = 1.0;
                         while(!wobble.arrived) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.PICKUP);
                             state = Wobble.WheelState.PICKUP;
                         }
                         Globals.MAX_WOBBLE = 1.0;
                         double wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 500) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(Wobble.openpose);
                         }
                         wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 200) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.CARRY);
                             state = Wobble.WheelState.CARRY;
                         }
@@ -467,7 +474,7 @@ public class RED extends MyOpMode {
                     if((index == 2 && rings != 1) || (index == 3 && rings == 1)) {
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.PICKUP);
                             state = Wobble.WheelState.PICKUP;
                         }
@@ -479,8 +486,7 @@ public class RED extends MyOpMode {
                             while (displacement > 0.08 || Math.abs(angle - 90) > 1) {
                                 angle = odometry.getAngle();
                                 data = robot.bulkRead();
-                                data2 = robot.bulkReadTwo();
-                                drive.update(robot, target, odometry, 90, angle, data, data2);
+                                drive.update(robot, target, odometry, 90, angle, data);
                                 wobble.update(robot, state);
                                 displacement = odometry.getPoint().distance(target, Unit.FEET);
                             }
@@ -488,52 +494,115 @@ public class RED extends MyOpMode {
                         }
                         double w2time = System.currentTimeMillis();
                         while(System.currentTimeMillis() - w2time <= 250) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(Wobble.closedpose);
                         }
                         double wobbletime = System.currentTimeMillis();
                         while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 600) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         wobble.update(robot, Wobble.WheelState.CARRY);
                         state = Wobble.WheelState.CARRY;
                         break;
                     }
-                    if(index == 3 && rings != 1 || index == 5 && rings == 1) {
+                    if(index == 3 && rings == 0 || index == 4 && rings == 4 || index == 5 && rings == 1) {
                         wobble.arrived = false;
                         Globals.MAX_WOBBLE = 1.0;
                         while(!wobble.arrived) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.PICKUP);
                             state = Wobble.WheelState.PICKUP;
                         }
                         Globals.MAX_WOBBLE = 1.0;
                         double wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 500) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         if(robot.wobble != null) {
                             robot.wobble.setPosition(Wobble.openpose);
                         }
                         wtime = System.currentTimeMillis();
                         while(System.currentTimeMillis() - wtime <= 200) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                         }
                         wobble.arrived = false;
                         while(!wobble.arrived) {
-                            odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                            odometry.update(robot.bulkRead(), odometry.getAngle());
                             wobble.update(robot, Wobble.WheelState.CARRY);
                             state = Wobble.WheelState.CARRY;
                         }
+                        if(rings == 0) {
+                            double myangle = odometry.getAngle();
+                            while(Math.abs(myangle - 135) > 1) {
+                                myangle = odometry.getAngle();
+                                drive.update(robot, odometry.getPoint(), odometry, 135, myangle, robot.bulkRead());
+                            }
+                            robot.setDrivePower(0, 0, 0, 0);
+                            wtime = System.currentTimeMillis();
+                            while(System.currentTimeMillis() - wtime <= 10000) {
+                                odometry.update(robot.bulkRead(), odometry.getAngle());
+                            }
+                            double size = robot.pipeline.rects.get(0).height();
+                            Rect rect = Imgproc.boundingRect(robot.pipeline.rects.get(0));
+                            double ang = Math.toDegrees(Math.atan2(rect.x, rect.y));
+                            double dist = ((-0.5281578304 * size) + 82.41320547) / 12.0;
+                            ArrayList<Point> points = Functions.infiniteLineCircleIntersection(new Circle(new Point(0, 0), dist), new Line(new Point(0, 0), new Point(1, Math.tan(Math.toRadians(ang)))));
+                            Point estimate = new Point(Double.NaN, Double.NaN);
+                            for(Point p : points) {
+                                if(p.getY() > 0) {
+                                    estimate = p;
+                                }
+                            }
+                            if(!Double.isNaN(estimate.getX())) {
+                                myangle = odometry.getAngle();
+                                estimate = new Point(estimate.getX(), estimate.getY());
+                                displacement = odometry.getPoint().distance(estimate, Unit.FEET);
+                                while (displacement > 0.1) {
+                                    telemetry.addData("Point", odometry.getPoint());
+                                    telemetry.addData("Target", estimate);
+                                    telemetry.update();
+                                    robot.setIntakePower(-1.0);
+                                    drive.update(robot, estimate, odometry, 90, odometry.getAngle(), robot.bulkRead());
+                                    displacement = odometry.getPoint().distance(estimate, Unit.FEET);
+                                }
+                            }
+                            robot.setDrivePower(0, 0, 0, 0);
+                            robot.setIntakePower(0);
+                        }
                         break;
+                    }
+                    if(index == 5 && rings == 4) {
+                        robot.setIntakePower(-1.0);
+                        ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        double shoottimer = System.currentTimeMillis();
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.8, true);
+                            drive.update(robot, new Point(odometry.getX(), odometry.getY() + 0.25), odometry, 90, odometry.getAngle(), robot.bulkRead());
+                        }
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.8, true);
+                            drive.update(robot, new Point(odometry.getX(), odometry.getY() + 0.25), odometry, 90, odometry.getAngle(), robot.bulkRead());
+                        }
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.8, true);
+                            drive.update(robot, new Point(odometry.getX(), odometry.getY() + 0.25), odometry, 90, odometry.getAngle(), robot.bulkRead());
+                        }
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.8, true);
+                            drive.update(robot, new Point(odometry.getX(), odometry.getY() + 0.25), odometry, 90, odometry.getAngle(), robot.bulkRead());
+                        }
                     }
                     if(rings == 1 && index == 4) {
                         while(Math.abs(angle - 91) > 1) {
                             angle = odometry.getAngle();
                             data = robot.bulkRead();
-                            data2 = robot.bulkReadTwo();
                             if((odometry.getY() < 0 && index == 0) || index > 0) {
                                 Globals.MIN_SPEED = 0.3;
                                 if(rings == 1 && index == 3) {
@@ -553,11 +622,11 @@ public class RED extends MyOpMode {
                                     }
                                 }
                             }
-                            drive.update(robot, odometry.getPoint(), odometry, 87, angle, data, data2);
+                            drive.update(robot, odometry.getPoint(), odometry, 87, angle, data);
                             wobble.update(robot, state);
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        odometry.update(robot.bulkRead(), robot.bulkReadTwo(), odometry.getAngle());
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
                         double shoottimer = System.currentTimeMillis();
                         shooter.shot = false;
                         ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
@@ -568,6 +637,59 @@ public class RED extends MyOpMode {
                         shooter.shot = false;
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             shooter.shoot(robot, 16.8, true);
+                        }
+                        robot.shoot1.setPower(0);
+                        robot.shoot2.setPower(0);
+                        break;
+                    }
+                    if(rings == 0 && index == 3) {
+                        ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        shooter.start(robot, 16.42);
+                        break;
+                    }
+                    if(rings == 0 && index == 4) {
+                        while(Math.abs(angle - 68) > 1) {
+                            angle = odometry.getAngle();
+                            data = robot.bulkRead();
+                            if((odometry.getY() < 0 && index == 0) || index > 0) {
+                                Globals.MIN_SPEED = 0.3;
+                                if(rings == 1 && index == 3) {
+                                    Globals.MAX_SPEED = 1.0;
+                                }
+                                if((index == 0 && odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 2 && odometry.getY() < 0) || (index > 0 && odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 0.5 && Math.abs(odometry.getAngle() - path.get(index)[path.get(index).length - 1].getAngle()) < 1)) {
+                                    if (((rings == 0 && (index == 1 || index == 3)) || (rings == 1 && (index == 1 || index == 3 || index == 5)))) {
+                                        if(rings == 1 && index == 3) {
+                                            Globals.MAX_SPEED = 0.35;
+                                        }
+                                        else {
+                                            Globals.MAX_SPEED = 0.45;
+                                        }
+                                    }
+                                    else {
+                                        Globals.MAX_SPEED = 0.35;
+                                    }
+                                }
+                            }
+                            drive.update(robot, odometry.getPoint(), odometry, 87, angle, data);
+                            wobble.update(robot, state);
+                        }
+                        robot.setDrivePower(0, 0, 0, 0);
+                        odometry.update(robot.bulkRead(), odometry.getAngle());
+                        double shoottimer = System.currentTimeMillis();
+                        shooter.shot = false;
+                        ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.IP, Shooter.i, 0, 0);
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.42, true);
+                        }
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.42, true);
+                        }
+                        shooter.shot = false;
+                        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
+                            shooter.shoot(robot, 16.42, true);
                         }
                         robot.shoot1.setPower(0);
                         robot.shoot2.setPower(0);
@@ -597,7 +719,6 @@ public class RED extends MyOpMode {
                     while(opModeIsActive()) {
                         angle = odometry.getAngle();
                         data = robot.bulkRead();
-                        data2 = robot.bulkReadTwo();
                         if((odometry.getY() < 0 && index == 0) || index > 0) {
                             Globals.MIN_SPEED = 0.3;
                             if(rings == 1 && index == 3) {
@@ -617,9 +738,9 @@ public class RED extends MyOpMode {
                                 }
                             }
                         }
-                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data, data2);
+                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
                         wobble.update(robot, state);
-                        odometry.update(data, data2, angle);
+                        odometry.update(data, angle);
                     }
                 }
                 try {
@@ -667,7 +788,7 @@ public class RED extends MyOpMode {
                     }
                 }
             }
-            drive.update(robot, synthetic, odometry, index == 0 ? Double.NaN : turnto, angle, data, data2);
+            drive.update(robot, synthetic, odometry, index == 0 ? Double.NaN : turnto, angle, data);
             wobble.update(robot, state);
         }
         else {
@@ -675,7 +796,7 @@ public class RED extends MyOpMode {
                 findTarget();
             }
             catch(Exception e) {}
-            odometry.update(data, data2, angle);
+            odometry.update(data, angle);
         }
     }
 
@@ -720,10 +841,9 @@ public class RED extends MyOpMode {
                     while(opModeIsActive()) {
                         double angle = odometry.getAngle();
                         RevBulkData data = robot.bulkRead();
-                        RevBulkData data2 = robot.bulkReadTwo();
-                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data, data2);
+                        drive.update(robot, odometry.getPoint(), odometry, odometry.getAngle(), angle, data);
                         wobble.update(robot, state);
-                        odometry.update(data, data2, angle);
+                        odometry.update(data, angle);
                     }
                 }
                 else {
@@ -746,5 +866,24 @@ public class RED extends MyOpMode {
         subtarget = path.get(index)[bestindex];
         ssubindex = subindex;
         subindex = bestindex;
+    }
+
+    public void stopOp() {
+        File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+        File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
+        try {
+            file.createNewFile();
+            file2.createNewFile();
+            PrintWriter something = new PrintWriter(file);
+            PrintWriter somethingelse = new PrintWriter(file2);
+            something.print(odometry.getAngle() + "\n");
+            somethingelse.print("red");
+            something.flush();
+            somethingelse.flush();
+            something.close();
+            somethingelse.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -51,8 +51,9 @@ public class OdometryTest extends MyOpMode {
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
+                telemetry.addData("angle", robot.gyro1.getAngularOrientation().firstAngle);
                 telemetry.update();
             }
         }
@@ -70,19 +71,19 @@ public class OdometryTest extends MyOpMode {
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
             }
             robot.setDrivePower(0,0,0,0);
             double time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 5000) {
-                odometry.update(data, data2);
+                odometry.update(data);
                 telemetry.addData("Status", "Waiting.... ( " + (((5000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
                 telemetry.addData("x", odometry.getX());
                 telemetry.addData("y", odometry.getY());
                 telemetry.addData("xraw", robot.getVOmniPos(data));
-                telemetry.addData("yraw", robot.getHOmniPos(data2));
+                telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
                 telemetry.update();
                 if(!opModeIsActive()) {
@@ -115,7 +116,7 @@ public class OdometryTest extends MyOpMode {
             telemetry.update();
             time = System.currentTimeMillis();
             while(opModeIsActive() && System.currentTimeMillis() - time <= 3000) {
-                odometry.update(data, data2);
+                odometry.update(data);
                 if(!opModeIsActive()) {
                     throw new InterruptedException();
                 }

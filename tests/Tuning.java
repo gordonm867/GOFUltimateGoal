@@ -31,7 +31,7 @@ public class Tuning extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
-    public static double targX = Globals.START_X;
+    public static double targX = Math.abs(Globals.START_X);
     public static double targY = Globals.START_Y;
     public static double targA = Globals.START_THETA;
 
@@ -70,7 +70,7 @@ public class Tuning extends MyOpMode {
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         double angle = odometry.getAngle() - targA;
         if(displacement > 3.0/96.0 || Math.abs(angle) > 0.5) {
-            drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data, data2);
+            drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }
         else {
             robot.setDrivePower(0, 0, 0, 0);

@@ -90,7 +90,7 @@ public class Victory extends MyOpMode {
         robot.setDrivePower(0,0,0,0);
         double time = System.currentTimeMillis();
         while(opModeIsActive() && System.currentTimeMillis() - time <= 2000) {
-            odometry.update(data, data2);
+            odometry.update(data);
             telemetry.addData("Status", "Waiting.... ( " + ((Math.round(2000 - (System.currentTimeMillis() - time))) / 1000.0) + " seconds left");
             telemetry.update();
             if(!opModeIsActive()) {
