@@ -40,8 +40,8 @@ public class CameraTest extends MyOpMode {
         try {
             size = robot.pipeline.rects.get(0).height();
             Rect rect = Imgproc.boundingRect(robot.pipeline.rects.get(0));
-            double ang = Functions.normalize(Math.toDegrees(Math.atan2(rect.y, rect.x)) + 135);
-            double dist = (((-0.5281578304 * size) + 82.41320547) / 12.0) + ((11.9 - 20) / 12);
+            double ang = Functions.normalize(Math.toDegrees(Math.atan2(rect.y - 480, rect.x - 320)) + 135);
+            double dist = (((-0.5281578304 * size) + 82.41320547) / 12.0) + ((11.9 /* - 20 */) / 12);
             telemetry.addData("Size", size);
             telemetry.addData("y", rect.y);
             telemetry.addData("x", rect.x);
@@ -52,8 +52,8 @@ public class CameraTest extends MyOpMode {
             ArrayList<Point> points = Functions.infiniteLineCircleIntersection(new Circle(new Point(realx, realy), dist), new Line(new Point(realx, realy), new Point(realx + 1, Math.tan(Math.toRadians(ang)))));
             for(Point p : points) {
                 if(p.getY() > 0) {
+                    //Point estimate = new Point(p.getX() + ((20.0/12) * Math.cos(Math.toRadians(135))), p.getY() + ((20.0/12) * Math.sin(Math.toRadians(135))));
                     telemetry.addData("POINT ESTIMATE", p);
-                    Point estimate = new Point(p.getX() + ((20.0/12) * Math.cos(Math.toRadians(135))), p.getY() + ((20.0/12) * Math.sin(Math.toRadians(135))));
                 }
             }
         } catch (Exception e) {
