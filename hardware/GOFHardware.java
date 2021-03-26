@@ -79,6 +79,8 @@ public class GOFHardware {
 
     public Servo wobble;
     public Servo flicker;
+    public Servo d1;
+    public Servo d2;
 
     public boolean enabled;
 
@@ -93,7 +95,7 @@ public class GOFHardware {
 
     public Integer camId;
 
-    public DetectionPipeline pipeline;
+    public OpenCvPipeline pipeline;
 
 
     /* Constructor */
@@ -210,9 +212,9 @@ public class GOFHardware {
 
         try {
             shoot1 = hwMap.get(DcMotor.class, "shoot1");
-            shoot1.setDirection(DcMotor.Direction.REVERSE);
+            shoot1.setDirection(DcMotor.Direction.FORWARD);
             shoot1.setPower(0);
-            shoot1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shoot1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             ((DcMotorEx)shoot1).setVelocityPIDFCoefficients(Shooter.PP, Shooter.PI, Shooter.PD, Shooter.PF);
         }
         catch(Exception p_exception) {
@@ -221,9 +223,9 @@ public class GOFHardware {
 
         try {
             shoot2 = hwMap.get(DcMotor.class, "shoot2");
-            shoot2.setDirection(DcMotor.Direction.REVERSE);
+            shoot2.setDirection(DcMotor.Direction.FORWARD);
             shoot2.setPower(0);
-            shoot2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shoot2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             ((DcMotorEx)shoot2).setVelocityPIDFCoefficients(Shooter.PP, Shooter.PI, Shooter.PD, Shooter.PF);
         }
         catch(Exception p_exception) {
@@ -255,6 +257,24 @@ public class GOFHardware {
         }
         catch(Exception p_exception) {
             wobble = null;
+        }
+
+        try {
+            r1 = hwMap.get(Servo.class, "d1");
+            r1.setDirection(Servo.Direction.FORWARD);
+            r1.setPosition(0);
+        }
+        catch(Exception p_exception) {
+            r1 = null;
+        }
+
+        try {
+            r2 = hwMap.get(Servo.class, "d2");
+            r2.setDirection(Servo.Direction.FORWARD);
+            r2.setPosition(0);
+        }
+        catch(Exception p_exception) {
+            r2 = null;
         }
 
         try {
@@ -416,6 +436,7 @@ public class GOFHardware {
     }
 
     public void cameraInit() {
+        Globals.BLUR_CONSTANT = 50;
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
@@ -423,10 +444,16 @@ public class GOFHardware {
     }
 
     public void cameraInit(OpenCvPipeline pipeline) {
+        this.pipeline = pipeline;
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
         FtcDashboard.getInstance().startCameraStream(phoneCam, 0);
+    }
+
+    public void changePipeline(OpenCvPipeline pipeline) {
+        this.pipeline = pipeline;
+        phoneCam.setPipeline(pipeline);
     }
 
     public double getPower(DcMotor motor) {

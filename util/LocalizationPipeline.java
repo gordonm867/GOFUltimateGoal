@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.util;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -21,13 +21,14 @@ public class LocalizationPipeline extends OpenCvPipeline {
 
     public boolean isProc = false;
 
-    private ArrayList<MatOfPoint> contlist = new ArrayList<>();
+    public ArrayList<MatOfPoint> contlist = new ArrayList<>();
     public ArrayList<MatOfPoint> rects = new ArrayList<>();
 
     public int rings = 0;
 
     @Override
     public Mat processFrame(Mat input) {
+        input = input.submat(200, 480, 0, 640);
         myMat = new Mat();
         disp = new Mat();
         filtered = new Mat();
@@ -38,70 +39,43 @@ public class LocalizationPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(myMat, myMat, Imgproc.COLOR_RGB2HSV);
         Imgproc.GaussianBlur(myMat, myMat, new Size((Globals.BLUR_CONSTANT * 2) + 1, (Globals.BLUR_CONSTANT * 2) + 1), 0);
         Core.inRange(myMat, new Scalar(Globals.MIN_B, Globals.MIN_G, Globals.MIN_R), new Scalar(Globals.MAX_B, Globals.MAX_G, Globals.MAX_R), filtered);
-        contlist.clear();
         Imgproc.findContours(filtered, contlist, test, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        ArrayList<MatOfPoint> toRemove = new ArrayList<>();
-        int x = 0;
-        for(MatOfPoint contour : contlist) {
-            double test = contour.size().height * contour.size().width;
-            if(150 >= test && test >= 10) {
-                if(contlist.size() > x) {
-                    Imgproc.drawContours(disp, contlist, x, new Scalar(128, 0, 128), 2);
-                }
+        ArrayList<Point> centers = new ArrayList<>();
+        for(int x = contlist.size() - 1; x >= 0; x--) {
+            if(contlist.get(x).size().area() > 5) {
+                Rect rect = Imgproc.boundingRect(contlist.get(x));
+                centers.add(new Point(rect.x, rect.y));
             }
             else {
-                toRemove.add(contour);
-                contour.release();
+                contlist.remove(x);
             }
-            x++;
         }
-        for(MatOfPoint rem : toRemove) {
-            contlist.remove(rem);
-        }
-        toRemove.clear();
-        if(contlist.size() > 0) {
-            ArrayList<Double> distances = new ArrayList<>();
-            int index = -1;
-            int l = 0;
-            double mindist = Double.MAX_VALUE;
-            for(MatOfPoint contour : contlist) {
-                Rect rect = Imgproc.boundingRect(contour);
-                double contx = rect.x;
-                double conty = rect.y;
-                double dist = Math.sqrt(Math.pow((myMat.cols() / 2f) - contx, 2) + Math.pow((myMat.rows() / 2f) - conty, 2));
-                if(dist < mindist && rect.height > 25) {
-                    mindist = dist;
-                    index = l;
-                }
-                l++;
-            }
-            for(int i = 0; i < contlist.size(); i++) {
-                if(i != index) {
-                    contlist.get(i).release();
+        ArrayList<MatOfPoint> duplicates = new ArrayList<>();
+        for(int x = 0; x < centers.size(); x++) {
+            for(int y = x + 1; y < centers.size(); y++) {
+                if(Math.abs(centers.get(y).distance(centers.get(x), Unit.FEET)) < 80) {
+                    duplicates.add(contlist.get(x));
+                    duplicates.add(contlist.get(y));
                 }
             }
-            if(index != -1) {
-                MatOfPoint keep = contlist.get(index);
-                contlist.clear();
-                contlist.add(keep);
+        }
+        for(int x = 0; x < duplicates.size(); x += 2) {
+            if(duplicates.get(x).size().area() > duplicates.get(x + 1).size().area()) {
+                contlist.remove(duplicates.get(x + 1));
             }
             else {
-                contlist.clear();
+                contlist.remove(duplicates.get(x));
             }
         }
-        if(contlist.size() == 0) {
-            rings = 0;
-        }
-        else {
-            rings = contlist.get(0).height() < Globals.RING_SIZE ? 1 : 4;
-            rects.clear();
-            rects.add(contlist.get(0));
+        rects.clear();
+        for(int x = 0; x < contlist.size(); x++) {
+            Imgproc.drawContours(disp, contlist, x, new Scalar(128, 0, 128), 2);
+            rects.add(contlist.get(x));
         }
         isProc = true;
         myMat.release();
         filtered.release();
         test.release();
-        Imgproc.line(disp, new Point(Globals.MINCX, Globals.MINCY), new Point(Globals.MAXCX, Globals.MAXCY), new Scalar(0, 255, 0));
         return disp;
     }
 }

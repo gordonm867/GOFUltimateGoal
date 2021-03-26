@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
@@ -40,12 +39,8 @@ public class GOFTeleOp extends MyOpMode {
     public ArrayList<Double> averageterms = new ArrayList<>();
 
     public boolean red = true;
-
-    public double sum = 0;
     private double lastangle = 0;
     private double lasttime = 0;
-
-    private double maxsofar = 0;
 
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -67,7 +62,6 @@ public class GOFTeleOp extends MyOpMode {
         subsystems.add(shooter);
         subsystems.add(wobble);
         RevBulkData data = robot.bulkRead();
-        RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
         }
@@ -106,8 +100,6 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("uh", e.getMessage());
             telemetry.update();
         }
-        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
-        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, Shooter.i, Shooter.d, Shooter.f);
         lastangle = odometry.getAngle();
         lasttime = System.currentTimeMillis();
     }
@@ -124,28 +116,18 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
-        if(gamepad2.right_trigger > 0.5) {
-            maxsofar = 0;
-        }
-        telemetry.addData("Flicker", robot.flicker.getPosition() < 0.5 ? "Shooting" : "Rest");
-        double hi = Math.abs(((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES)) * 99.5 * 4 * Math.PI * 0.0254 / 360.0;
-        telemetry.addData("Shooter velocity", hi);
         if(handler.contains("stv")) {
-            telemetry.addData("Shooter target velocity", (double)handler.getData("stv"));
+            if((double)handler.getData("stv") == 0) {
+                telemetry.addData("Target", Shooter.firstshotvel);
+            }
+            else {
+                telemetry.addData("Target", (double) handler.getData("stv"));
+            }
         }
-        telemetry.addData("Max vel", maxsofar);
-        telemetry.addData("Encoders", robot.shoot1.getCurrentPosition() + ", " + robot.shoot2.getCurrentPosition());
-        telemetry.update();
-        /*
-        telemetry.addData("Point", odometry.getPoint());
-        telemetry.addData("Angle", odometry.getAngle());
-        telemetry.addData("wheel", robot.lb.getPower());
-        telemetry.addData("Intended Angle", odometry.getPoint().angle(new Point(3 + ((odometry.getX() - 3) * (7.5 / 12.0) / 5), 6), AngleUnit.DEGREES) - 1.5);
-        if(handler.contains("Omega")) {
-            telemetry.addData("Omega", (double)handler.getData("Omega"));
+        if(handler.contains("sav")) {
+            telemetry.addData("Shooter velocity", (double) handler.getData("sav"));
         }
         telemetry.update();
-         */
         lastangle = angle;
     }
 

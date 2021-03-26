@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Odometry;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
+import org.firstinspires.ftc.teamcode.gofultimategoal.util.DetectionPipeline;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.PathGenerator;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
@@ -121,60 +122,60 @@ public class BLUE extends MyOpMode {
 
         robot.cameraInit();
 
-        while(!isStarted() && !isStopRequested() && !robot.pipeline.isProc) {
-            telemetry.addData("Status", "Initializing OpenCV....");
-            telemetry.update();
-        }
-        double sum = 0;
-        ArrayList<Integer> thing = new ArrayList<>();
-        double size = 0;
-        while(!isStarted() && !isStopRequested()) {
-            try {
-                size = robot.pipeline.rects.get(0).height();
-                telemetry.addData("Size", size);
+        if(robot.pipeline instanceof DetectionPipeline) {
+            while (!isStarted() && !isStopRequested() && !((DetectionPipeline) robot.pipeline).isProc) {
+                telemetry.addData("Status", "Initializing OpenCV....");
+                telemetry.update();
             }
-            catch(Exception e) {
-                telemetry.addData("Note", "No contours found!");
-            }
-            thing.add(Math.min(robot.pipeline.rings, 2));
-            while(thing.size() > 500) {
-                thing.remove(0);
-            }
-            sum = 0;
-            for (int x = 0; x < thing.size(); x++) {
-                sum += thing.get(x);
-            }
-            telemetry.addData("sum", sum);
-            sum /= thing.size();
-            if (sum > 1.5) {
-                sum = 4;
-            } else if (sum > 0.5) {
-                sum = 1;
-            } else {
+            double sum = 0;
+            ArrayList<Integer> thing = new ArrayList<>();
+            double size = 0;
+            while (!isStarted() && !isStopRequested()) {
+                try {
+                    size = ((DetectionPipeline) robot.pipeline).rects.get(0).height();
+                    telemetry.addData("Size", size);
+                } catch (Exception e) {
+                    telemetry.addData("Note", "No contours found!");
+                }
+                thing.add(Math.min(((DetectionPipeline) robot.pipeline).rings, 2));
+                while (thing.size() > 500) {
+                    thing.remove(0);
+                }
                 sum = 0;
+                for (int x = 0; x < thing.size(); x++) {
+                    sum += thing.get(x);
+                }
+                telemetry.addData("sum", sum);
+                sum /= thing.size();
+                if (sum > 1.5) {
+                    sum = 4;
+                } else if (sum > 0.5) {
+                    sum = 1;
+                } else {
+                    sum = 0;
+                }
+                ready = true;
+                telemetry.addData("Rings", sum);
+                telemetry.addData("Paths", path0.isDone() + ", " + path1.isDone() + ", " + path4.isDone());
+                telemetry.update();
             }
-            ready = true;
-            telemetry.addData("Rings", sum);
-            telemetry.addData("Paths", path0.isDone() + ", " + path1.isDone() + ", " + path4.isDone());
-            telemetry.update();
-        }
-        //robot.cameraOff();
-        rings = (int)Math.round(sum);
-        //rings = 0;
-        //rings = 1;
-        //rings = 4;
-        try {
-            if (rings == 0) {
-                path = path0.get();
-            } else if (rings == 1) {
-                path = path1.get();
-            } else {
-                path = path4.get();
+            //robot.cameraOff();
+            rings = (int) Math.round(sum);
+            //rings = 0;
+            //rings = 1;
+            //rings = 4;
+            try {
+                if (rings == 0) {
+                    path = path0.get();
+                } else if (rings == 1) {
+                    path = path1.get();
+                } else {
+                    path = path4.get();
+                }
+                myservice.shutdown();
+            } catch (Exception e) {
+                throw new GOFException("You need a new programmer");
             }
-            myservice.shutdown();
-        }
-        catch(Exception e) {
-            throw new GOFException("You need a new programmer");
         }
     }
 

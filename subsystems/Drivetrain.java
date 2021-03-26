@@ -208,16 +208,8 @@ public class Drivetrain implements Subsystem {
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
-                            powerstate = Powerstate.WAIT;
+                            powerstate = Powerstate.FIRST;
                         }
-                    }
-                    return;
-                }
-                else if(powerstate == Powerstate.WAIT) {
-                    waitingForShoot = false;
-                    if(gamepad2.b && !gamepad2.start) {
-                        powerstate = Powerstate.FIRST;
-                        Shooter.waitingForDrive = false;
                     }
                     return;
                 }

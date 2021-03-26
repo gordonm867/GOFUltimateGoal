@@ -35,7 +35,7 @@ public final class Globals {
 
     public static double RING_SIZE = 90;
 
-    public static double BLUR_CONSTANT = 50;
+    public static double BLUR_CONSTANT = 0;
 
     public static double MINCX = 0;
     public static double MINCY = 0;
