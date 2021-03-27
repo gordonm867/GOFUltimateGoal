@@ -47,6 +47,8 @@ public class GOFTeleOp extends MyOpMode {
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
         robot.init(hardwareMap, telemetry);
+        robot.d1.setPosition(0.5);
+        robot.d2.setPosition(0);
         robot.wobble.setPosition(Wobble.openpose);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
@@ -127,6 +129,7 @@ public class GOFTeleOp extends MyOpMode {
         if(handler.contains("sav")) {
             telemetry.addData("Shooter velocity", (double) handler.getData("sav"));
         }
+        telemetry.addData("Power state", drive.powerstate);
         telemetry.update();
         lastangle = angle;
     }

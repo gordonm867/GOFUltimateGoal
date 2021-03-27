@@ -395,7 +395,7 @@ public class Odometry implements Subsystem {
             }
         }
              */
-            x = 5.26;
+            x = -1.26;
             y = 1;
             lastYPos = data1.getMotorCurrentPosition(robot.rb);
             lastXPos = data1.getMotorCurrentPosition(robot.lf);

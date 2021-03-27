@@ -260,21 +260,21 @@ public class GOFHardware {
         }
 
         try {
-            r1 = hwMap.get(Servo.class, "d1");
-            r1.setDirection(Servo.Direction.FORWARD);
-            r1.setPosition(0);
+            d1 = hwMap.get(Servo.class, "d1");
+            d1.setDirection(Servo.Direction.FORWARD);
+            d1.setPosition(0);
         }
         catch(Exception p_exception) {
-            r1 = null;
+            d1 = null;
         }
 
         try {
-            r2 = hwMap.get(Servo.class, "d2");
-            r2.setDirection(Servo.Direction.FORWARD);
-            r2.setPosition(0);
+            d2 = hwMap.get(Servo.class, "d2");
+            d2.setDirection(Servo.Direction.FORWARD);
+            d2.setPosition(0.39);
         }
         catch(Exception p_exception) {
-            r2 = null;
+            d2 = null;
         }
 
         try {

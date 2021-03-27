@@ -9,6 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 @Config
 public class Shooter implements Subsystem {
 
@@ -32,7 +36,7 @@ public class Shooter implements Subsystem {
 
     public int powershots = 0;
 
-    Target targ;
+    public Target targ;
 
     double time = 0;
     int step = 0;
@@ -45,7 +49,7 @@ public class Shooter implements Subsystem {
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
-    public static double shootTime = 65.0;
+    public static double shootTime = 75.0;
     public static double shootIn = 0.36;
     public static double shootOut = 0.55;
 
@@ -60,10 +64,10 @@ public class Shooter implements Subsystem {
     public static double PD = 0;
     public static double PF = 0;
 
-    public static double vel = 16.32;
-    public static double firstshotvel = 16.32;
-    public static double secondshotvel = 16.32;
-    public static double thirdshotvel = 16.32;
+    public static double vel = 16.2;
+    public static double firstshotvel = 16.2;
+    public static double secondshotvel = 16.2;
+    public static double thirdshotvel = 16.2;
 
     //public static double oldfirstshotvel = 16.32;
     //public static double oldsecondshotvel = 16.32;
@@ -83,6 +87,8 @@ public class Shooter implements Subsystem {
     public double lasterror = 0;
     public double integral = 0;
 
+    private Dictionary<Double, Double> integrals = new Hashtable<>();
+
     public Shooter(State state) {
         this.state = state;
     }
@@ -95,7 +101,7 @@ public class Shooter implements Subsystem {
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
         handler.pushData("Power Shots", powershots);
-        if(!uh && (handler.contains("Power State") && (handler.getData("Power State") == Drivetrain.Powerstate.FIRST || handler.getData("Power State") == Drivetrain.Powerstate.SECOND || handler.getData("Power State") == Drivetrain.Powerstate.THIRD) || (gamepad2.y || Drivetrain.waitingForShoot))) {
+        if(!uh && (gamepad2.y || Drivetrain.waitingForShoot)) {
             uh = true;
             thing = 2;
             vel = powershotvel;
@@ -105,14 +111,48 @@ public class Shooter implements Subsystem {
             handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.POWER;
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = integrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
+                        }
+                    }
+                    integral = integrals.get(closest);
+                }
+            }
+            catch(Exception e) {}
         }
-        if(uh && !gamepad1.y) {
+        if(uh && !gamepad2.y) {
             uh = false;
         }
         if((gamepad1.b && !gamepad1.start) && !b1pressed) {
             b1pressed = true;
             readying = true;
             start(robot, powershotvel);
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = integrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
+                        }
+                    }
+                    integral = integrals.get(closest);
+                }
+            }
+            catch(Exception e) {}
         }
         if(!(gamepad1.b && !gamepad1.start)) {
             b1pressed = false;
@@ -138,6 +178,23 @@ public class Shooter implements Subsystem {
             attempts = 0;
             shooting = true;
             ready = false;
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = integrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
+                        }
+                    }
+                    integral = integrals.get(closest);
+                }
+            }
+            catch(Exception e) {}
             handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
@@ -151,6 +208,23 @@ public class Shooter implements Subsystem {
             else {
                 readying = true;
                 start(robot, powershotvel);
+                try {
+                    double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                    if(target != 0) {
+                        double closest = 0;
+                        double closestdist = Double.MAX_VALUE;
+                        Enumeration<Double> enumthing = integrals.keys();
+                        while (enumthing.hasMoreElements()) {
+                            double next = enumthing.nextElement();
+                            if (Math.abs(next - target) < closestdist) {
+                                closestdist = Math.abs(next - target);
+                                closest = next;
+                            }
+                        }
+                        integral = integrals.get(closest);
+                    }
+                }
+                catch(Exception e) {}
             }
         }
         if(!gamepad2.x) {
@@ -163,6 +237,23 @@ public class Shooter implements Subsystem {
             readying = true;
             vel = firstshotvel;
             start(robot, vel);
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = integrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
+                        }
+                    }
+                    integral = integrals.get(closest);
+                }
+            }
+            catch(Exception e) {}
         }
         if(gamepad2.left_trigger < 0.05) {
             lt = false;
@@ -170,6 +261,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.left_bumper) {
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
+            Drivetrain.waitingForShoot = false;
             integral = 0;
             shooting = false;
             ready = false;
@@ -206,7 +298,6 @@ public class Shooter implements Subsystem {
             if(derror >= error) {
                 derror = 0;
             }
-            integral += error * deltatime;
             double derivative = derror / deltatime;
             if(t == 0) {
                 robot.shoot1.setPower(0);
@@ -214,6 +305,8 @@ public class Shooter implements Subsystem {
                 integral = 0;
             }
             else {
+                integral += error * deltatime;
+                integrals.put(Math.round(10 * v) / 10.0, integral);
                 robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
@@ -256,7 +349,6 @@ public class Shooter implements Subsystem {
             if(derror >= error) {
                 derror = 0;
             }
-            integral += error * deltatime;
             double derivative = derror / deltatime;
             if(t == 0) {
                 robot.shoot1.setPower(0);
@@ -264,6 +356,8 @@ public class Shooter implements Subsystem {
                 integral = 0;
             }
             else {
+                integral += error * deltatime;
+                integrals.put(Math.round(10 * v) / 10.0, integral);
                 robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
@@ -275,7 +369,44 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.15))) {
+        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.15)) && Math.abs(a) < 0.25) {
+            if(once) {
+                shootonce(targ, robot);
+            }
+            else {
+                shoot(targ, robot);
+            }
+        }
+    }
+
+    public void forceshoot(GOFHardware robot, double velocity, boolean once) {
+        handler.pushData("stv", velocity);
+        if(robot.shoot1 != null && robot.shoot2 != null) {
+            t = (double)handler.getData("stv");
+            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+            double error = t - v;
+            double derror = error - lasterror;
+            if(derror >= error) {
+                derror = 0;
+            }
+            double derivative = derror / deltatime;
+            if(t == 0) {
+                robot.shoot1.setPower(0);
+                robot.shoot2.setPower(0);
+                integral = 0;
+            }
+            else {
+                integral += error * deltatime;
+                integrals.put(Math.round(10 * v) / 10.0, integral);
+                robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+                robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+            }
+            lasterror = error;
+            lasttime = System.currentTimeMillis();
+            handler.pushData("sav", v);
+        }
+        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.3))) {
             if(once) {
                 shootonce(targ, robot);
             }
@@ -296,7 +427,6 @@ public class Shooter implements Subsystem {
             if(derror >= error) {
                 derror = 0;
             }
-            integral += error * deltatime;
             double derivative = derror / deltatime;
             if(t == 0) {
                 robot.shoot1.setPower(0);
@@ -304,6 +434,8 @@ public class Shooter implements Subsystem {
                 integral = 0;
             }
             else {
+                integral += error * deltatime;
+                integrals.put(Math.round(10 * v) / 10.0, integral);
                 robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }

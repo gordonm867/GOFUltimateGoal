@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -17,7 +16,6 @@ import org.openftc.revextensions2.RevBulkData;
 import java.util.ArrayList;
 
 @TeleOp(name="VoltageIntakeTest")
-@Disabled
 public class VoltageTest extends MyOpMode {
 
     private     ArrayList<Subsystem>    subsystems = new ArrayList<>();
@@ -34,6 +32,9 @@ public class VoltageTest extends MyOpMode {
         odometry = Odometry.getInstance(robot);
 
         robot.enabled = true;
+
+        robot.d1.setPosition(0.5);
+        robot.d2.setPosition(0);
 
         subsystems.add(odometry);
         subsystems.add(drive);

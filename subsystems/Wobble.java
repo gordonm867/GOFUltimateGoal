@@ -107,7 +107,7 @@ public class Wobble implements Subsystem {
             target = -200;
         }
         else if(targetstate == WheelState.DESTROY) {
-            target = -1200;
+            target = -920;
         }
         else {
             throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
@@ -115,12 +115,7 @@ public class Wobble implements Subsystem {
         if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 15) {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            if(targetstate == WheelState.IN) {
-                robot.wobblewheel.setPower(0.5);
-            }
-            else {
-                robot.wobblewheel.setPower(1.0);
-            }
+            robot.wobblewheel.setPower(1.0);
         }
         else if(robot.wobblewheel != null && robot.lf != null) {
             robot.wobblewheel.setPower(0);

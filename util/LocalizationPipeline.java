@@ -7,7 +7,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -37,7 +36,6 @@ public class LocalizationPipeline extends OpenCvPipeline {
         input.copyTo(myMat);
         input.copyTo(disp);
         Imgproc.cvtColor(myMat, myMat, Imgproc.COLOR_RGB2HSV);
-        Imgproc.GaussianBlur(myMat, myMat, new Size((Globals.BLUR_CONSTANT * 2) + 1, (Globals.BLUR_CONSTANT * 2) + 1), 0);
         Core.inRange(myMat, new Scalar(Globals.MIN_B, Globals.MIN_G, Globals.MIN_R), new Scalar(Globals.MAX_B, Globals.MAX_G, Globals.MAX_R), filtered);
         Imgproc.findContours(filtered, contlist, test, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
         ArrayList<Point> centers = new ArrayList<>();
