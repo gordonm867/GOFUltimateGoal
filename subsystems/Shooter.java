@@ -46,6 +46,9 @@ public class Shooter implements Subsystem {
     public double t = 0;
     public double a = 0;
 
+    public double oldd1 = 0;
+    public double oldd2 = 0.39;
+
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
@@ -233,7 +236,8 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger < 0.05 && rt) {
             rt = false;
         }
-        if(gamepad2.left_trigger > 0.05 && !lt) {
+        if((gamepad2.left_trigger > 0.05 && !lt) || Intake.rings == 3) {
+            Intake.rings = 0;
             readying = true;
             vel = firstshotvel;
             start(robot, vel);
@@ -262,6 +266,7 @@ public class Shooter implements Subsystem {
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
             Drivetrain.waitingForShoot = false;
+            Intake.rings = 0;
             integral = 0;
             shooting = false;
             ready = false;
@@ -325,12 +330,21 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if(robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.25)) {
-            ready = true;
-            shoot(targ, robot);
+        if(v == powershotvel) {
+            if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.25))) {
+                ready = true;
+                shoot(targ, robot);
+            } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
+                handler.pushData("stv", vel);
+            }
         }
-        else if(shooting && robot.shoot1 != null && robot.shoot2 != null) {
-            handler.pushData("stv", vel);
+        else {
+            if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.25) && Math.abs(a) < 0.4))) {
+                ready = true;
+                shoot(targ, robot);
+            } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
+                handler.pushData("stv", vel);
+            }
         }
         if(!shooting && !readying) {
             handler.pushData("stv", 0.0);
@@ -455,6 +469,12 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target target, GOFHardware robot) {
+        if(robot.d1.getPosition() != 0 || robot.d2.getPosition() != 0.39) {
+            oldd1 = robot.d1.getPosition();
+            oldd2 = robot.d2.getPosition();
+        }
+        robot.d1.setPosition(0);
+        robot.d2.setPosition(0.39);
         if(targ == Target.POWER) {
             shootonce(target, robot);
             return;
@@ -477,6 +497,8 @@ public class Shooter implements Subsystem {
                     readying = false;
                 }
                 ready = false;
+                robot.d1.setPosition(oldd1);
+                robot.d2.setPosition(oldd2);
                 return;
             }
             if (targ == Target.GOAL) {

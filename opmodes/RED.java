@@ -272,7 +272,7 @@ public class RED extends MyOpMode {
             robot.d1.setPosition(0.65);
             robot.d2.setPosition(0.1);
             robot.setIntakePower(-1);
-            if(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 0.5 && ((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 5) {
+            if(odometry.getPoint().distance(path.get(index)[path.get(index).length - 1], Unit.FEET) < 0.5 && ((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 5.5) {
                 displacement = 0;
                 angle = path.get(index)[path.get(index).length - 1].getAngle();
             }
@@ -685,7 +685,7 @@ public class RED extends MyOpMode {
                                     drive.update(robot, bounceback, odometry, odometry.getPoint().angle(bounceback, AngleUnit.DEGREES), odometry.getAngle(), robot.bulkRead());
                                     telemetry.addData("Power", Math.max(Math.max(Math.max(Math.abs(robot.rb.getPower()), Math.abs(robot.lb.getPower())), Math.abs(robot.lf.getPower())), Math.abs(robot.lb.getPower())));
                                     telemetry.update();
-                                    if(odometry.getPoint().distance(mypoint, Unit.FEET) > 0.5 && ((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 5) {
+                                    if(odometry.getPoint().distance(mypoint, Unit.FEET) > 0.5 && ((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS) > 5.5) {
                                         robot.setDrivePower(0, 0, 0, 0);
                                         displacement = 0;
                                     }
