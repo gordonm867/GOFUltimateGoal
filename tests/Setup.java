@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
@@ -22,8 +23,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Disabled
 @TeleOp(name="Return")
-public class setup extends MyOpMode {
+public class Setup extends MyOpMode {
 
     private Drivetrain drive;
     private GOFHardware robot = GOFHardware.getInstance();

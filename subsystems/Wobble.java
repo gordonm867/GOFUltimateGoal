@@ -80,7 +80,7 @@ public class Wobble implements Subsystem {
         else {
             robot.wobblewheel.setTargetPosition(target);
             robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(1.0);
+            robot.wobblewheel.setPower(target > robot.wobblewheel.getCurrentPosition() ? 0.7 : 1.0);
         }
 
     }

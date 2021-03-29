@@ -196,9 +196,9 @@ public class Drivetrain implements Subsystem {
                     waitingForShoot = false;
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(-1.35 + (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 87) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(-1.35 + (5.0/12), 0), odometry, 87, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-1.35 + (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 87) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(-1.35 + (4.0/12), 0), odometry, 87, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -207,13 +207,14 @@ public class Drivetrain implements Subsystem {
                     }
                     else {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 87) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(1.35 - (5.0/12), 0), odometry, 87, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(1.35 - (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 87) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(1.35 - (4.0/12), 0), odometry, 87, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
                             powerstate = Powerstate.FIRST;
+                            Shooter.waitingForDrive = false;
                         }
                     }
                     return;
@@ -234,9 +235,9 @@ public class Drivetrain implements Subsystem {
                     waitingForShoot = false;
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(-1.35 + (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 93) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(-1.35 + (5.0/12), 0), odometry, 93, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-1.35 + (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 93) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(-1.35 + (4.0/12), 0), odometry, 93, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -245,13 +246,14 @@ public class Drivetrain implements Subsystem {
                     }
                     else {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 93) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(1.35 - (5.0/12), 0), odometry, 93, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(1.35 - (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 93) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(1.35 - (4.0/12), 0), odometry, 93, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
                             powerstate = Powerstate.SECOND;
+                            Shooter.powershotvel -= 0.1;
                             Shooter.waitingForDrive = false;
                         }
                     }
@@ -262,6 +264,7 @@ public class Drivetrain implements Subsystem {
                     if(Shooter.waitingForDrive) {
                         Shooter.waitingForDrive = false;
                         waitingForShoot = false;
+                        Shooter.powershotvel += 0.1;
                         powerstate = Powerstate.THIRDTRANSIT;
                     }
                     else {
@@ -273,9 +276,9 @@ public class Drivetrain implements Subsystem {
                     waitingForShoot = false;
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(-1.35 + (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(angle - 99) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(-1.35 + (5.0/12), 0), odometry, 99, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(-1.35 + (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(angle - 99.5) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(-1.35 + (4.0/12), 0), odometry, 99.5, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -284,9 +287,9 @@ public class Drivetrain implements Subsystem {
                     }
                     else {
                         Globals.MIN_SPEED = 0.3;
-                        displacement = odometry.getPoint().distance(new Point(1.35 - (5.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 99) > 1) || (double)handler.getData("Omega") > 0.15)) {
-                            update(robot, new Point(1.35 - (5.0/12), 0), odometry, 99, robotangle, data1);
+                        displacement = odometry.getPoint().distance(new Point(1.35 - (4.0/12), 0), Unit.FEET);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 99.5) > 0.5) || (double)handler.getData("Omega") > 0.15)) {
+                            update(robot, new Point(1.35 - (4.0/12), 0), odometry, 99.5, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -431,7 +434,7 @@ public class Drivetrain implements Subsystem {
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     error = Functions.normalize(myAngle - current);
-                    if(Math.abs(error) >= 0.45) {
+                    if(Math.abs(error) >= 0.25) {
                         double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
                         lasttime = System.currentTimeMillis();
                         lasterror = error;

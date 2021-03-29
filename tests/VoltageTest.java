@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -15,6 +16,7 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
+@Disabled
 @TeleOp(name="VoltageIntakeTest")
 public class VoltageTest extends MyOpMode {
 

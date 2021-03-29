@@ -119,16 +119,12 @@ public class GOFTeleOp extends MyOpMode {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
         if(handler.contains("stv")) {
-            if((double)handler.getData("stv") == 0) {
-                telemetry.addData("Target", Shooter.firstshotvel);
-            }
-            else {
-                telemetry.addData("Target", (double) handler.getData("stv"));
-            }
+            telemetry.addData("Target", (double)handler.getData("stv"));
         }
         if(handler.contains("sav")) {
             telemetry.addData("Shooter velocity", (double) handler.getData("sav"));
         }
+        telemetry.addData("Rings", Intake.rings);
         telemetry.addData("Power state", drive.powerstate);
         telemetry.update();
         lastangle = angle;
