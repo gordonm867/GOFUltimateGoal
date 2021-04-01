@@ -104,7 +104,12 @@ public class Intake implements Subsystem {
 
         if(distance < 30 && !voltage) {
             voltage = true;
-            rings++;
+            if(robot.in.getPower() > 0) {
+                rings--;
+            }
+            else {
+                rings++;
+            }
         }
         if(distance > 40) {
             voltage = false;
