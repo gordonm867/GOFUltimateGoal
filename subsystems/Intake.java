@@ -102,11 +102,11 @@ public class Intake implements Subsystem {
 
         double distance = robot.ringsensor.getDistance(DistanceUnit.MM);
 
-        if(distance < 10 && !voltage) {
+        if(distance < 30 && !voltage) {
             voltage = true;
             rings++;
         }
-        if(distance > 20) {
+        if(distance > 40) {
             voltage = false;
         }
     }
