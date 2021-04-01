@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -76,6 +77,8 @@ public class GOFHardware {
     public DcMotor shoot1;
     public DcMotor shoot2;
     public DcMotor wobblewheel;
+
+    public RevColorSensorV3 ringsensor;
 
     public Servo wobble;
     public Servo flicker;
@@ -158,6 +161,15 @@ public class GOFHardware {
             telemetry.addData("Warning", "Gyro no work :(");
             telemetry.update();
             gyro1 = null;
+        }
+
+        try {
+            ringsensor = hwMap.get(RevColorSensorV3.class, "rs");
+        }
+        catch(Exception p_exception) {
+            ringsensor = null;
+            telemetry.addData("Warning", "Ring sensor bad :(");
+            telemetry.update();
         }
 
         try { // Left rear wheel
