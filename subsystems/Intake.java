@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
@@ -97,6 +98,16 @@ public class Intake implements Subsystem {
         }
         if(!gamepad2.dpad_right) {
             rdpad = false;
+        }
+
+        double distance = robot.ringsensor.getDistance(DistanceUnit.MM);
+
+        if(distance < 10 && !voltage) {
+            voltage = true;
+            rings++;
+        }
+        if(distance > 20) {
+            voltage = false;
         }
     }
 
