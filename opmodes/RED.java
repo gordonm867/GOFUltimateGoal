@@ -416,7 +416,6 @@ public class RED extends MyOpMode {
                         double lastangle;
                         double lasttime = System.currentTimeMillis();
                         double omega = Double.MAX_VALUE;
-                        double cycles = 0;
                         shooter.PIDReset();
                         double oldintegral = 0;
                         while((displacement > 1.0/48.0 || Math.abs(angle - 104.6875) > 0.6) || omega > 0.2) {
@@ -439,6 +438,7 @@ public class RED extends MyOpMode {
                             angle = odometry.getAngle();
                             odometry.update(robot.bulkRead(), angle);
                             if(System.currentTimeMillis() - shoottimer >= 2500) {
+                                shooter.shoot(robot, 15.0, true);
                             }
                             else {
                                 shooter.forceshoot(robot, 15.0, true);
@@ -469,7 +469,6 @@ public class RED extends MyOpMode {
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             angle = odometry.getAngle();
                             odometry.update(robot.bulkRead(), angle);
-                            if(System.currentTimeMillis() - shoottimer >= 2000) {
                             if(System.currentTimeMillis() - shoottimer >= 2500) {
                                 shooter.shoot(robot, 15.0, true);
                             }
@@ -478,11 +477,10 @@ public class RED extends MyOpMode {
                             }
                         }
                         angle = odometry.getAngle();
-                        displacement = odometry.getPoint().distance(new Point(1.35 - (4.0/12), 0), Unit.FEET);
+                        displacement = odometry.getPoint().distance(new Point(3, -0.2), Unit.FEET);
                         lasttime = System.currentTimeMillis();
                         omega = Double.MAX_VALUE;
                         shooter.integral = oldintegral;
-                            shooter.start(robot, 14.9);
                         while((displacement > 1.0/48.0 || Math.abs(angle - 113.75) > 0.6) || omega > 0.2) {
                             shooter.start(robot, 15.0);
                             lastangle = angle;
@@ -501,11 +499,11 @@ public class RED extends MyOpMode {
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             angle = odometry.getAngle();
                             odometry.update(robot.bulkRead(), angle);
-                            if(System.currentTimeMillis() - shoottimer >= 2000) {
                             if(System.currentTimeMillis() - shoottimer >= 2500) {
                                 shooter.shoot(robot, 15.0, true);
                             }
                             else {
+                                shooter.forceshoot(robot, 15.0, true);
                             }
                         }
                         robot.shoot1.setPower(0);

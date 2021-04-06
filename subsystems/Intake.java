@@ -17,6 +17,7 @@ public class Intake implements Subsystem {
 
     public boolean ldpad = false;
     public boolean rdpad = false;
+    public boolean b = false;
 
     private State state;
     double intaketimer = System.currentTimeMillis();
@@ -82,6 +83,14 @@ public class Intake implements Subsystem {
         }
         if(!(gamepad2.a && !gamepad2.start)) {
             apressed = false;
+        }
+        if(gamepad2.b && !gamepad2.start && !b && !start) {
+            b = true;
+            robot.d1.setPosition(0);
+            robot.d2.setPosition(0);
+        }
+        if(!(gamepad2.b && !gamepad2.start)) {
+            b = false;
         }
         if(gamepad2.dpad_left && !ldpad) {
             ldpad = true;
