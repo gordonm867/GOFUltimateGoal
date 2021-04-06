@@ -19,7 +19,7 @@ public final class Globals {
     public static double MAX_WOBBLE = 0.3;
 
     public static double START_Y = -5.25853; // Default starting y position
-    public static double START_X = -1.27; // Default starting x position
+    public static double START_X = -2.98; // Default starting x position
     public static double START_THETA = 90; // Default starting angle
 
     public static double xOffset = -6.8520357496;
@@ -35,7 +35,7 @@ public final class Globals {
 
     public static double RING_SIZE = 60;
 
-    public static double BLUR_CONSTANT = 0;
+    public static double BLUR_CONSTANT = 10;
 
     public static double MINCX = 0;
     public static double MINCY = 0;

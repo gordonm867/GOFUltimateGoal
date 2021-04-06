@@ -57,8 +57,8 @@ public class Setup extends MyOpMode {
     public void loopOp() throws InterruptedException, GOFException, IOException {
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("Point", odometry.getPoint());
-        telemetry.addData("Target", new Point(1.27, -4.6));
+        telemetry.addData("Target", new Point(4.78125, -4.6));
         telemetry.update();
-        drive.update(robot, new Point(1.27, -4.6), odometry, 90, odometry.getAngle(), robot.bulkRead());
+        drive.update(robot, new Point(4.78125, -4.6), odometry, 90, odometry.getAngle(), robot.bulkRead());
     }
 }

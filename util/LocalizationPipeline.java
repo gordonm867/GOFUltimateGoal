@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.util;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
-import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
+@Config
 public class LocalizationPipeline extends OpenCvPipeline {
     Mat myMat = new Mat();
     Mat disp = new Mat();
@@ -20,60 +23,92 @@ public class LocalizationPipeline extends OpenCvPipeline {
 
     public boolean isProc = false;
 
+    public static double alpha = 1.5;
+    public static double filterThreshhold = 40;
+
     public ArrayList<MatOfPoint> contlist = new ArrayList<>();
-    public ArrayList<MatOfPoint> rects = new ArrayList<>();
+    public volatile ArrayList<RotatedRect> rects = new ArrayList<>();
 
     public int rings = 0;
 
     @Override
     public Mat processFrame(Mat input) {
         input = input.submat(200, 480, 0, 640);
+        contlist.clear();
         myMat = new Mat();
         disp = new Mat();
-        filtered = new Mat();
-        test = new Mat();
-        contlist.clear();
+        input.convertTo(input, -1, alpha);
         input.copyTo(myMat);
         input.copyTo(disp);
+        input.release();
         Imgproc.cvtColor(myMat, myMat, Imgproc.COLOR_RGB2HSV);
+        filtered = new Mat();
         Core.inRange(myMat, new Scalar(Globals.MIN_B, Globals.MIN_G, Globals.MIN_R), new Scalar(Globals.MAX_B, Globals.MAX_G, Globals.MAX_R), filtered);
-        Imgproc.findContours(filtered, contlist, test, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        ArrayList<Point> centers = new ArrayList<>();
+        myMat.release();
+        test = new Mat();
+        Imgproc.findContours(filtered, contlist, test, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        filtered.release();
+        test.release();
+        ArrayList<RotatedRect> ellipses = new ArrayList<>();
         for(int x = contlist.size() - 1; x >= 0; x--) {
-            if(contlist.get(x).size().area() > 5) {
-                Rect rect = Imgproc.boundingRect(contlist.get(x));
-                centers.add(new Point(rect.x, rect.y));
-            }
-            else {
+            if((contlist.get(x).size().area() < filterThreshhold) || contlist.get(x).toArray().length < 5) {
+                contlist.get(x).release();
                 contlist.remove(x);
             }
+            else {
+                Imgproc.drawContours(disp, contlist, x, new Scalar(255, 255, 0), 2);
+            }
         }
-        ArrayList<MatOfPoint> duplicates = new ArrayList<>();
-        for(int x = 0; x < centers.size(); x++) {
-            for(int y = x + 1; y < centers.size(); y++) {
-                if(Math.abs(centers.get(y).distance(centers.get(x), Unit.FEET)) < 80) {
-                    duplicates.add(contlist.get(x));
-                    duplicates.add(contlist.get(y));
+        double largest = 0;
+        int firstindex = -1;
+        double nextlargest = 0;
+        int secondindex = -1;
+        double nextnextlargest = 0;
+        int thirdindex = -1;
+        if(contlist.size() > 3) {
+            for(int x = contlist.size() - 1; x >= 0; x--) {
+                if (contlist.get(x).size().area() > largest) {
+                    largest = contlist.get(x).size().area();
+                    firstindex = x;
+                } else if (contlist.get(x).size().area() > nextlargest) {
+                    nextlargest = contlist.get(x).size().area();
+                    secondindex = x;
+                } else if (contlist.get(x).size().area() > nextnextlargest) {
+                    nextnextlargest = contlist.get(x).size().area();
+                    thirdindex = x;
+                }
+            }
+            if(firstindex != -1) {
+                ellipses.add(Imgproc.fitEllipse(new MatOfPoint2f(contlist.get(firstindex).toArray())));
+            }
+            if(secondindex != -1) {
+                ellipses.add(Imgproc.fitEllipse(new MatOfPoint2f(contlist.get(secondindex).toArray())));
+            }
+            if(thirdindex != -1) {
+                ellipses.add(Imgproc.fitEllipse(new MatOfPoint2f(contlist.get(thirdindex).toArray())));
+            }
+            for(int x = 0; x < contlist.size(); x++) {
+                contlist.get(x).release();
+            }
+        }
+        else {
+            for(int x = 0; x < contlist.size(); x++) {
+                try {
+                    ellipses.add(Imgproc.fitEllipse(new MatOfPoint2f(contlist.get(x).toArray())));
+                    contlist.get(x).release();
+                }
+                catch(Exception e) {
+                    contlist.get(x).release();
+                    contlist.remove(x);
                 }
             }
         }
-        for(int x = 0; x < duplicates.size(); x += 2) {
-            if(duplicates.get(x).size().area() > duplicates.get(x + 1).size().area()) {
-                contlist.remove(duplicates.get(x + 1));
-            }
-            else {
-                contlist.remove(duplicates.get(x));
-            }
-        }
         rects.clear();
-        for(int x = 0; x < contlist.size(); x++) {
-            Imgproc.drawContours(disp, contlist, x, new Scalar(128, 0, 128), 2);
-            rects.add(contlist.get(x));
+        rects.addAll(ellipses);
+        for(int x = 0; x < ellipses.size(); x++) {
+            Imgproc.ellipse(disp, ellipses.get(x), new Scalar(128, 0, 128), 4);
         }
         isProc = true;
-        myMat.release();
-        filtered.release();
-        test.release();
         return disp;
     }
 }

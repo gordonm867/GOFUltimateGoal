@@ -23,7 +23,7 @@ public class Odometry implements Subsystem {
     public double lastXPos = 0;
     public double lastYPos = 0;
     private static double angle;
-    private double x = Globals.START_X;
+    private double x = Math.abs(Globals.START_X);
     private double y = Globals.START_Y;
     private double lastTime = System.currentTimeMillis();
     private double dTime = 0;
@@ -31,7 +31,10 @@ public class Odometry implements Subsystem {
     private boolean update = true;
     private static Odometry thismetry = null;
     private static double angleOffset = 0;
-    private double velocity = 0;
+    private volatile double velocity = 0;
+
+    public volatile double lastangleread = Globals.START_THETA;
+    public volatile Point lastpoint = new Point(Globals.START_X, Globals.START_Y);
 
     //private double roboangle = Globals.START_THETA;
 
@@ -39,7 +42,7 @@ public class Odometry implements Subsystem {
 
     private State state = State.ON;
 
-    public Odometry(GOFHardware robot) {
+    private Odometry(GOFHardware robot) {
         Odometry.robot = robot;
     }
 
@@ -68,7 +71,8 @@ public class Odometry implements Subsystem {
 
     public double getAngle() {
         //return roboangle;
-        return Functions.normalize(robot.getAngle() + angleOffset);
+        lastangleread = Functions.normalize(robot.getAngle() + angleOffset);
+        return lastangleread;
     }
 
     public Point getPoint() {
@@ -86,7 +90,7 @@ public class Odometry implements Subsystem {
     public void update(RevBulkData data1) {
         if(update) {
             updates++;
-            angle = Functions.normalize(robot.getAngle() + angleOffset);
+            angle = getAngle();
             handler.pushData("Angle", angle);
             double dTheta = angle - lastAngle;
             //roboangle += ((∆encoder #1 - ∆encoder #2) / (2 * ticks per rotation)) * 360 degrees
@@ -175,6 +179,7 @@ public class Odometry implements Subsystem {
             velocity = displacement / (System.currentTimeMillis() - lastTime);
             lastTime = System.currentTimeMillis();
             //y *= -1;
+            lastpoint = new Point(x, y);
             handler.pushData("Odometry Point", new Point(x, y));
         }
     }
@@ -277,6 +282,7 @@ public class Odometry implements Subsystem {
             dTime += System.currentTimeMillis() - lastTime;
             velocity = displacement / (System.currentTimeMillis() - lastTime);
             lastTime = System.currentTimeMillis();
+            lastpoint = new Point(x, y);
             handler.pushData("Odometry Point", new Point(x, y));
         }
 
@@ -412,7 +418,7 @@ public class Odometry implements Subsystem {
         robot.resetOmnis();
         lastXPos = 0;
         lastYPos = 0;
-        x = Globals.START_X;
+        x = Math.abs(Globals.START_X);
         y = Globals.START_Y;
         lastTime = System.currentTimeMillis();
         dTime = 0;

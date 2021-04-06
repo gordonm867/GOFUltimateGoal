@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -20,7 +21,6 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
-@Disabled
 @Config
 @TeleOp(name="ShootingTune",group="GOF")
 public class Tuning extends MyOpMode {
@@ -38,6 +38,7 @@ public class Tuning extends MyOpMode {
     public static double targA = Globals.START_THETA;
 
     public void initOp() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Globals.MAX_SPEED = 1.0;
         Shooter.thing = 4;
         robot.init(hardwareMap, telemetry);

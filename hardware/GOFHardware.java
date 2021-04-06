@@ -448,7 +448,7 @@ public class GOFHardware {
     }
 
     public void cameraInit() {
-        Globals.BLUR_CONSTANT = 50;
+        Globals.BLUR_CONSTANT = 10;
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);

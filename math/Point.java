@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
 
 public class Point {
 
-    private double x;
-    private double y;
+    private volatile double x;
+    private volatile double y;
     private double angle;
 
     public Point(double x, double y) {
@@ -116,7 +116,7 @@ public class Point {
 
     @NonNull
     public String toString() {
-        return "(" + getX() + ", " + getY() + ")";
+        return "(" + Math.round(1000 * getX()) / 1000.0 + ", " + Math.round(1000 * getY()) / 1000.0  + ")";
     }
 
     @Override

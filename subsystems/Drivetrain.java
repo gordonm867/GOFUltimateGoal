@@ -460,18 +460,21 @@ public class Drivetrain implements Subsystem {
         }
         double scaleFactor;
         double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
-        if(max > Globals.MAX_SPEED) {
-            scaleFactor = Math.abs(Globals.MAX_SPEED / max);
-        } else {
-            if(Math.abs(Functions.normalize(myAngle - current)) > degRemaining && displacement <= 0.5) {
+        if(displacement > 0.1 || (!Double.isNaN(myAngle) && Math.abs(Functions.normalize(myAngle - current)) > 5)) {
+            if (max > Globals.MAX_SPEED) {
                 scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+            } else {
+                if (Math.abs(Functions.normalize(myAngle - current)) > degRemaining && displacement <= 0.5) {
+                    scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+                } else if (displacement >= 0.5) {
+                    scaleFactor = Math.abs((Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED)) / max);
+                } else {
+                    scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
+                }
             }
-            else if(displacement >= 0.5) {
-                scaleFactor = Math.abs((Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED)) / max);
-            }
-            else {
-                scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
-            }
+        }
+        else {
+            scaleFactor = Math.abs(Globals.MIN_SPEED) / Math.abs(max);
         }
         odometry.update(data, current);
         robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
