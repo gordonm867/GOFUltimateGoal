@@ -56,13 +56,13 @@ public class Shooter implements Subsystem {
     public static double p = 0.2;
     public static double i = 0.2;
     public static double d = 0;
-    public static double f = 0;
-    public static double IP = 150;
+//    public static double f = 0;
+//    public static double IP = 150;
 
-    public static double PP = 30;
-    public static double PI = 2;
-    public static double PD = 0;
-    public static double PF = 0;
+//    public static double PP = 30;
+//    public static double PI = 2;
+//    public static double PD = 0;
+//    public static double PF = 0;
 
     public static double vel = 16.22;
     public static double firstshotvel = 16.22;
@@ -76,7 +76,7 @@ public class Shooter implements Subsystem {
     public static int thing = 4;
     public static int oldthing = 4;
 
-    public static double powershotvel = 15.15;
+    public static double powershotvel = 15.08;
 
     public double cycles = 0;
 
@@ -336,7 +336,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.15) && Math.abs(a) < 0.25))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 0.4))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -432,12 +432,22 @@ public class Shooter implements Subsystem {
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
         }
-        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1))) {
-            if(once) {
-                shootonce(targ, robot);
+        if(t > 16.8) {
+            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+                if (once) {
+                    shootonce(targ, robot);
+                } else {
+                    shoot(targ, robot);
+                }
             }
-            else {
-                shoot(targ, robot);
+        }
+        else {
+            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+                if (once) {
+                    shootonce(targ, robot);
+                } else {
+                    shoot(targ, robot);
+                }
             }
         }
     }
@@ -498,6 +508,7 @@ public class Shooter implements Subsystem {
         if(step == 0 && robot.flicker != null) {
             attempts++;
             if (attempts == thing) {
+                shot = true;
                 if(targetlol != Target.POWER) {
                     integral = 0;
                 }

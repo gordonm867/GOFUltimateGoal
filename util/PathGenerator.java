@@ -45,8 +45,8 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         else if(rings == 1) {
             path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-3, -0.2, 104.6875))); // Start-power shots
             path.add(new Line(new Point(-3, -0.2), new Point(-1, 2.75, 180), obstacles)); // Power shots-wobble drop off
-            path.add(new Line(new Point(-1, 2.75), new Point(-3.55, -2.33, 90))); // Wobble drop off-Wobble pickup
-            path.add(new Line(new Point(-3.55, -2.73), new Point(-3.85, 1, -90), obstacles)); // Wobble pickup-Wobble drop off
+            path.add(new Line(new Point(-1, 2.75), new Point(-3.85, -1.93, 90))); // Wobble drop off-Wobble pickup
+            path.add(new Line(new Point(-3.85, -2.33), new Point(-3.85, 1, -90), obstacles)); // Wobble pickup-Wobble drop off
             path.add(new Line(new Point(-3.85, 1), new Point(-2, -0.5, 90), obstacles)); // Wobble drop off-shoot
             path.add(new Line(new Point(-2, -0.5), new Point(-2, 0, 90))); // Shoot-park
         }
