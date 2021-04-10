@@ -72,13 +72,13 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.a && !gamepad2.start && !apressed && !start) {
             apressed = true;
-            if(robot.d1.getPosition() == 0) {
-                robot.d1.setPosition(0.45);
-                robot.d2.setPosition(0.18);
-            }
-            else {
+            if(robot.d1.getPosition() == 0.45) {
                 robot.d1.setPosition(0);
                 robot.d2.setPosition(0.33);
+            }
+            else {
+                robot.d1.setPosition(0.45);
+                robot.d2.setPosition(0.18);
             }
         }
         if(!(gamepad2.a && !gamepad2.start)) {

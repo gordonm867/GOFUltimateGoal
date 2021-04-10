@@ -46,6 +46,7 @@ public class Shooter implements Subsystem {
     public double t = 0;
     public double a = 0;
 
+    public double reallasttime = System.currentTimeMillis();
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
@@ -109,6 +110,9 @@ public class Shooter implements Subsystem {
             attempts = 0;
             shooting = true;
             Intake.rings -= (thing - 1);
+            if(Intake.rings < 0) {
+                Intake.rings = 0;
+            }
             ready = false;
             handler.pushData("stv", vel);
             t = (double)handler.getData("stv");
@@ -322,12 +326,21 @@ public class Shooter implements Subsystem {
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
             lasterror = error;
-            if(deltatime > 0.02) {
-                a = (v - lastv) / (deltatime);
+            double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
+            if(realdeltatime > 0.5) {
+                realdeltatime = 0;
+                reallasttime = System.currentTimeMillis();
                 lastv = v;
+                a = 0.0;
+            }
+            if(v != lastv) {
+                a = (v - lastv) / (realdeltatime);
+                lastv = v;
+                reallasttime = System.currentTimeMillis();
             }
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
+            handler.pushData("saa", a);
         }
         if(gamepad2.a && !apressed) {
             apressed = true;
@@ -336,7 +349,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 0.4))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 2.0))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -380,14 +393,23 @@ public class Shooter implements Subsystem {
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
             lasterror = error;
-            if(deltatime > 0.02) {
-                a = (v - lastv) / (deltatime);
+            double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
+            if(realdeltatime > 0.5) {
+                realdeltatime = 0;
+                reallasttime = System.currentTimeMillis();
                 lastv = v;
+                a = 0.0;
+            }
+            if(v != lastv) {
+                a = (v - lastv) / (realdeltatime);
+                lastv = v;
+                reallasttime = System.currentTimeMillis();
             }
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
+            handler.pushData("saa", a);
         }
-        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) && Math.abs(a) < 0.4) {
+        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) && Math.abs(a) < 2.0) {
             if(once) {
                 shootonce(targ, robot);
             }
@@ -408,32 +430,43 @@ public class Shooter implements Subsystem {
             }
             double error = t - v;
             double derror = error - lasterror;
-            if(derror >= error) {
+            if (derror >= error) {
                 derror = 0;
             }
             double derivative = derror / deltatime;
-            if(t == 0) {
+            if (t == 0) {
                 robot.shoot1.setPower(0);
                 robot.shoot2.setPower(0);
                 integral = 0;
-            }
-            else {
+            } else {
                 integral += error * deltatime;
-                if(v == powershotvel) {
+                if (v == powershotvel) {
                     powershotintegrals.put(Math.round(10 * v) / 10.0, integral);
-                }
-                else {
+                } else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
                 }
                 robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
             lasterror = error;
+            double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
+            if(realdeltatime > 0.5) {
+                realdeltatime = 0;
+                reallasttime = System.currentTimeMillis();
+                lastv = v;
+                a = 0.0;
+            }
+            if(v != lastv) {
+                a = (v - lastv) / (realdeltatime);
+                lastv = v;
+                reallasttime = System.currentTimeMillis();
+            }
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
+            handler.pushData("saa", a);
         }
         if(t > 16.8) {
-            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.25) && Math.abs(a) < 2.0)) {
                 if (once) {
                     shootonce(targ, robot);
                 } else {
@@ -484,12 +517,21 @@ public class Shooter implements Subsystem {
                 robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
             }
             lasterror = error;
-            if(deltatime > 0.02) {
-                a = (v - lastv) / (deltatime);
+            double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
+            if(realdeltatime > 0.5) {
+                realdeltatime = 0;
+                reallasttime = System.currentTimeMillis();
                 lastv = v;
+                a = 0.0;
+            }
+            if(v != lastv) {
+                a = (v - lastv) / (realdeltatime);
+                lastv = v;
+                reallasttime = System.currentTimeMillis();
             }
             lasttime = System.currentTimeMillis();
             handler.pushData("sav", v);
+            handler.pushData("saa", a);
         }
     }
 
@@ -538,9 +580,9 @@ public class Shooter implements Subsystem {
                     }
                 }
                 //else {
-                    //firstshotvel = oldfirstshotvel;
-                    //secondshotvel = oldsecondshotvel;
-                    //thirdshotvel = oldthirdshotvel;
+                //firstshotvel = oldfirstshotvel;
+                //secondshotvel = oldsecondshotvel;
+                //thirdshotvel = oldthirdshotvel;
                 //}
                 shooting = false;
                 if (targetlol != Target.POWER) {

@@ -108,10 +108,11 @@ public class GOFTeleOp extends MyOpMode {
 
     public void loopOp() {
         double angle = odometry.getAngle();
-        if(System.currentTimeMillis() - lasttime >= 15) {
+        if(angle != lastangle) {
             double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
             handler.pushData("Omega", omega);
             lasttime = System.currentTimeMillis();
+            lastangle = angle;
         }
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
@@ -122,11 +123,13 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }
         if(handler.contains("sav")) {
-            telemetry.addData("Shooter velocity", (double) handler.getData("sav"));
+            telemetry.addData("Shooter velocity", (double)handler.getData("sav"));
+        }
+        if(handler.contains("saa")) {
+            telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
         telemetry.addData("Rings", Intake.rings);
         telemetry.update();
-        lastangle = angle;
     }
 
     public void stopOp() {

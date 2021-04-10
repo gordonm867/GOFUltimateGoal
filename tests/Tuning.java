@@ -37,6 +37,10 @@ public class Tuning extends MyOpMode {
     public static double targY = Globals.START_Y;
     public static double targA = Globals.START_THETA;
 
+    double lastangle;
+    double lasttime = System.currentTimeMillis();
+    double omega = 6;
+
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Globals.MAX_SPEED = 1.0;
@@ -68,11 +72,18 @@ public class Tuning extends MyOpMode {
         for(Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
         }
+        double angle = odometry.getAngle();
+        if(angle != lastangle) {
+            double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
+            handler.pushData("Omega", omega);
+            lasttime = System.currentTimeMillis();
+            lastangle = angle;
+        }
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
-        double angle = odometry.getAngle() - targA;
-        if(displacement > 3.0/96.0 || Math.abs(angle) > 0.5) {
+        double angularerror = odometry.getAngle() - targA;
+        if(displacement > 3.0/96.0 || Math.abs(angularerror) > 0.25 || Math.abs(odometry.getX() - targX) > 1.0/96.0 || omega > 0.15) {
             drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }
         else {
