@@ -266,6 +266,7 @@ public class Shooter implements Subsystem {
             lt = false;
         }
         if(gamepad2.left_bumper) {
+            Intake.rings = 0;
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
             Drivetrain.waitingForShoot = false;
