@@ -542,8 +542,8 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target targetlol, GOFHardware robot) {
-        robot.d1.setPosition(0);
-        robot.d2.setPosition(0.39);
+        robot.d1.setPosition(0.2);
+        robot.d2.setPosition(0.5);
         if(targ == Target.POWER) {
             shootonce(targetlol, robot);
             return;
@@ -590,8 +590,8 @@ public class Shooter implements Subsystem {
                     readying = false;
                 }
                 ready = false;
-                robot.d1.setPosition(0);
-                robot.d2.setPosition(0.39);
+                robot.d1.setPosition(0.2);
+                robot.d2.setPosition(0.5);
                 return;
             }
             if (targ == Target.GOAL) {

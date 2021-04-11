@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 
 import java.io.IOException;
 
-@Disabled
+//@Disabled
 @Config
 @TeleOp(name="DualServoTest")
 public class DualServoTest extends MyOpMode {
