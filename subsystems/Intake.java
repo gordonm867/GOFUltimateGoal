@@ -72,13 +72,13 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.a && !gamepad2.start && !apressed && !start) {
             apressed = true;
-            if(robot.d1.getPosition() == 0.45) {
-                robot.d1.setPosition(0.2);
-                robot.d2.setPosition(0.5);
+            if(robot.d1.getPosition() == 0.43) {
+                robot.d1.setPosition(0.0);
+                robot.d2.setPosition(0.52);
             }
             else {
-                robot.d1.setPosition(0.53);
-                robot.d2.setPosition(0.28);
+                robot.d1.setPosition(0.43);
+                robot.d2.setPosition(0.3);
             }
         }
         if(!(gamepad2.a && !gamepad2.start)) {
@@ -86,8 +86,8 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.b && !gamepad2.start && !b && !start) {
             b = true;
-            robot.d1.setPosition(0.45);
-            robot.d2.setPosition(0.35);
+            robot.d1.setPosition(0.36);
+            robot.d2.setPosition(0.36);
         }
         if(!(gamepad2.b && !gamepad2.start)) {
             b = false;

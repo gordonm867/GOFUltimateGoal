@@ -43,6 +43,7 @@ public class GOFTeleOp extends MyOpMode {
     private double lasttime = 0;
 
     public void initOp() {
+        Globals.AUTO = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
@@ -108,7 +109,7 @@ public class GOFTeleOp extends MyOpMode {
 
     public void loopOp() {
         double angle = odometry.getAngle();
-        if(angle != lastangle) {
+        if(angle != lastangle || System.currentTimeMillis() - lasttime >= 1000) {
             double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
             handler.pushData("Omega", omega);
             lasttime = System.currentTimeMillis();
@@ -128,7 +129,7 @@ public class GOFTeleOp extends MyOpMode {
         if(handler.contains("saa")) {
             telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
-        telemetry.addData("Rings", Intake.rings);
+        telemetry.addData("Angle", angle);
         telemetry.update();
     }
 

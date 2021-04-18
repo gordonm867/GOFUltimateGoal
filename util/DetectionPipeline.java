@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.util;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -12,6 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
+@Config
 public class DetectionPipeline extends OpenCvPipeline {
     Mat myMat = new Mat();
     Mat disp = new Mat();
@@ -25,9 +28,12 @@ public class DetectionPipeline extends OpenCvPipeline {
 
     public int rings = 0;
 
+    public static double alpha = 0.8;
+
     @Override
     public Mat processFrame(Mat input) {
         input = input.submat(200, 480, 0, 640);
+        input.convertTo(input, -1, alpha);
         myMat = new Mat();
         disp = new Mat();
         filtered = new Mat();

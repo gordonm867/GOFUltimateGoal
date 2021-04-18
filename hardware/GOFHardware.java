@@ -263,7 +263,7 @@ public class GOFHardware {
         try {
             wobble = hwMap.get(Servo.class, "w");
             wobble.setDirection(Servo.Direction.FORWARD);
-            wobble.setPosition(Wobble.closedpose);
+            wobble.setPosition(Wobble.closedpose + 0.11);
         }
         catch(Exception p_exception) {
             wobble = null;
@@ -272,7 +272,7 @@ public class GOFHardware {
         try {
             d1 = hwMap.get(Servo.class, "d1");
             d1.setDirection(Servo.Direction.FORWARD);
-            d1.setPosition(0);
+            d1.setPosition(0.2);
         }
         catch(Exception p_exception) {
             d1 = null;
@@ -281,7 +281,7 @@ public class GOFHardware {
         try {
             d2 = hwMap.get(Servo.class, "d2");
             d2.setDirection(Servo.Direction.FORWARD);
-            d2.setPosition(0.39);
+            d2.setPosition(0.5);
         }
         catch(Exception p_exception) {
             d2 = null;

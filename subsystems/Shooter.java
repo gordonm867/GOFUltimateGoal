@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
@@ -29,6 +30,7 @@ public class Shooter implements Subsystem {
     boolean dpaddown = false;
     boolean ready = false;
     boolean b1pressed = false;
+    boolean override = false;
 
     public boolean shot = false;
     public boolean shooting = false;
@@ -39,7 +41,7 @@ public class Shooter implements Subsystem {
     public Target targ;
 
     double time = 0;
-    int step = 0;
+    public int step = 0;
     public int attempts = 0;
 
     public double v = 0;
@@ -69,6 +71,8 @@ public class Shooter implements Subsystem {
     public static double firstshotvel = 16.22;
     public static double secondshotvel = 16.22;
     public static double thirdshotvel = 16.22;
+
+    public static double shotvel = 0;
 
     //public static double oldfirstshotvel = 16.32;
     //public static double oldsecondshotvel = 16.32;
@@ -164,6 +168,7 @@ public class Shooter implements Subsystem {
             b1pressed = false;
         }
         if(gamepad2.right_trigger > 0.05 && !rt) {
+            step = 0;
             shots++;
             if(shots % 3 == 0) {
                 //odometry.shootreset();
@@ -467,7 +472,8 @@ public class Shooter implements Subsystem {
             handler.pushData("saa", a);
         }
         if(t > 16.8) {
-            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.25) && Math.abs(a) < 2.0)) {
+            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.25))) {
+                override = true;
                 if (once) {
                     shootonce(targ, robot);
                 } else {
@@ -476,13 +482,67 @@ public class Shooter implements Subsystem {
             }
         }
         else {
-            if (((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+                override = true;
                 if (once) {
                     shootonce(targ, robot);
                 } else {
                     shoot(targ, robot);
                 }
             }
+        }
+    }
+
+    public void reallyforceshoot(GOFHardware robot, double velocity, boolean once) {
+        handler.pushData("stv", velocity);
+        if(robot.shoot1 != null && robot.shoot2 != null) {
+            t = (double)handler.getData("stv");
+            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+            if(deltatime > 0.2) {
+                deltatime = 0;
+            }
+            double error = t - v;
+            double derror = error - lasterror;
+            if (derror >= error) {
+                derror = 0;
+            }
+            double derivative = derror / deltatime;
+            if (t == 0) {
+                robot.shoot1.setPower(0);
+                robot.shoot2.setPower(0);
+                integral = 0;
+            } else {
+                integral += error * deltatime;
+                if (v == powershotvel) {
+                    powershotintegrals.put(Math.round(10 * v) / 10.0, integral);
+                } else {
+                    integrals.put(Math.round(10 * v) / 10.0, integral);
+                }
+                robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+                robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+            }
+            lasterror = error;
+            double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
+            if(realdeltatime > 0.5) {
+                realdeltatime = 0;
+                reallasttime = System.currentTimeMillis();
+                lastv = v;
+                a = 0.0;
+            }
+            if(v != lastv) {
+                a = (v - lastv) / (realdeltatime);
+                lastv = v;
+                reallasttime = System.currentTimeMillis();
+            }
+            lasttime = System.currentTimeMillis();
+            handler.pushData("sav", v);
+            handler.pushData("saa", a);
+        }
+        if (once) {
+            shootonce(targ, robot);
+        } else {
+            shoot(targ, robot);
         }
     }
 
@@ -542,8 +602,10 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(Target targetlol, GOFHardware robot) {
-        robot.d1.setPosition(0.2);
-        robot.d2.setPosition(0.5);
+        if(!Globals.AUTO) {
+            robot.d1.setPosition(0.2);
+            robot.d2.setPosition(0.5);
+        }
         if(targ == Target.POWER) {
             shootonce(targetlol, robot);
             return;
@@ -552,49 +614,22 @@ public class Shooter implements Subsystem {
             attempts++;
             if (attempts == thing) {
                 shot = true;
+                override = false;
                 if(targetlol != Target.POWER) {
                     integral = 0;
                 }
-                if(Math.abs(vel) < Math.abs(Math.min(Math.min(firstshotvel, secondshotvel), thirdshotvel)) - 0.7 || Math.abs(vel) == powershotvel) {
-                    uh = false;
-                    powershots++;
-                    if(powershots % 3 != 0) {
-                        readying = true;
-                        start(robot, powershotvel);
-                        try {
-                            double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
-                            if(target != 0) {
-                                double closest = 0;
-                                double closestdist = Double.MAX_VALUE;
-                                Enumeration<Double> enumthing = powershotintegrals.keys();
-                                while (enumthing.hasMoreElements()) {
-                                    double next = enumthing.nextElement();
-                                    if (Math.abs(next - target) < closestdist) {
-                                        closestdist = Math.abs(next - target);
-                                        closest = next;
-                                    }
-                                }
-                                integral = powershotintegrals.get(closest);
-                            }
-                        }
-                        catch(Exception e) {}
-                    }
-                }
-                //else {
-                //firstshotvel = oldfirstshotvel;
-                //secondshotvel = oldsecondshotvel;
-                //thirdshotvel = oldthirdshotvel;
-                //}
                 shooting = false;
                 if (targetlol != Target.POWER) {
                     readying = false;
                 }
                 ready = false;
-                robot.d1.setPosition(0.2);
-                robot.d2.setPosition(0.5);
+                if(!Globals.AUTO) {
+                    robot.d1.setPosition(0.2);
+                    robot.d2.setPosition(0.5);
+                }
                 return;
             }
-            if (targ == Target.GOAL) {
+            if (!Globals.AUTO && targ == Target.GOAL) {
                 if (attempts == 1) {
                     vel = firstshotvel;
                     handler.pushData("stv", vel);
@@ -608,9 +643,19 @@ public class Shooter implements Subsystem {
             }
             robot.flicker.setPosition(shootIn);
             time = System.currentTimeMillis();
+            shotvel = (double)handler.getData("sav");
             step++;
         }
-        if(step == 1 && System.currentTimeMillis() - time > shootTime) {
+        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) || (!Globals.AUTO && System.currentTimeMillis() - time > shootTime))) {
+            if(System.currentTimeMillis() - time > shootTime * 1.5) {
+                time = System.currentTimeMillis();
+                if(robot.flicker.getPosition() == shootIn) {
+                    robot.flicker.setPosition(shootOut);
+                }
+                else {
+                    robot.flicker.setPosition(shootIn);
+                }
+            }
             robot.flicker.setPosition(shootOut);
             time = System.currentTimeMillis();
             step++;
@@ -630,6 +675,7 @@ public class Shooter implements Subsystem {
         if(step == 1 && System.currentTimeMillis() - time > shootTime) {
             robot.flicker.setPosition(shootOut);
             shot = true;
+            override = false;
             time = System.currentTimeMillis();
             step++;
         }

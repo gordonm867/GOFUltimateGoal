@@ -23,7 +23,7 @@ public class LocalizationPipeline extends OpenCvPipeline {
 
     public boolean isProc = false;
 
-    public static double alpha = 1.5;
+    public static double alpha = 1;
     public static double filterThreshhold = 40;
 
     public ArrayList<MatOfPoint> contlist = new ArrayList<>();
