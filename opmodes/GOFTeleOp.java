@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -119,6 +120,21 @@ public class GOFTeleOp extends MyOpMode {
         RevBulkData data2 = robot.bulkReadTwo();
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
+        }
+        if(robot.led != null) {
+            if (!shooter.shooting) {
+                if (Intake.rings == 0) {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+                } else if (Intake.rings == 1) {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
+                } else if (Intake.rings == 2) {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
+                } else {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                }
+            } else {
+                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_MEDIUM);
+            }
         }
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));

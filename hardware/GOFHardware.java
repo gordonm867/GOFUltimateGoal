@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.hardware;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -84,6 +85,7 @@ public class GOFHardware {
     public Servo flicker;
     public Servo d1;
     public Servo d2;
+    public RevBlinkinLedDriver led;
 
     public boolean enabled;
 
@@ -267,6 +269,13 @@ public class GOFHardware {
         }
         catch(Exception p_exception) {
             wobble = null;
+        }
+
+        try {
+            led = hwMap.get(RevBlinkinLedDriver.class, "led");
+        }
+        catch(Exception p_exception) {
+            led = null;
         }
 
         try {
