@@ -279,8 +279,8 @@ public class Drivetrain implements Subsystem {
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         Globals.MIN_SPEED = 0.3;
                         displacement = odometry.getPoint().distance(new Point(-1.35 + (4.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(angle - 99.5) > 0.5) || (double)handler.getData("Omega") > 0.05)) {
-                            update(robot, new Point(-1.35 + (4.0/12), 0), odometry, 99.5, robotangle, data1);
+                        if (((displacement > 3.0/96.0 || Math.abs(angle - 100.75) > 0.5) || (double)handler.getData("Omega") > 0.05)) {
+                            update(robot, new Point(-1.35 + (4.0/12), 0), odometry, 100.75, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -290,8 +290,8 @@ public class Drivetrain implements Subsystem {
                     else {
                         Globals.MIN_SPEED = 0.3;
                         displacement = odometry.getPoint().distance(new Point(1.35 - (4.0/12), 0), Unit.FEET);
-                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 99.5) > 0.5) || (double)handler.getData("Omega") > 0.05)) {
-                            update(robot, new Point(1.35 - (4.0/12), 0), odometry, 99.5, robotangle, data1);
+                        if (((displacement > 3.0/96.0 || Math.abs(robotangle - 100.75) > 0.5) || (double)handler.getData("Omega") > 0.05)) {
+                            update(robot, new Point(1.35 - (4.0/12), 0), odometry, 100.75, robotangle, data1);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -505,7 +505,7 @@ public class Drivetrain implements Subsystem {
         if(displacement != 0 && !Double.isInfinite(displacement) && !Double.isNaN(displacement)) {
             double PIDd = -Math.cos(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
             if(PIDd != -displacement) {
-                angle = (1f / 0.95f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
+                angle = (1f / 0.8f) * Math.sin(myPos.angle(target, AngleUnit.RADIANS) - Math.toRadians(current)) * displacement;
                 drive = PIDd;
                 if(!Double.isNaN(myAngle)) {
                     error = Functions.normalize(myAngle - current);

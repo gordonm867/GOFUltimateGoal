@@ -16,7 +16,7 @@ public final class Globals {
     public static double MAX_IN_SPEED = 1.0;
     public static double MIN_IN_SPEED = 0.45;
 
-    public static double MAX_WOBBLE = 0.3;
+    public static double MAX_WOBBLE = 0.5;
 
     public static double START_Y = -5.25853; // Default starting y position
     public static double START_X = -2.98; // Default starting x position
