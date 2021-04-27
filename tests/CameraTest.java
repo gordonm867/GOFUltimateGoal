@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -104,19 +102,19 @@ public class CameraTest extends MyOpMode {
                             mypoints.add(p);
                         }
                     }
+                    telemetry.addData("Size", size);
                 }
+            } catch (Exception e) {
+                telemetry.addData("Note", "No contours found!");
             }
-            catch (Exception e) {}
         }
         StringBuilder telem = new StringBuilder();
-        TelemetryPacket pack = new TelemetryPacket();
-        Canvas field = pack.fieldOverlay();
-        field = field.fillRect(targY * 12, -targX * 12, 18, 18);
         for(Point p : mypoints) {
             if(Math.abs(p.getY()) < 5.25 && Math.abs(p.getX()) < 5.25) {
-                field = field.strokeCircle(p.getY() * 12, -p.getX() * 12, 5);
+                telem.append(p.toString()).append("\n");
             }
         }
-        FtcDashboard.getInstance().sendTelemetryPacket(pack);
+        telemetry.addData("", telem.toString());
+        telemetry.update();
     }
 }

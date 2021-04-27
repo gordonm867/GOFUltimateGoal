@@ -446,8 +446,8 @@ public class Shooter implements Subsystem {
                 integral = 0;
             } else {
                 integral += error * deltatime;
-                if (v == powershotvel) {
-                    powershotintegrals.put(Math.round(10 * v) / 10.0, integral);
+                if (t == powershotvel) {
+                    powershotintegrals.put(Math.round(10 * t) / 10.0, integral);
                 } else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
                 }
@@ -568,8 +568,8 @@ public class Shooter implements Subsystem {
             }
             else {
                 integral += error * deltatime;
-                if(v == powershotvel) {
-                    powershotintegrals.put(Math.round(10 * v) / 10.0, integral);
+                if(t == powershotvel) {
+                    powershotintegrals.put(Math.round(10 * t) / 10.0, integral);
                 }
                 else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
@@ -646,7 +646,7 @@ public class Shooter implements Subsystem {
             shotvel = (double)handler.getData("sav");
             step++;
         }
-        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) || (!Globals.AUTO && System.currentTimeMillis() - time > shootTime))) {
+        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) && System.currentTimeMillis() - time > 50 || (!Globals.AUTO && System.currentTimeMillis() - time > shootTime))) {
             if(System.currentTimeMillis() - time > shootTime * 1.5) {
                 time = System.currentTimeMillis();
                 if(robot.flicker.getPosition() == shootIn) {
