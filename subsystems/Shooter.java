@@ -624,8 +624,8 @@ public class Shooter implements Subsystem {
                 }
                 ready = false;
                 if(!Globals.AUTO) {
-                    robot.d1.setPosition(0.2);
-                    robot.d2.setPosition(0.5);
+                    robot.d1.setPosition(0.1);
+                    robot.d2.setPosition(0.82);
                 }
                 return;
             }

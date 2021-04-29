@@ -225,8 +225,8 @@ public class RED extends MyOpMode {
         }
         starttime = System.currentTimeMillis();
         if(rings == 4) {
-            robot.d1.setPosition(0);
-            robot.d2.setPosition(0.48);
+            robot.d1.setPosition(0.1);
+            robot.d2.setPosition(0.82);
             robot.setIntakePower(1.0);
         }
     }
@@ -318,8 +318,8 @@ public class RED extends MyOpMode {
                         }
                         Shooter.i = oldi;
                         while (odometry.getY() < -2.5 && !(robot.ringsensor.getDistance(DistanceUnit.MM) < 30)) {
-                            robot.d1.setPosition(0.53);
-                            robot.d2.setPosition(0.28);
+                            robot.d1.setPosition(0.58);
+                            robot.d2.setPosition(0.36);
                             robot.setIntakePower(-1.0);
                             target = new Point(3, odometry.getY() + 0.5);
                             newangle = odometry.getAngle();
@@ -337,8 +337,8 @@ public class RED extends MyOpMode {
                         Point target = new Point(3.2, -3.3);
                         double newdisplacement = odometry.getPoint().distance(target, Unit.FEET);
                         double newangle = odometry.getAngle();
-                        robot.d1.setPosition(0);
-                        robot.d2.setPosition(0.52);
+                        robot.d1.setPosition(0.32);
+                        robot.d2.setPosition(0.60);
                         while ((newdisplacement > 3.0 / 96.0) || Math.abs(newangle - 91) > 0.6) {
                             newdisplacement = odometry.getPoint().distance(target, Unit.FEET);
                             newangle = odometry.getAngle();
@@ -383,31 +383,31 @@ public class RED extends MyOpMode {
                             robot.setIntakePower(1.0);
                         }
                         robot.setIntakePower(-1.0);
-                        robot.d1.setPosition(0.2);
-                        robot.d2.setPosition(0.45);
+                        robot.d1.setPosition(0.4);
+                        robot.d2.setPosition(0.52);
                         timeout = System.currentTimeMillis();
                         target = new Point(3.2, -3.18);
-                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 30) {
+                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 35) {
                             drive.update(robot, target, odometry, 90, odometry.getAngle(), robot.bulkRead());
                             if (System.currentTimeMillis() - timeout >= 2000) {
                                 break;
                             }
                         }
                         robot.setDrivePower(0, 0, 0, 0);
-                        robot.d1.setPosition(0.36);
-                        robot.d2.setPosition(0.36);
+                        robot.d1.setPosition(0.5);
+                        robot.d2.setPosition(0.42);
                         timeout = System.currentTimeMillis();
                         while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) < 40) {}
-                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 30) {
+                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 35) {
                             if (System.currentTimeMillis() - timeout >= 1200) {
                                 break;
                             }
                         }
                         while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) < 40) {}
-                        robot.d1.setPosition(0.43);
-                        robot.d2.setPosition(0.3);
+                        robot.d1.setPosition(0.58);
+                        robot.d2.setPosition(0.36);
                         timeout = System.currentTimeMillis();
-                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 30) {
+                        while (opModeIsActive() && robot.ringsensor.getDistance(DistanceUnit.MM) > 35) {
                             if (System.currentTimeMillis() - timeout >= 1200) {
                                 break;
                             }
@@ -420,8 +420,8 @@ public class RED extends MyOpMode {
                         fish = true;
                         shooter.step = 0;
                         shooter.attempts = 0;
-                        robot.d1.setPosition(0);
-                        robot.d2.setPosition(0.52);
+                        robot.d1.setPosition(0.1);
+                        robot.d2.setPosition(0.82);
                         robot.shoot1.setPower(0);
                         robot.shoot2.setPower(0);
                         Shooter.shootTime -= 30.0;
@@ -459,8 +459,8 @@ public class RED extends MyOpMode {
             Globals.MAX_SPEED = 1.0;
         }
         if((rings == 1 && ((index == 0 && shooter.shot && !fish) || index == 4 || index == 1)) || (rings == 0 && index == 4) || (rings == 4 && index == 0 && fishy && !fish)) {
-            robot.d1.setPosition(0);
-            robot.d2.setPosition(0.48);
+            robot.d1.setPosition(0.1);
+            robot.d2.setPosition(0.82);
             robot.setIntakePower(-1);
             if(index != 0 && !hasrings && robot.ringsensor.getDistance(DistanceUnit.MM) < 30) {
                 hasrings = true;
@@ -520,8 +520,8 @@ public class RED extends MyOpMode {
                     if(index == 0) {
                         double d1p = robot.d1.getPosition();
                         double d2p = robot.d2.getPosition();
-                        robot.d1.setPosition(0);
-                        robot.d2.setPosition(0.48);
+                        robot.d1.setPosition(0.1);
+                        robot.d2.setPosition(0.82);
                         /*
                         Globals.MAX_SPEED = 0.35;
                         double shoottimer = System.currentTimeMillis();
@@ -787,8 +787,8 @@ public class RED extends MyOpMode {
                             int atts = rings;
                             shooter.PIDReset();
                             MAIN: for(Point bounceback : mypoints) {
-                                robot.d1.setPosition(0.53);
-                                robot.d2.setPosition(0.28);
+                                robot.d1.setPosition(0.58);
+                                robot.d2.setPosition(0.36);
                                 atts++;
                                 if(atts > 3) {
                                     break;
@@ -1015,8 +1015,8 @@ public class RED extends MyOpMode {
                             int atts = rings;
                             shooter.PIDReset();
                             MAIN: for(Point bounceback : mypoints) {
-                                robot.d1.setPosition(0.53);
-                                robot.d2.setPosition(0.28);
+                                robot.d1.setPosition(0.58);
+                                robot.d2.setPosition(0.36);
                                 atts++;
                                 if(atts > 3) {
                                     break;
@@ -1092,8 +1092,8 @@ public class RED extends MyOpMode {
                                 }
                             }
                             robot.setDrivePower(0, 0, 0, 0);
-                            robot.d1.setPosition(0);
-                            robot.d2.setPosition(0.48);
+                            robot.d1.setPosition(0.1);
+                            robot.d2.setPosition(0.82);
                         }
                         break;
                     }
@@ -1117,8 +1117,8 @@ public class RED extends MyOpMode {
                         }
                         shooter.shot = false;
                         shooter.attempts = 0;
-                        robot.d1.setPosition(0);
-                        robot.d2.setPosition(0.48);
+                        robot.d1.setPosition(0.1);
+                        robot.d2.setPosition(0.82);
                         while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                             shooter.forceshoot(robot, 16.42, false);

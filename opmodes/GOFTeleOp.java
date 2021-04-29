@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
@@ -136,6 +137,7 @@ public class GOFTeleOp extends MyOpMode {
                 robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_MEDIUM);
             }
         }
+        telemetry.addData("Distance", robot.ringsensor.getDistance(DistanceUnit.MM));
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }
