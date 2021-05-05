@@ -52,31 +52,27 @@ public class Shooter implements Subsystem {
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
-    public static double shootTime = 75.0;
+    public static double shootTime = 50.0;
     public static double shootIn = 0.36;
     public static double shootOut = 0.55;
 
     public static double p = 0.2;
     public static double i = 0.2;
     public static double d = 0;
-//    public static double f = 0;
-//    public static double IP = 150;
+    public static double f = 0;
+    public static double IP = 150;
 
-//    public static double PP = 30;
-//    public static double PI = 2;
-//    public static double PD = 0;
-//    public static double PF = 0;
+    public static double PP = 30;
+    public static double PI = 2;
+    public static double PD = 0;
+    public static double PF = 0;
 
-    public static double vel = 16.22;
-    public static double firstshotvel = 16.22;
-    public static double secondshotvel = 16.22;
-    public static double thirdshotvel = 16.22;
+    public static double vel = 17.0;
+    public static double firstshotvel = 17.0;
+    public static double secondshotvel = 17.0;
+    public static double thirdshotvel = 17.0;
 
     public static double shotvel = 0;
-
-    //public static double oldfirstshotvel = 16.32;
-    //public static double oldsecondshotvel = 16.32;
-    //public static double oldthirdshotvel = 16.32;
 
     public static int thing = 4;
     public static int oldthing = 4;
@@ -171,7 +167,7 @@ public class Shooter implements Subsystem {
             step = 0;
             shots++;
             if(shots % 3 == 0) {
-                //odometry.shootreset();
+                odometry.shootreset();
             }
             thing = oldthing;
             rt = true;
@@ -183,7 +179,7 @@ public class Shooter implements Subsystem {
             else {
                 target = new Point(3, 6);
             }
-            //vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
+            vel = (((maxvel - oldvel) / 4) * (odometry.getPoint().distance(target, Unit.FEET) - 10)) + maxvel;
              */
             vel = firstshotvel;
             attempts = 0;
@@ -220,7 +216,7 @@ public class Shooter implements Subsystem {
             }
             else {
                 readying = true;
-                //start(robot, powershotvel);
+                start(robot, powershotvel);
                 try {
                     double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
                     if(target != 0) {
@@ -287,7 +283,7 @@ public class Shooter implements Subsystem {
             dpadup = true;
             firstshotvel += 0.08;
             secondshotvel += 0.08;
-            //thirdshotvel += 0.08;
+            thirdshotvel += 0.08;
         }
         if(!gamepad2.dpad_up) {
             dpadup = false;
@@ -296,7 +292,7 @@ public class Shooter implements Subsystem {
             dpaddown = true;
             firstshotvel -= 0.08;
             secondshotvel -= 0.08;
-            //thirdshotvel -= 0.08;
+            thirdshotvel -= 0.08;
         }
         if(!gamepad2.dpad_down) {
             dpaddown = false;
