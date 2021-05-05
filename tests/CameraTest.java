@@ -91,8 +91,8 @@ public class CameraTest extends MyOpMode {
                 for (int x = 0; x < ((LocalizationPipeline) robot.pipeline).rects.size(); x++) {
                     Rect rect = ((LocalizationPipeline) robot.pipeline).rects.get(x).boundingRect();
                     size = rect.area();
-                    double ang = Functions.normalize(Math.toDegrees(Math.atan2(rect.y + 480, rect.x - 320)) + odometry.getAngle() + 98);
-                    double dist = ((1369.5873 * Math.pow(size, -0.41436702)) / 12.0);
+                    double ang = Functions.normalize(Math.toDegrees(Math.atan2(rect.y + 480, rect.x - 320)) + odometry.getAngle() + 91);
+                    double dist = ((1333.77505 * Math.pow(size, -0.413616085)) / 12.0);
                     double realx = ((1.5 / 12.0) * Math.sin(Math.toRadians(odometry.getAngle())) + ((4.5 / 12.0) * Math.cos(Math.toRadians(odometry.getAngle())))) + odometry.getX();
                     double realy = ((1.5 / 12.0) * Math.cos(Math.toRadians(odometry.getAngle())) + ((4.5 / 12.0) * Math.sin(Math.toRadians(odometry.getAngle())))) + odometry.getY();
                     ArrayList<Point> points = Functions.infiniteLineCircleIntersection(new Circle(new Point(realx, realy), dist), new Line(new Point(realx, realy), new Point(realx + 1, Math.tan(Math.toRadians(ang)))));
@@ -110,7 +110,7 @@ public class CameraTest extends MyOpMode {
         }
         StringBuilder telem = new StringBuilder();
         for(Point p : mypoints) {
-            if(Math.abs(p.getY()) < 5.25 && Math.abs(p.getX()) < 5.25) {
+            if(Math.abs(p.getY()) < 6.5 && Math.abs(p.getX()) < 6.5) {
                 telem.append(p.toString()).append("\n");
             }
         }

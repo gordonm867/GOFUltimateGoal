@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
@@ -50,8 +49,8 @@ public class GOFTeleOp extends MyOpMode {
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
         robot.init(hardwareMap, telemetry);
-        robot.d1.setPosition(0);
-        robot.d2.setPosition(0.48);
+        robot.d1.setPosition(0.65);
+        robot.d2.setPosition(0.32);
         robot.wobble.setPosition(Wobble.openpose);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);
@@ -137,7 +136,7 @@ public class GOFTeleOp extends MyOpMode {
                 robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_MEDIUM);
             }
         }
-        telemetry.addData("Distance", robot.ringsensor.getDistance(DistanceUnit.MM));
+        telemetry.addData("First shot velocity", Shooter.firstshotvel);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }

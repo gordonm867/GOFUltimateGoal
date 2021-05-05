@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -8,13 +9,14 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.openftc.revextensions2.RevBulkData;
 
+@Config
 public class Wobble implements Subsystem {
     public State child;
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
     public static double closedpose = 0.35;
-    public static double openpose = 0.80;
+    public static double openpose = 0.65;
 
     public int target = 0;
 

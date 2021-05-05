@@ -211,6 +211,7 @@ public class Shooter implements Subsystem {
             t = (double)handler.getData("stv");
             targ = Target.GOAL;
         }
+        /*
         if(gamepad2.x && !xpressed) {
             thing = 2;
             xpressed = true;
@@ -219,7 +220,7 @@ public class Shooter implements Subsystem {
             }
             else {
                 readying = true;
-                start(robot, powershotvel);
+                //start(robot, powershotvel);
                 try {
                     double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
                     if(target != 0) {
@@ -242,6 +243,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.x) {
             xpressed = false;
         }
+         */
         if(gamepad2.right_trigger < 0.05 && rt) {
             rt = false;
         }
@@ -355,7 +357,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 2.0))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -415,7 +417,7 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
             handler.pushData("saa", a);
         }
-        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) && Math.abs(a) < 2.0) {
+        if(((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
             if(once) {
                 shootonce(targ, robot);
             }
@@ -603,8 +605,8 @@ public class Shooter implements Subsystem {
 
     public void shoot(Target targetlol, GOFHardware robot) {
         if(!Globals.AUTO) {
-            robot.d1.setPosition(0.2);
-            robot.d2.setPosition(0.5);
+            robot.d1.setPosition(0.32);
+            robot.d2.setPosition(0.84);
         }
         if(targ == Target.POWER) {
             shootonce(targetlol, robot);
@@ -624,8 +626,8 @@ public class Shooter implements Subsystem {
                 }
                 ready = false;
                 if(!Globals.AUTO) {
-                    robot.d1.setPosition(0.1);
-                    robot.d2.setPosition(0.82);
+                    robot.d1.setPosition(0.77);
+                    robot.d2.setPosition(0.25);
                 }
                 return;
             }
@@ -646,7 +648,7 @@ public class Shooter implements Subsystem {
             shotvel = (double)handler.getData("sav");
             step++;
         }
-        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) && System.currentTimeMillis() - time > 50 || (!Globals.AUTO && System.currentTimeMillis() - time > shootTime))) {
+        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) && System.currentTimeMillis() - time > 50 || (System.currentTimeMillis() - time > shootTime))) {
             if(System.currentTimeMillis() - time > shootTime * 1.5) {
                 time = System.currentTimeMillis();
                 if(robot.flicker.getPosition() == shootIn) {
@@ -682,31 +684,29 @@ public class Shooter implements Subsystem {
         if(step == 2 && System.currentTimeMillis() - time > shootTime) {
             step = 0;
             shooting = false;
-            if(powershots % 3 != 0) {
-                readying = true;
-                start(robot, powershotvel);
-                try {
-                    double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
-                    if(target != 0) {
-                        double closest = 0;
-                        double closestdist = Double.MAX_VALUE;
-                        Enumeration<Double> enumthing = powershotintegrals.keys();
-                        while (enumthing.hasMoreElements()) {
-                            double next = enumthing.nextElement();
-                            if (Math.abs(next - target) < closestdist) {
-                                closestdist = Math.abs(next - target);
-                                closest = next;
-                            }
+            readying = true;
+            start(robot, powershotvel);
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = powershotintegrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
                         }
-                        integral = powershotintegrals.get(closest);
                     }
+                    integral = powershotintegrals.get(closest);
                 }
-                catch(Exception e) {}
             }
-            powershots++;
-            waitingForDrive = true;
-            Drivetrain.waitingForShoot = false;
+            catch(Exception e) {}
         }
+        powershots++;
+        waitingForDrive = true;
+        Drivetrain.waitingForShoot = false;
     }
 
     public void PIDReset() {

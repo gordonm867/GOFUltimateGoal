@@ -281,7 +281,7 @@ public class GOFHardware {
         try {
             d1 = hwMap.get(Servo.class, "d1");
             d1.setDirection(Servo.Direction.FORWARD);
-            d1.setPosition(0.2);
+            d1.setPosition(0.32);
         }
         catch(Exception p_exception) {
             d1 = null;
@@ -290,7 +290,7 @@ public class GOFHardware {
         try {
             d2 = hwMap.get(Servo.class, "d2");
             d2.setDirection(Servo.Direction.FORWARD);
-            d2.setPosition(0.5);
+            d2.setPosition(0.84);
         }
         catch(Exception p_exception) {
             d2 = null;
@@ -455,7 +455,7 @@ public class GOFHardware {
     }
 
     public void cameraInit() {
-        Globals.BLUR_CONSTANT = 10;
+        Globals.BLUR_CONSTANT = 30;
         phoneCam.openCameraDevice();
         phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);

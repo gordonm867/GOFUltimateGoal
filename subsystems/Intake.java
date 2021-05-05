@@ -72,13 +72,13 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.a && !gamepad2.start && !apressed && !start) {
             apressed = true;
-            if(robot.d1.getPosition() < 0.58) {
-                robot.d1.setPosition(0.58);
-                robot.d2.setPosition(0.36);
+            if(robot.d1.getPosition() < 0.77) {
+                robot.d1.setPosition(0.77);
+                robot.d2.setPosition(0.25);
             }
             else {
-                robot.d1.setPosition(0.1);
-                robot.d2.setPosition(0.82);
+                robot.d1.setPosition(0.57);
+                robot.d2.setPosition(0.38);
             }
         }
         if(!(gamepad2.a && !gamepad2.start)) {
@@ -86,8 +86,8 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.b && !gamepad2.start && !b && !start) {
             b = true;
-            robot.d1.setPosition(0.5);
-            robot.d2.setPosition(0.42);
+            robot.d1.setPosition(0.65);
+            robot.d2.setPosition(0.32);
         }
         if(!(gamepad2.b && !gamepad2.start)) {
             b = false;
@@ -111,7 +111,7 @@ public class Intake implements Subsystem {
 
         double distance = robot.ringsensor.getDistance(DistanceUnit.MM);
 
-        if(distance < 35 && !voltage) {
+        if(distance < 29 && !voltage) {
             voltage = true;
             if(robot.in.getPower() > 0) {
                 rings--;
@@ -120,7 +120,7 @@ public class Intake implements Subsystem {
                 rings++;
             }
         }
-        if(distance > 40) {
+        if(distance > 32) {
             voltage = false;
         }
     }

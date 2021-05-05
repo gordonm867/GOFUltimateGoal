@@ -39,9 +39,13 @@ public class Drivetrain implements Subsystem {
     private double error = 0;
     private double lasterror = 0;
     private double lasttime = 0;
+    private double integral = 0;
 
-    public static double kp = 0.008;
-    public static double kd = 0.005;
+    public static double kp = 0.03;
+    public static double kd = 0;
+    public static double ki = 0.01;
+
+    public double lasttargetangle = Double.NaN;
 
     public static double minturn = 0.12;
     public double lastsign = 0;
@@ -424,6 +428,9 @@ public class Drivetrain implements Subsystem {
      * @param data Bulk data from REV hub
      */
     public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data) {
+        if(!Double.isNaN(myAngle) && (Double.isNaN(lasttargetangle) || lasttargetangle != myAngle)) {
+            integral = 0;
+        }
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
         double angle = 0;
@@ -437,11 +444,13 @@ public class Drivetrain implements Subsystem {
                 if(!Double.isNaN(myAngle)) {
                     error = Functions.normalize(myAngle - current);
                     if(Math.abs(error) >= 0.25) {
-                        double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+                        double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+                        double deriv = (error - lasterror) / deltatime;
+                        integral += error * deltatime;
                         lasttime = System.currentTimeMillis();
                         lasterror = error;
-                        double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
-                        turn = Math.max(Math.abs(pow), (Globals.MIN_SPEED * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
+                        double pow = (kp * error) + (kd * deriv) + (ki * integral);
+                        turn = Math.abs(pow);
                     }
                 }
                 if(Math.abs(displacement) <= 1.0/96.0) {
@@ -452,33 +461,21 @@ public class Drivetrain implements Subsystem {
         }
         else if(!Double.isNaN(myAngle)) {
             error = Functions.normalize(myAngle - current);
-            if(Math.abs(error) >= 0.4) {
-                double deriv = (error - lasterror) / (System.currentTimeMillis() - lasttime);
+            if(Math.abs(error) >= 0.25) {
+                double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
+                double deriv = (error - lasterror) / deltatime;
+                integral += error * deltatime;
                 lasttime = System.currentTimeMillis();
                 lasterror = error;
-                double pow = (kp * error * Globals.MAX_SPEED) + (kd * deriv * Globals.MAX_SPEED);
-                turn = Math.max(Math.abs(pow), ((Globals.MIN_SPEED) * (Math.abs(drive) + Math.abs(angle)) / Globals.MAX_SPEED)) * Math.signum(pow);
+                double pow = (kp * error) + (kd * deriv) + (ki * integral);
+                turn = Math.abs(pow);
             }
         }
         double scaleFactor;
         double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
-        if(displacement > 0.1 || (!Double.isNaN(myAngle) && Math.abs(Functions.normalize(myAngle - current)) > 5)) {
-            if (max > Globals.MAX_SPEED) {
-                scaleFactor = Math.abs(Globals.MAX_SPEED / max);
-            } else {
-                if ((Double.isNaN(myAngle) || Math.abs(Functions.normalize(myAngle - current)) > degRemaining) && displacement <= 0.5) {
-                    scaleFactor = Math.abs(Globals.MAX_SPEED / max);
-                } else if (displacement >= 0.5) {
-                    scaleFactor = Math.abs((Math.max(Math.min(Globals.MAX_SPEED, displacement * 2), Globals.MIN_SPEED)) / max);
-                } else {
-                    scaleFactor = Math.abs(Math.min(Globals.MAX_SPEED / max, Math.max(Math.max(displacement / 2.5, Math.abs(Functions.normalize(myAngle - current)) / degRemaining), Globals.MIN_SPEED) / max));
-                }
-            }
-        }
-        else {
-            scaleFactor = Math.abs(Globals.MIN_SPEED) / Math.abs(max);
-        }
-        if(Double.isNaN(scaleFactor)) {
+        if(displacement >= max) {
+            scaleFactor = Math.abs(Globals.MAX_SPEED / max);
+        } else {
             scaleFactor = 1.0;
         }
         odometry.update(data, current);
