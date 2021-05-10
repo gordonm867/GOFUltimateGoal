@@ -15,6 +15,8 @@ public final class Globals {
 
     public static double MAX_IN_SPEED = 1.0;
     public static double MIN_IN_SPEED = 0.45;
+    public static double W1POS = .5;
+    public static double W2POS = .5;
 
     public static double MAX_WOBBLE = 0.5;
 

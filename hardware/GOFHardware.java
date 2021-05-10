@@ -85,6 +85,8 @@ public class GOFHardware {
     public Servo flicker;
     public Servo d1;
     public Servo d2;
+    public Servo w1;
+    public Servo w2;
     public RevBlinkinLedDriver led;
 
     public boolean enabled;
@@ -294,6 +296,24 @@ public class GOFHardware {
         }
         catch(Exception p_exception) {
             d2 = null;
+        }
+
+        try {
+            w1 = hwMap.get(Servo.class, "w1");
+            w1.setDirection(Servo.Direction.FORWARD);
+            w1.setPosition(0.5);
+        }
+        catch(Exception p_exception) {
+            w1 = null;
+        }
+
+        try {
+            w2 = hwMap.get(Servo.class, "w2");
+            w2.setDirection(Servo.Direction.FORWARD);
+            w2.setPosition(0.5);
+        }
+        catch(Exception p_exception) {
+            w2 = null;
         }
 
         try {

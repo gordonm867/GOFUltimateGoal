@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
-@Disabled
+//@Disabled
 @TeleOp(name="wobbletest")
 public class ServoTestImpl2 extends MyOpMode {
 
