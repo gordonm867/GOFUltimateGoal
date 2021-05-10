@@ -18,6 +18,8 @@ public class Wobble implements Subsystem {
     public static double closedpose = 1.0;
     public static double openpose = 0.6;
 
+    public double pointat = 0;
+
     public int target = 0;
 
     public boolean bumperpressed = false;
@@ -26,6 +28,8 @@ public class Wobble implements Subsystem {
     public boolean auto = false;
 
     public Point mytarget = new Point(4, 2);
+
+    double time = System.currentTimeMillis();
 
     public Wobble(Subsystem.State state) {
         this.parent = state;
@@ -76,7 +80,7 @@ public class Wobble implements Subsystem {
             mytarget = new Point(mytarget.getX(), 2);
         }
         if(auto) {
-            double pointat = Functions.normalize(odometry.getPoint().angle(mytarget, AngleUnit.DEGREES) - angle);
+            pointat = Functions.normalize(odometry.getPoint().angle(mytarget, AngleUnit.DEGREES) - angle);
             if (pointat == 180) {
                 pointat = -180;
             }
@@ -84,24 +88,29 @@ public class Wobble implements Subsystem {
                 robot.w2.setPosition(Math.max(Math.min(0.9 * (pointat / 270), 0.9), 0.12));
             }
         }
-        if(gamepad2.right_stick_y < -0.5) {
+        if(gamepad2.right_stick_y > 0.5) {
             robot.w1.setPosition(0.52);
         }
-        if(gamepad2.right_stick_y > 0.5) {
+        if(gamepad2.right_stick_y < -0.5) {
             robot.w1.setPosition(0.15);
+            if(System.currentTimeMillis() - time > 500) {
+                robot.w1.setPosition(0.37);
+            }
         }
-        if(gamepad2.right_stick_x < -0.5) {
-            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x)), 0.9), 0.12));
-            auto = false;
+        else {
+            time = System.currentTimeMillis();
         }
         if(gamepad2.right_stick_x > 0.5) {
-            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x)), 0.9), 0.12));
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x) * Math.signum(Math.sin(angle))), 0.9), 0.12));
+            auto = false;
+        }
+        if(gamepad2.right_stick_x < -0.5) {
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x) * Math.signum(Math.sin(angle))), 0.9), 0.12));
             auto = false;
         }
     }
 
     public void update(GOFHardware robot, WheelState targetstate) {
-
     }
 
     @Override

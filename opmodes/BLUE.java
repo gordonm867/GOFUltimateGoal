@@ -7,7 +7,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
@@ -105,10 +104,6 @@ public class BLUE extends MyOpMode {
         Future<ArrayList<Point[]>> path4 = myservice.submit(generator4);
 
         robot.init(hardwareMap, telemetry);
-        if (robot.wobblewheel != null){
-            robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
         robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         shooter = new Shooter(Subsystem.State.OFF);
@@ -364,9 +359,6 @@ public class BLUE extends MyOpMode {
                             wobble.update(robot, Wobble.WheelState.IN);
                             odometry.update(robot.bulkRead(), odometry.getAngle());
                             state = Wobble.WheelState.IN;
-                        }
-                        if(robot.wobblewheel != null) {
-                            robot.wobblewheel.setPower(0);
                         }
                         break;
                     }

@@ -147,6 +147,8 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
         telemetry.addData("Angle", angle);
+        telemetry.addData("My point", odometry.getPoint());
+        telemetry.addData("Wobble target", wobble.pointat);
         telemetry.update();
     }
 
