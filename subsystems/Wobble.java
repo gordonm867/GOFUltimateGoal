@@ -90,24 +90,34 @@ public class Wobble implements Subsystem {
                 robot.w2.setPosition(Math.max(Math.min(0.9 * (((Math.abs(90 - pointat)) / 270)), 0.9), 0.12));
             }
         }
-        if(gamepad2.right_stick_y > 0.1) {
-            robot.w1.setPosition(0.52);
-        }
-        if(gamepad2.right_stick_y < -0.1) {
-            robot.w1.setPosition(0.15);
-            if(System.currentTimeMillis() - time > 500) {
-                robot.w1.setPosition(0.05);
+        if(Math.abs(gamepad2.right_stick_y) > 0.8) {
+            if (gamepad2.right_stick_y > 0.8) {
+                robot.w1.setPosition(0.52);
+            }
+            if (gamepad2.right_stick_y < -0.8) {
+                robot.w1.setPosition(0.15);
+                if (System.currentTimeMillis() - time > 500) {
+                    robot.w1.setPosition(0.36);
+                }
+            } else {
+                time = System.currentTimeMillis();
             }
         }
-        else {
-            time = System.currentTimeMillis();
+        else if(Math.abs(gamepad2.right_stick_y) > 0.1) {
+            if(gamepad2.right_stick_y < -0.1) {
+                robot.w1.setPosition(Math.max(Math.min((robot.w1.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_y))), 0.55), 0.15));
+            }
+            if(gamepad2.right_stick_y > 0.1) {
+                robot.w1.setPosition(Math.max(Math.min((robot.w1.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_y))), 0.55), 0.15));
+            }
         }
+        double signum = Math.signum(Math.sin(Math.toRadians(angle)));
         if(gamepad2.right_stick_x > 0.1) {
-            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x) * Math.signum(Math.sin(angle))), 0.9), 0.12));
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x) * signum), 0.9), 0.12));
             auto = false;
         }
         if(gamepad2.right_stick_x < -0.1) {
-            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x) * Math.signum(Math.sin(angle))), 0.9), 0.12));
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x) * signum), 0.9), 0.12));
             auto = false;
         }
         if(run && System.currentTimeMillis() - secondtime > 300) {
