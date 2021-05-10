@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -123,10 +122,6 @@ public class RED extends MyOpMode {
 
         robot.init(hardwareMap, telemetry);
         robot.led.close();
-        if (robot.wobblewheel != null){
-            robot.wobblewheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
         robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         shooter = new Shooter(Subsystem.State.OFF);

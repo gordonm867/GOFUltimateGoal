@@ -20,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.DetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -77,7 +76,6 @@ public class GOFHardware {
     public DcMotor in;
     public DcMotor shoot1;
     public DcMotor shoot2;
-    public DcMotor wobblewheel;
 
     public RevColorSensorV3 ringsensor;
 
@@ -247,15 +245,6 @@ public class GOFHardware {
         }
 
         try {
-            wobblewheel = hwMap.get(DcMotor.class, "vw");
-            wobblewheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobblewheel.setPower(0);
-        }
-        catch(Exception p_exception) {
-            wobblewheel = null;
-        }
-
-        try {
             flicker = hwMap.get(Servo.class, "f");
             flicker.setDirection(Servo.Direction.FORWARD);
             flicker.setPosition(Shooter.shootOut);
@@ -267,7 +256,7 @@ public class GOFHardware {
         try {
             wobble = hwMap.get(Servo.class, "w");
             wobble.setDirection(Servo.Direction.FORWARD);
-            wobble.setPosition(Wobble.closedpose + 0.11);
+            wobble.setPosition(1.0);
         }
         catch(Exception p_exception) {
             wobble = null;
@@ -301,7 +290,7 @@ public class GOFHardware {
         try {
             w1 = hwMap.get(Servo.class, "w1");
             w1.setDirection(Servo.Direction.FORWARD);
-            w1.setPosition(0.5);
+            w1.setPosition(0.36);
         }
         catch(Exception p_exception) {
             w1 = null;
@@ -310,7 +299,7 @@ public class GOFHardware {
         try {
             w2 = hwMap.get(Servo.class, "w2");
             w2.setDirection(Servo.Direction.FORWARD);
-            w2.setPosition(0.5);
+            w2.setPosition(0);
         }
         catch(Exception p_exception) {
             w2 = null;

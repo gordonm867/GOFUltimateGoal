@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.openftc.revextensions2.RevBulkData;
 
 public class Intake implements Subsystem {
@@ -22,11 +23,17 @@ public class Intake implements Subsystem {
     private State state;
     double intaketimer = System.currentTimeMillis();
 
+    public static int height = 1;
+
     public Intake(State state) {
         this.state = state;
     }
 
     public static int rings = 0;
+
+    public static Point height3 = new Point(0.75, 0.3);
+    public static Point height2 = new Point(0.57, 0.38);
+    public static Point height1 = new Point(0.65, 0.32);
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
@@ -72,13 +79,15 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.a && !gamepad2.start && !apressed && !start) {
             apressed = true;
-            if(robot.d1.getPosition() < 0.77) {
-                robot.d1.setPosition(0.77);
-                robot.d2.setPosition(0.25);
+            if(robot.d1.getPosition() < height3.getX()) {
+                robot.d1.setPosition(height3.getX());
+                robot.d2.setPosition(height3.getY());
+                height = 3;
             }
             else {
-                robot.d1.setPosition(0.57);
-                robot.d2.setPosition(0.38);
+                robot.d1.setPosition(height2.getX());
+                robot.d2.setPosition(height2.getY());
+                height = 2;
             }
         }
         if(!(gamepad2.a && !gamepad2.start)) {
@@ -86,8 +95,9 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.b && !gamepad2.start && !b && !start) {
             b = true;
-            robot.d1.setPosition(0.65);
-            robot.d2.setPosition(0.32);
+            robot.d1.setPosition(height1.getX());
+            robot.d2.setPosition(height1.getY());
+            height = 1;
         }
         if(!(gamepad2.b && !gamepad2.start)) {
             b = false;
@@ -96,6 +106,18 @@ public class Intake implements Subsystem {
             ldpad = true;
             robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() + 0.05)));
             robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() - 0.05)));
+            if(height == 1) {
+                height1.setX(height1.getX() + 0.05);
+                height1.setY(height1.getY() - 0.05);
+            }
+            else if(height == 2) {
+                height2.setX(height2.getX() + 0.05);
+                height2.setY(height2.getY() - 0.05);
+            }
+            else {
+                height3.setX(height3.getX() + 0.05);
+                height3.setY(height3.getY() - 0.05);
+            }
         }
         if(!gamepad2.dpad_left) {
             ldpad = false;
@@ -104,6 +126,18 @@ public class Intake implements Subsystem {
             rdpad = true;
             robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() - 0.05)));
             robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() + 0.05)));
+            if(height == 1) {
+                height1.setX(height1.getX() - 0.05);
+                height1.setY(height1.getY() + 0.05);
+            }
+            else if(height == 2) {
+                height2.setX(height2.getX() - 0.05);
+                height2.setY(height2.getY() + 0.05);
+            }
+            else {
+                height3.setX(height3.getX() - 0.05);
+                height3.setY(height3.getY() + 0.05);
+            }
         }
         if(!gamepad2.dpad_right) {
             rdpad = false;

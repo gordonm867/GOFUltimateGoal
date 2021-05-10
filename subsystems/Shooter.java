@@ -56,7 +56,7 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.36;
     public static double shootOut = 0.55;
 
-    public static double p = 0.2;
+    public static double p = 0.1;
     public static double i = 0.2;
     public static double d = 0;
     public static double f = 0;
@@ -67,17 +67,17 @@ public class Shooter implements Subsystem {
     public static double PD = 0;
     public static double PF = 0;
 
-    public static double vel = 17.0;
-    public static double firstshotvel = 17.0;
-    public static double secondshotvel = 17.0;
-    public static double thirdshotvel = 17.0;
+    public static double vel = 16.68;
+    public static double firstshotvel = 16.68;
+    public static double secondshotvel = 16.68;
+    public static double thirdshotvel = 16.68;
 
     public static double shotvel = 0;
 
     public static int thing = 4;
     public static int oldthing = 4;
 
-    public static double powershotvel = 15.08;
+    public static double powershotvel = 15.4;
 
     public double cycles = 0;
 
@@ -353,7 +353,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.2) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 1.5)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -622,8 +622,9 @@ public class Shooter implements Subsystem {
                 }
                 ready = false;
                 if(!Globals.AUTO) {
-                    robot.d1.setPosition(0.77);
-                    robot.d2.setPosition(0.25);
+                    robot.d1.setPosition(Intake.height3.getX());
+                    robot.d2.setPosition(Intake.height3.getY());
+                    Intake.height = 3;
                 }
                 return;
             }

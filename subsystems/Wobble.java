@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
-import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Point;
 import org.openftc.revextensions2.RevBulkData;
 
 @Config
@@ -15,13 +15,17 @@ public class Wobble implements Subsystem {
     public Subsystem.State parent;
     public WheelState wheelstate = WheelState.UP;
 
-    public static double closedpose = 0.35;
-    public static double openpose = 0.65;
+    public static double closedpose = 1.0;
+    public static double openpose = 0.6;
 
     public int target = 0;
 
     public boolean bumperpressed = false;
     public boolean arrived = false;
+
+    public boolean auto = false;
+
+    public Point mytarget = new Point(4, 2);
 
     public Wobble(Subsystem.State state) {
         this.parent = state;
@@ -56,73 +60,48 @@ public class Wobble implements Subsystem {
             bumperpressed = true;
             if(child == State.CLOSED) {
                 child = State.OPEN;
+                mytarget = new Point(3, 2);
             }
             else {
                 child = State.CLOSED;
+                robot.w1.setPosition(0.15);
+                mytarget = new Point(mytarget.getX(), -6);
             }
         }
         if(!gamepad2.right_bumper) {
             bumperpressed = false;
         }
-        if(Math.abs(gamepad2.right_stick_y) > 0.5) {
-            if (gamepad2.right_stick_y < -0.5) {
-                wheelstate = WheelState.DROP;
-                target = -100;
+        if(gamepad2.x) {
+            auto = true;
+            mytarget = new Point(mytarget.getX(), 2);
+        }
+        if(auto) {
+            double pointat = Functions.normalize(odometry.getPoint().angle(mytarget, AngleUnit.DEGREES) - angle);
+            if (pointat == 180) {
+                pointat = -180;
             }
-            if (gamepad2.right_stick_y > 0.5) {
-                wheelstate = WheelState.PICKUP;
-                target = -1100;
+            if (pointat < 90) {
+                robot.w2.setPosition(Math.max(Math.min(0.9 * (pointat / 270), 0.9), 0.12));
             }
         }
-        else if(Math.abs(gamepad2.right_stick_x) > 0.5) {
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.wobblewheel.setPower(Math.min(Math.abs(gamepad2.right_stick_x) / 2, Globals.MAX_WOBBLE) * Math.signum(gamepad2.right_stick_x));
-            target = robot.wobblewheel.getCurrentPosition();
+        if(gamepad2.right_stick_y < -0.5) {
+            robot.w1.setPosition(0.52);
         }
-        else {
-            robot.wobblewheel.setTargetPosition(target);
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(target > robot.wobblewheel.getCurrentPosition() ? 0.7 : 1.0);
+        if(gamepad2.right_stick_y > 0.5) {
+            robot.w1.setPosition(0.15);
         }
-
+        if(gamepad2.right_stick_x < -0.5) {
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x)), 0.9), 0.12));
+            auto = false;
+        }
+        if(gamepad2.right_stick_x > 0.5) {
+            robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x)), 0.9), 0.12));
+            auto = false;
+        }
     }
 
     public void update(GOFHardware robot, WheelState targetstate) {
-        if(targetstate == null) {
-            return;
-        }
-        if(parent == Subsystem.State.ON) {
-            if(child == State.OPEN && robot.wobble != null) {
-                robot.wobble.setPosition(openpose);
-            }
-            else if(robot.wobble != null) {
-                robot.wobble.setPosition(closedpose);
-            }
-        }
-        if(targetstate == WheelState.PICKUP) {
-            target = -1060;
-        }
-        else if(targetstate == WheelState.CARRY) {
-            target = -750;
-        }
-        else if(targetstate == WheelState.IN) {
-            target = -200;
-        }
-        else if(targetstate == WheelState.DESTROY) {
-            target = -920;
-        }
-        else {
-            throw new GOFException("Illegal argument passed; autonomous killed; good luck.");
-        }
-        if(robot.wobblewheel != null && Math.abs(Math.abs(target) - Math.abs(robot.wobblewheel.getCurrentPosition())) > 15) {
-            robot.wobblewheel.setTargetPosition(target);
-            robot.wobblewheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.wobblewheel.setPower(1.0);
-        }
-        else if(robot.wobblewheel != null && robot.lf != null) {
-            robot.wobblewheel.setPower(0);
-            arrived = true;
-        }
+
     }
 
     @Override
