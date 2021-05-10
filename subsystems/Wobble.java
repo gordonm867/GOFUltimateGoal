@@ -26,10 +26,12 @@ public class Wobble implements Subsystem {
     public boolean arrived = false;
 
     public boolean auto = false;
+    public boolean run = false;
 
     public Point mytarget = new Point(4, 2);
 
     double time = System.currentTimeMillis();
+    double secondtime = System.currentTimeMillis();
 
     public Wobble(Subsystem.State state) {
         this.parent = state;
@@ -68,8 +70,8 @@ public class Wobble implements Subsystem {
             }
             else {
                 child = State.CLOSED;
-                robot.w1.setPosition(0.15);
-                mytarget = new Point(mytarget.getX(), -6);
+                run = true;
+                secondtime = System.currentTimeMillis();
             }
         }
         if(!gamepad2.right_bumper) {
@@ -85,7 +87,7 @@ public class Wobble implements Subsystem {
                 pointat = -180;
             }
             if (pointat < 90) {
-                robot.w2.setPosition(Math.max(Math.min(0.9 * (pointat / 270), 0.9), 0.12));
+                robot.w2.setPosition(Math.max(Math.min(0.9 * (((Math.abs(90 - pointat)) / 270)), 0.9), 0.12));
             }
         }
         if(gamepad2.right_stick_y > 0.5) {
@@ -107,6 +109,11 @@ public class Wobble implements Subsystem {
         if(gamepad2.right_stick_x < -0.5) {
             robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() + (0.025 * Math.abs(gamepad2.right_stick_x) * Math.signum(Math.sin(angle))), 0.9), 0.12));
             auto = false;
+        }
+        if(run && System.currentTimeMillis() - secondtime > 300) {
+            robot.w1.setPosition(0.15);
+            mytarget = new Point(mytarget.getX(), -6);
+            run = false;
         }
     }
 
