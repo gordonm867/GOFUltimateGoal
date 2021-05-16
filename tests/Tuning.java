@@ -66,7 +66,7 @@ public class Tuning extends MyOpMode {
     }
 
     public void loopOp() {
-        Globals.MAX_SPEED = 0.5;
+        Globals.MAX_SPEED = 1.0;
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
@@ -81,6 +81,8 @@ public class Tuning extends MyOpMode {
         }
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
+        telemetry.addData("Integral", drive.integral);
+        telemetry.addData("Target Angle", targA);
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         double angularerror = odometry.getAngle() - targA;
         if(displacement > 3.0/96.0 || Math.abs(angularerror) > 0.25 || Math.abs(odometry.getX() - targX) > 1.0/96.0 || omega > 0.15) {

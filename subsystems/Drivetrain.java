@@ -39,11 +39,11 @@ public class Drivetrain implements Subsystem {
     private double error = 0;
     private double lasterror = 0;
     private double lasttime = 0;
-    private double integral = 0;
+    public double integral = 0;
 
-    public static double kp = 0.03;
-    public static double kd = 0;
-    public static double ki = 0.01;
+    public static double kp = 0.025;
+    public static double kd = 0.003;
+    public static double ki = 0.05;
 
     public double lasttargetangle = Double.NaN;
 
@@ -428,8 +428,13 @@ public class Drivetrain implements Subsystem {
      * @param data Bulk data from REV hub
      */
     public void update(GOFHardware robot, Point target, Odometry odometry, double myAngle, double current, RevBulkData data) {
-        if(!Double.isNaN(myAngle) && (Double.isNaN(lasttargetangle) || lasttargetangle != myAngle)) {
+        if(Math.abs(integral) > 1 / ki) {
+            integral = 1/ki * Math.signum(integral);
+        }
+        if(Double.isNaN(myAngle) || Double.isNaN(lasttargetangle) || lasttargetangle != myAngle) {
             integral = 0;
+            lasttime = System.currentTimeMillis();
+            lasttargetangle = myAngle;
         }
         Point myPos = odometry.getPoint();
         double displacement = Math.abs(Math.sqrt(Math.pow(target.getX() - myPos.getX(), 2) + Math.pow(target.getY() - myPos.getY(), 2)));
@@ -446,11 +451,15 @@ public class Drivetrain implements Subsystem {
                     if(Math.abs(error) >= 0.25) {
                         double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
                         double deriv = (error - lasterror) / deltatime;
-                        integral += error * deltatime;
+                        if(Math.abs(error) < 1 / kp) {
+                            integral += error * deltatime;
+                        }
                         lasttime = System.currentTimeMillis();
                         lasterror = error;
-                        double pow = (kp * error) + (kd * deriv) + (ki * integral);
-                        turn = Math.abs(pow);
+                        turn = (kp * error) + (kd * deriv) + (ki * integral);
+                    }
+                    else {
+                        integral = 0;
                     }
                 }
                 if(Math.abs(displacement) <= 1.0/96.0) {
@@ -464,22 +473,30 @@ public class Drivetrain implements Subsystem {
             if(Math.abs(error) >= 0.25) {
                 double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
                 double deriv = (error - lasterror) / deltatime;
-                integral += error * deltatime;
+                if(Math.abs(error) < 1 / kp) {
+                    integral += error * deltatime;
+                }
                 lasttime = System.currentTimeMillis();
                 lasterror = error;
-                double pow = (kp * error) + (kd * deriv) + (ki * integral);
-                turn = Math.abs(pow);
+                turn = (kp * error) + (kd * deriv) + (ki * integral);
+            }
+            else {
+                integral = 0;
             }
         }
         double scaleFactor;
-        double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
-        if(displacement >= max) {
-            scaleFactor = Math.abs(Globals.MAX_SPEED / max);
-        } else {
+        double max = Math.max(Math.abs(drive - angle), Math.abs(drive + angle));
+        if(Math.abs(max) > Globals.MAX_SPEED - Math.abs(turn)) {
+            scaleFactor = Math.abs((Globals.MAX_SPEED - Math.abs(turn)) / max);
+        }
+        else if(Math.abs(max) + Math.abs(turn) < Globals.MIN_SPEED) {
+            scaleFactor = Math.abs((Globals.MIN_SPEED - Math.abs(turn)) / max);
+        }
+        else {
             scaleFactor = 1.0;
         }
         odometry.update(data, current);
-        robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle));
+        robot.setDrivePower((scaleFactor * (drive - angle)) + turn, (scaleFactor * (drive + angle)) + turn, (scaleFactor * (drive + angle)) - turn, (scaleFactor * (drive - angle)) - turn);
     }
 
     /**

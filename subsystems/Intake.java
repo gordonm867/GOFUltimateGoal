@@ -31,7 +31,7 @@ public class Intake implements Subsystem {
 
     public static int rings = 0;
 
-    public static Point height3 = new Point(0.75, 0.3);
+    public static Point height3 = new Point(0.77, 0.28);
     public static Point height2 = new Point(0.57, 0.38);
     public static Point height1 = new Point(0.65, 0.32);
 
