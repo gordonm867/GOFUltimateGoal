@@ -353,7 +353,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ Math.abs(Math.abs(v) - Math.abs(t)) < 0.1 || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 1.5)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 1.5)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -470,7 +470,7 @@ public class Shooter implements Subsystem {
             handler.pushData("saa", a);
         }
         if(t > 16.8) {
-            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.25))) {
+            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1))) {
                 override = true;
                 if (once) {
                     shootonce(targ, robot);

@@ -41,9 +41,15 @@ public class Tuning extends MyOpMode {
     double lasttime = System.currentTimeMillis();
     double omega = 6;
 
+    int iterations = 0;
+
+    Point thetarget;
+    Point start;
+
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Globals.MAX_SPEED = 1.0;
+        Globals.MIN_SPEED = 0.15;
         Shooter.thing = 4;
         robot.init(hardwareMap, telemetry);
         drive = new Drivetrain(Subsystem.State.OFF);
@@ -63,10 +69,10 @@ public class Tuning extends MyOpMode {
             subsystem.setState(Subsystem.State.ON);
         }
         drive.setState(Subsystem.State.ON);
+        start = odometry.getPoint();
     }
 
     public void loopOp() {
-        Globals.MAX_SPEED = 1.0;
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
         for(Subsystem subsystem : subsystems) {
@@ -81,10 +87,22 @@ public class Tuning extends MyOpMode {
         }
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
-        telemetry.addData("Integral", drive.integral);
         telemetry.addData("Target Angle", targA);
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         double angularerror = odometry.getAngle() - targA;
+        if(thetarget == null || !thetarget.equals(new Point(targX, targY))) {
+            iterations = 0;
+            start = odometry.getPoint();
+        }
+        thetarget = new Point(targX, targY);
+        if(displacement > 3.0/96.0 && Math.abs(odometry.getVelocity()) <= 0.5 / 1000.0 && thetarget.distance(odometry.getPoint(), Unit.FEET) < 0.2) {
+            iterations++;
+            Globals.MIN_SPEED = Math.min(0.35, Globals.MIN_SPEED + 0.0001 * iterations);
+        }
+        else {
+            iterations--;
+            Globals.MIN_SPEED = Math.min(0.35, Math.max(0.1, Globals.MIN_SPEED + 0.0001 * iterations));
+        }
         if(displacement > 3.0/96.0 || Math.abs(angularerror) > 0.25 || Math.abs(odometry.getX() - targX) > 1.0/96.0 || omega > 0.15) {
             drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }

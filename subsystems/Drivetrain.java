@@ -37,8 +37,8 @@ public class Drivetrain implements Subsystem {
     public boolean turningToPoint3 = false;
 
     private double error = 0;
-    private double lasterror = 0;
-    private double lasttime = 0;
+    public double lasterror = 0;
+    public double lasttime = 0;
     public double integral = 0;
 
     public static double kp = 0.025;
@@ -462,15 +462,11 @@ public class Drivetrain implements Subsystem {
                         integral = 0;
                     }
                 }
-                if(Math.abs(displacement) <= 1.0/96.0) {
-                    drive = 0;
-                    angle = 0;
-                }
             }
         }
         else if(!Double.isNaN(myAngle)) {
             error = Functions.normalize(myAngle - current);
-            if(Math.abs(error) >= 0.25) {
+            if(Math.abs(error) >= 0.4) {
                 double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
                 double deriv = (error - lasterror) / deltatime;
                 if(Math.abs(error) < 1 / kp) {
@@ -484,15 +480,30 @@ public class Drivetrain implements Subsystem {
                 integral = 0;
             }
         }
-        double scaleFactor;
-        double max = Math.max(Math.abs(drive - angle), Math.abs(drive + angle));
-        if(Math.abs(max) > Globals.MAX_SPEED - Math.abs(turn)) {
-            scaleFactor = Math.abs((Globals.MAX_SPEED - Math.abs(turn)) / max);
+        if(integral != 0 && Math.abs(integral) * ki < 0.2 && drive == 0 && angle == 0) {
+            turn -= ki * integral;
+            integral = Math.signum(integral) * 0.2 / ki;
+            turn += ki * integral;
         }
-        else if(Math.abs(max) + Math.abs(turn) < Globals.MIN_SPEED) {
-            scaleFactor = Math.abs((Globals.MIN_SPEED - Math.abs(turn)) / max);
+        double scaleFactor;
+        double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
+        if(displacement > 0.1 || (!Double.isNaN(myAngle) && Math.abs(Functions.normalize(myAngle - current)) > 5)) {
+            if (max > Globals.MAX_SPEED) {
+                scaleFactor = Math.abs((Globals.MAX_SPEED - Math.abs(turn)) / max);
+            } else {
+                if ((Double.isNaN(myAngle) || Math.abs(Functions.normalize(myAngle - current)) > degRemaining) && displacement <= 0.5) {
+                    scaleFactor = Math.abs(Math.abs(Globals.MAX_SPEED - Math.abs(turn)) / max);
+                } else if (displacement >= 0.5) {
+                    scaleFactor = Math.abs((Math.max(Math.min(Math.abs(Globals.MAX_SPEED - Math.abs(turn)), displacement * 2), Globals.MIN_SPEED)) / max);
+                } else {
+                    scaleFactor = Math.abs(Math.min((Globals.MAX_SPEED - Math.abs(turn)) / max, Math.max(displacement / 2.5, Globals.MIN_SPEED) / max));
+                }
+            }
         }
         else {
+            scaleFactor = Math.abs(Globals.MIN_SPEED) / Math.abs(max);
+        }
+        if(Double.isNaN(scaleFactor)) {
             scaleFactor = 1.0;
         }
         odometry.update(data, current);
