@@ -480,9 +480,9 @@ public class Drivetrain implements Subsystem {
                 integral = 0;
             }
         }
-        if(integral != 0 && Math.abs(integral) * ki < 0.2 && drive == 0 && angle == 0) {
+        if(integral != 0 && Math.abs(integral) * ki < 0.23 && drive == 0 && angle == 0 && Math.abs(odometry.getVelocity()) <= 0.1 / 1000.0) {
             turn -= ki * integral;
-            integral = Math.signum(integral) * 0.2 / ki;
+            integral = Math.signum(integral) * 0.23 / ki;
             turn += ki * integral;
         }
         double scaleFactor;

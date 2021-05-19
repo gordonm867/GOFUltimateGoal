@@ -74,6 +74,7 @@ public class GOFHardware {
     public DcMotor lf;
     public DcMotor lb;
     public DcMotor in;
+    public DcMotor in2;
     public DcMotor shoot1;
     public DcMotor shoot2;
 
@@ -245,6 +246,16 @@ public class GOFHardware {
         }
 
         try {
+            in2 = hwMap.get(DcMotor.class, "in2");
+            in2.setDirection(DcMotor.Direction.FORWARD);
+            in2.setPower(0);
+            in2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        catch(Exception p_exception) {
+            in2 = null;
+        }
+
+        try {
             flicker = hwMap.get(Servo.class, "f");
             flicker.setDirection(Servo.Direction.FORWARD);
             flicker.setPosition(Shooter.shootOut);
@@ -290,7 +301,7 @@ public class GOFHardware {
         try {
             w1 = hwMap.get(Servo.class, "w1");
             w1.setDirection(Servo.Direction.FORWARD);
-            w1.setPosition(0.36);
+            w1.setPosition(0.045);
         }
         catch(Exception p_exception) {
             w1 = null;
@@ -299,7 +310,7 @@ public class GOFHardware {
         try {
             w2 = hwMap.get(Servo.class, "w2");
             w2.setDirection(Servo.Direction.FORWARD);
-            w2.setPosition(0);
+            w2.setPosition(0.69);
         }
         catch(Exception p_exception) {
             w2 = null;
@@ -417,6 +428,7 @@ public class GOFHardware {
     public void setIntakePower(double power) {
         if(in != null) {
             in.setPower(Range.clip(power, -Globals.MAX_IN_SPEED, Globals.MAX_IN_SPEED));
+            in2.setPower(Range.clip(power, -Globals.MAX_IN_SPEED, Globals.MAX_IN_SPEED));
         }
     }
 

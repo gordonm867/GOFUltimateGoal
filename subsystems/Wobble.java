@@ -16,7 +16,7 @@ public class Wobble implements Subsystem {
     public WheelState wheelstate = WheelState.UP;
 
     public static double closedpose = 1.0;
-    public static double openpose = 0.6;
+    public static double openpose = 0.5;
 
     public double pointat = 0;
 
@@ -94,7 +94,7 @@ public class Wobble implements Subsystem {
         if(Math.abs(gamepad2.right_stick_y) > 0.8) {
             if (gamepad2.right_stick_y > 0.8) {
                 robot.w1.setPosition(0.49);
-                if(System.currentTimeMillis() - thirdtime > 500) {
+                if(System.currentTimeMillis() - thirdtime > 1000) {
                     robot.w1.setPosition(0.36);
                     robot.w2.setPosition(0);
                 }
@@ -137,7 +137,7 @@ public class Wobble implements Subsystem {
             robot.w2.setPosition(Math.max(Math.min(robot.w2.getPosition() - (0.025 * Math.abs(gamepad2.right_stick_x) * signum), 0.9), 0.12));
             auto = false;
         }
-        if(run && System.currentTimeMillis() - secondtime > 300) {
+        if(run && System.currentTimeMillis() - secondtime > 500) {
             robot.w1.setPosition(0.15);
             mytarget = new Point(mytarget.getX(), -6);
             run = false;
@@ -145,6 +145,16 @@ public class Wobble implements Subsystem {
     }
 
     public void update(GOFHardware robot, WheelState targetstate) {
+    }
+
+    public void update(GOFHardware robot, Point point, Odometry odometry, double currentangle) {
+        double pointat = Functions.normalize(odometry.getPoint().angle(point, AngleUnit.DEGREES) - currentangle);
+        if (pointat == 180) {
+            pointat = -180;
+        }
+        if (pointat < 90) {
+            robot.w2.setPosition(Math.max(Math.min(0.9 * (((Math.abs(90 - pointat)) / 270)), 0.9), 0.12));
+        }
     }
 
     @Override

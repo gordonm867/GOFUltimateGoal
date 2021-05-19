@@ -35,20 +35,19 @@ public class PathGenerator implements Callable<ArrayList<Point[]>> {
         ArrayList<Obstacle> fullobstacles = new ArrayList<>();
         fullobstacles.add(new Obstacle(-3, -2, 1.25));
         if(rings == 0) {
-            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-0.2, 0, 90))); // Start-power shots
-            path.add(new Line(new Point(-1.6, 0), new Point(-3, 2))); // Power shots-wobble drop off
-            path.add(new Line(new Point(-3, 2), new Point(-3.55, -2.6, 90))); // Wobble drop off-Wobble pickup
-            path.add(new Line(new Point(-3.55, -2.6), new Point(-3.5, -0.1, 180))); // Wobble pickup-Wobble drop off
-            path.add(new Line(new Point(-3.5, -0.1), new Point(-2, -0.5, 85))); // Wobble drop off-shoot
+            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-0.5, 0, 90))); // Start-power shots
+            path.add(new Line(new Point(-1.6, 0), new Point(-3.45, 2.3))); // Power shots-wobble drop off
+            path.add(new Line(new Point(-3.45, 2.3), new Point(-3.45, -2.85, 90))); // Wobble drop off-Wobble pickup
+            path.add(new Line(new Point(-3.45, -2.85), new Point(-3.45, 0.5, 90))); // Wobble pickup-Wobble drop off
+            path.add(new Line(new Point(-3.45, 0.5), new Point(-2, -0.5, 85))); // Wobble drop off-shoot
             path.add(new Line(new Point(-2, -0.5), new Point(-2, 0, 90))); // Shoot-park
         }
         else if(rings == 1) {
-            path.add(new Line(new Point(-3, -2.5), new Point(-1.35 + (20.0/20.0), -0.2, 90))); // Start-power shots
-            path.add(new Line(new Point(-1.35 + (20.0/12.0), -0.2), new Point(-1, 2.75, 180))); // Power shots-wobble drop off
-            path.add(new Line(new Point(-1, 2.75), new Point(-3.75, -1.93, 90))); // Wobble drop off-Wobble pickup
-            path.add(new Line(new Point(-3.75, -2.33), new Point(-3.85, 1, -90))); // Wobble pickup-Wobble drop off
-            path.add(new Line(new Point(-3.85, 1), new Point(-2, 0, 90))); // Wobble drop off-shoot
-            path.add(new Line(new Point(-2, 0), new Point(-2, 0, 90))); // Shoot-park
+            path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-1.6, 0, 90))); // Start-power shots
+            path.add(new Line(new Point(-4.5, 4.5), new Point(-3.45, -2.85, 90))); // Wobble drop off-Wobble pickup
+            path.add(new Line(new Point(-3.45, -2.85), new Point(-1.45, 2.5, 90))); // Wobble pickup-Wobble drop off
+            path.add(new Line(new Point(-1.45, 2.5), new Point(-2, -0.5, 85))); // Wobble drop off-shoot
+            path.add(new Line(new Point(-2, -0.5), new Point(-2, 0, 90))); // Shoot-park
         }
         else {
             path.add(new Line(new Point(blue ? Globals.START_X : -Globals.START_X, Globals.START_Y), new Point(-3.45, 4.6, -170))); // Power shots-wobble drop off
