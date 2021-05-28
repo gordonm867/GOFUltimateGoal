@@ -39,9 +39,15 @@ public class GOFTeleOp extends MyOpMode {
 
     public ArrayList<Double> averageterms = new ArrayList<>();
 
+    public boolean achieved = false;
     public boolean red = true;
+    public boolean started = false;
+
+    private double highest = 0;
     private double lastangle = 0;
     private double lasttime = 0;
+
+    public double shotvel = 0;
 
     public void initOp() {
         Globals.AUTO = false;
@@ -65,6 +71,7 @@ public class GOFTeleOp extends MyOpMode {
         subsystems.add(intake);
         subsystems.add(shooter);
         subsystems.add(wobble);
+
         RevBulkData data = robot.bulkRead();
         for(Subsystem subsystem : subsystems) {
             subsystem.setState(Subsystem.State.ON);
@@ -110,7 +117,7 @@ public class GOFTeleOp extends MyOpMode {
 
     public void loopOp() {
         double angle = odometry.getAngle();
-        if(angle != lastangle || System.currentTimeMillis() - lasttime >= 1000) {
+        if(angle != lastangle || System.currentTimeMillis() - lasttime >= 200) {
             double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
             handler.pushData("Omega", omega);
             lasttime = System.currentTimeMillis();
@@ -136,7 +143,9 @@ public class GOFTeleOp extends MyOpMode {
                 robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_MEDIUM);
             }
         }
-        telemetry.addData("First shot velocity", Shooter.firstshotvel);
+        telemetry.addData("We will shoot at", Shooter.firstshotvel);
+        telemetry.addData("Power State", drive.powerstate == Drivetrain.Powerstate.FIRSTTRANSIT ? "FIRST_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.FIRST ? "first" : drive.powerstate == Drivetrain.Powerstate.SECONDTRANSIT ? "SECOND_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.SECOND ? "second" : drive.powerstate == Drivetrain.Powerstate.THIRDTRANSIT ? "THIRD_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.THIRD ? "third" : "idle");
+        telemetry.addData("Angle", angle);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }
@@ -146,9 +155,6 @@ public class GOFTeleOp extends MyOpMode {
         if(handler.contains("saa")) {
             telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
-        telemetry.addData("Angle", angle);
-        telemetry.addData("My point", odometry.getPoint());
-        telemetry.addData("Wobble target", wobble.pointat);
         telemetry.update();
     }
 

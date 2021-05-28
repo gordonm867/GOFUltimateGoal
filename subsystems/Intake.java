@@ -31,9 +31,9 @@ public class Intake implements Subsystem {
 
     public static int rings = 0;
 
-    public static Point height3 = new Point(0.77, 0.28);
-    public static Point height2 = new Point(0.57, 0.38);
-    public static Point height1 = new Point(0.65, 0.32);
+    public static Point height3 = new Point(0.72, 0.33);
+    public static Point height2 = new Point(0.57, 0.45);
+    public static Point height1 = new Point(0.62, 0.4);
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {

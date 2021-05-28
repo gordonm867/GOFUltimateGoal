@@ -52,11 +52,11 @@ public class Shooter implements Subsystem {
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
-    public static double shootTime = 50.0;
-    public static double shootIn = 0.36;
+    public static double shootTime = 61.5;
+    public static double shootIn = 0.3;
     public static double shootOut = 0.55;
 
-    public static double p = 0.1;
+    public static double p = 0.2;
     public static double i = 0.2;
     public static double d = 0;
     public static double f = 0;
@@ -77,7 +77,7 @@ public class Shooter implements Subsystem {
     public static int thing = 4;
     public static int oldthing = 4;
 
-    public static double powershotvel = 15.4;
+    public static double powershotvel = 15.48;
 
     public double cycles = 0;
 
@@ -138,7 +138,7 @@ public class Shooter implements Subsystem {
         if(uh && !gamepad2.y) {
             uh = false;
         }
-        if((gamepad1.b && !gamepad1.start) && !b1pressed) {
+        if(((gamepad1.a || Drivetrain.bored) && !gamepad1.start) && !b1pressed) {
             b1pressed = true;
             readying = true;
             start(robot, powershotvel);
@@ -147,7 +147,7 @@ public class Shooter implements Subsystem {
                 if(target != 0) {
                     double closest = 0;
                     double closestdist = Double.MAX_VALUE;
-                    Enumeration<Double> enumthing = integrals.keys();
+                    Enumeration<Double> enumthing = powershotintegrals.keys();
                     while (enumthing.hasMoreElements()) {
                         double next = enumthing.nextElement();
                         if (Math.abs(next - target) < closestdist) {
@@ -155,7 +155,7 @@ public class Shooter implements Subsystem {
                             closest = next;
                         }
                     }
-                    integral = integrals.get(closest);
+                    integral = powershotintegrals.get(closest);
                 }
             }
             catch(Exception e) {}
@@ -302,7 +302,7 @@ public class Shooter implements Subsystem {
         }
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
-            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             if(deltatime > 0.2) {
                 deltatime = 0;
@@ -331,7 +331,7 @@ public class Shooter implements Subsystem {
             }
             lasterror = error;
             double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
-            if(realdeltatime > 0.5) {
+            if(realdeltatime > 0.2) {
                 realdeltatime = 0;
                 reallasttime = System.currentTimeMillis();
                 lastv = v;
@@ -353,14 +353,14 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && (ready || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.1) || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2 && Math.abs(a) < 1.5)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && ((ready && Math.abs((Math.abs(v) - Math.abs(t))) < 2.5) || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
             handler.pushData("stv", vel);
         }
         if(!shooting && !readying) {
-            handler.pushData("stv", 0.0);
+            handler.pushData("stv", firstshotvel);
         }
         handler.pushData("gamepad2", g2);
     }
@@ -369,7 +369,7 @@ public class Shooter implements Subsystem {
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
-            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             if(deltatime > 0.2) {
                 deltatime = 0;
@@ -427,7 +427,7 @@ public class Shooter implements Subsystem {
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
-            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             if(deltatime > 0.2) {
                 deltatime = 0;
@@ -469,24 +469,12 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
             handler.pushData("saa", a);
         }
-        if(t > 16.8) {
-            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.1))) {
-                override = true;
-                if (once) {
-                    shootonce(targ, robot);
-                } else {
-                    shoot(targ, robot);
-                }
-            }
-        }
-        else {
-            if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
-                override = true;
-                if (once) {
-                    shootonce(targ, robot);
-                } else {
-                    shoot(targ, robot);
-                }
+        if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+            override = true;
+            if (once) {
+                shootonce(targ, robot);
+            } else {
+                shoot(targ, robot);
             }
         }
     }
@@ -495,7 +483,7 @@ public class Shooter implements Subsystem {
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
-            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             if(deltatime > 0.2) {
                 deltatime = 0;
@@ -548,7 +536,7 @@ public class Shooter implements Subsystem {
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
-            v = (((DcMotorEx)robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
+            v = (((DcMotorEx)robot.shoot2).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0;
             double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
             if(deltatime > 0.2) {
                 deltatime = 0;
@@ -645,7 +633,7 @@ public class Shooter implements Subsystem {
             shotvel = (double)handler.getData("sav");
             step++;
         }
-        if(step == 1 && (((double)handler.getData("sav") < shotvel - 0.5) && System.currentTimeMillis() - time > 50 || (System.currentTimeMillis() - time > shootTime))) {
+        if(step == 1 && ((((double)handler.getData("sav") < shotvel - 0.5) && System.currentTimeMillis() - time > 50) || (System.currentTimeMillis() - time > shootTime))) {
             if(System.currentTimeMillis() - time > shootTime * 1.5) {
                 time = System.currentTimeMillis();
                 if(robot.flicker.getPosition() == shootIn) {

@@ -63,6 +63,10 @@ public class Wobble implements Subsystem {
                 robot.wobble.setPosition(closedpose);
             }
         }
+        if(gamepad2.left_stick_button) {
+            robot.w1.setPosition(0.49);
+            robot.w2.setPosition(0.33);
+        }
         if(gamepad2.right_bumper && !bumperpressed) {
             bumperpressed = true;
             if(child == State.CLOSED) {

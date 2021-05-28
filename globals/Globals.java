@@ -39,6 +39,11 @@ public final class Globals {
 
     public static boolean AUTO = false;
 
+    public static double MAX_STRAFE = 4.0;
+    public static double MAX_STRAIGHT = 6.0;
+
+    public static double MAX_ACCEL = 6.3;
+
     //-48º, xraw = -1774, yraw = -407
 
 }

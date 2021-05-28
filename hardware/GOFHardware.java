@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -78,6 +79,10 @@ public class GOFHardware {
     public DcMotor shoot1;
     public DcMotor shoot2;
 
+    public ExpansionHubEx ex2;
+    public ExpansionHubEx ex3;
+
+    public RevBlinkinLedDriver led;
     public RevColorSensorV3 ringsensor;
 
     public Servo wobble;
@@ -86,12 +91,10 @@ public class GOFHardware {
     public Servo d2;
     public Servo w1;
     public Servo w2;
-    public RevBlinkinLedDriver led;
+
+    public VoltageSensor battery;
 
     public boolean enabled;
-
-    public ExpansionHubEx ex2;
-    public ExpansionHubEx ex3;
 
     private static GOFHardware myInstance = null;
 
@@ -167,6 +170,15 @@ public class GOFHardware {
         }
 
         try {
+            battery = hwMap.get(VoltageSensor.class, "Control Hub");
+        }
+        catch (Exception p_exception) {
+            battery = null;
+            telemetry.addData("Warning", "Funny story: your autonomous is about to fail. :P");
+            telemetry.update();
+        }
+
+        try {
             ringsensor = hwMap.get(RevColorSensorV3.class, "rs");
         }
         catch(Exception p_exception) {
@@ -218,7 +230,7 @@ public class GOFHardware {
         try { // Intake wheel
             in = hwMap.get(DcMotor.class, "in");
             in.setDirection(DcMotor.Direction.FORWARD);
-            in.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            in.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             in.setPower(0);
             in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception p_exception) {
@@ -246,7 +258,7 @@ public class GOFHardware {
         }
 
         try {
-            in2 = hwMap.get(DcMotor.class, "in2");
+            in2 = hwMap.get(DcMotor.class, "vw");
             in2.setDirection(DcMotor.Direction.FORWARD);
             in2.setPower(0);
             in2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -301,7 +313,7 @@ public class GOFHardware {
         try {
             w1 = hwMap.get(Servo.class, "w1");
             w1.setDirection(Servo.Direction.FORWARD);
-            w1.setPosition(0.045);
+            w1.setPosition(0.04);
         }
         catch(Exception p_exception) {
             w1 = null;
@@ -310,7 +322,7 @@ public class GOFHardware {
         try {
             w2 = hwMap.get(Servo.class, "w2");
             w2.setDirection(Servo.Direction.FORWARD);
-            w2.setPosition(0.69);
+            w2.setPosition(0.7);
         }
         catch(Exception p_exception) {
             w2 = null;
@@ -428,6 +440,8 @@ public class GOFHardware {
     public void setIntakePower(double power) {
         if(in != null) {
             in.setPower(Range.clip(power, -Globals.MAX_IN_SPEED, Globals.MAX_IN_SPEED));
+        }
+        if(in2 != null) {
             in2.setPower(Range.clip(power, -Globals.MAX_IN_SPEED, Globals.MAX_IN_SPEED));
         }
     }
