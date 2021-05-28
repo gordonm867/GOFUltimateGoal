@@ -31,6 +31,7 @@ public class Shooter implements Subsystem {
     boolean ready = false;
     boolean b1pressed = false;
     boolean override = false;
+    boolean off = false;
 
     public boolean shot = false;
     public boolean shooting = false;
@@ -244,6 +245,7 @@ public class Shooter implements Subsystem {
             rt = false;
         }
         if((gamepad2.left_trigger > 0.05 && !lt) || Intake.rings == 3) {
+            off = false;
             readying = true;
             vel = firstshotvel;
             start(robot, vel);
@@ -272,6 +274,7 @@ public class Shooter implements Subsystem {
             Intake.rings = 0;
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
+            off = true;
             Drivetrain.waitingForShoot = false;
             integral = 0;
             shooting = false;
@@ -360,7 +363,12 @@ public class Shooter implements Subsystem {
             handler.pushData("stv", vel);
         }
         if(!shooting && !readying) {
-            handler.pushData("stv", firstshotvel);
+            if(!off) {
+                handler.pushData("stv", firstshotvel);
+            }
+            else {
+                handler.pushData("stv", 0);
+            }
         }
         handler.pushData("gamepad2", g2);
     }
