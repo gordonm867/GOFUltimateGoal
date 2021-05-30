@@ -22,7 +22,7 @@ import org.openftc.revextensions2.RevBulkData;
 import java.util.ArrayList;
 
 @Config
-@TeleOp(name="ShootingTune",group="GOF")
+@TeleOp(name="ShootingTune",group="Tests")
 public class Tuning extends MyOpMode {
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();
     private     Drivetrain              drive;
@@ -48,7 +48,7 @@ public class Tuning extends MyOpMode {
 
     public void initOp() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Globals.MAX_SPEED = 1.0;
+        Globals.MAX_SPEED = 0.4;
         Globals.MIN_SPEED = 0.15;
         Shooter.thing = 4;
         robot.init(hardwareMap, telemetry);
@@ -95,15 +95,11 @@ public class Tuning extends MyOpMode {
             iterations = 0;
             start = odometry.getPoint();
         }
+        if(thetarget == null || !thetarget.equals(new Point(targX, targY))) {
+            drive.lasttime = System.currentTimeMillis();
+            drive.mylasttime = System.currentTimeMillis();
+        }
         thetarget = new Point(targX, targY);
-        if(displacement > 3.0/96.0 && Math.abs(odometry.getVelocity()) <= 0.5 / 1000.0 && thetarget.distance(odometry.getPoint(), Unit.FEET) < 0.2) {
-            iterations++;
-            Globals.MIN_SPEED = Math.min(0.35, Globals.MIN_SPEED + 0.0001 * iterations);
-        }
-        else {
-            iterations--;
-            Globals.MIN_SPEED = Math.min(0.35, Math.max(0.1, Globals.MIN_SPEED + 0.0001 * iterations));
-        }
         if(displacement > 3.0/96.0 ||  Math.abs(angularerror) > 0.5) {
             drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }

@@ -16,7 +16,7 @@ import org.openftc.revextensions2.RevBulkData;
 import java.util.ArrayList;
 @Disabled
 @Config
-@TeleOp(name="ShooterTest")
+@TeleOp(name="ShooterTest", group="Tests")
 //@Disabled
 public class ShooterTest extends MyOpMode {
     GOFHardware robot = GOFHardware.getInstance();

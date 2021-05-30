@@ -26,7 +26,7 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 @Config
-@TeleOp(name="CameraTest")
+@TeleOp(name="CameraTest", group="Tests")
 public class CameraTest extends MyOpMode {
 
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();

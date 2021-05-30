@@ -58,6 +58,7 @@ public class Drivetrain implements Subsystem {
     public Point lastpoint = null;
 
     public double lasttargetangle = Double.NaN;
+    public double pstimer = 0;
 
     public static double minturn = 0.12;
     public double lastsign = 0;
@@ -67,6 +68,7 @@ public class Drivetrain implements Subsystem {
     public static boolean waitingForShoot = false;
 
     public Powerstate powerstate = Powerstate.IDLE;
+    public double targ = 0;
 
     public Drivetrain(State state) {
         this.state = state;
@@ -214,8 +216,8 @@ public class Drivetrain implements Subsystem {
                     waitingForShoot = false;
                     if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
                         Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(robotangle - 105) > 1.0) {
-                            dupdate(robot, 105, robotangle);
+                        if (Math.abs(robotangle - 90) > 0.5) {
+                            dupdate(robot, 90, robotangle);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
@@ -224,13 +226,14 @@ public class Drivetrain implements Subsystem {
                     }
                     else {
                         Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(robotangle - 105) > 1.0) {
-                            dupdate(robot, 105, robotangle);
+                        if (Math.abs(robotangle - 90) > 0.5) {
+                            dupdate(robot, 90, robotangle);
                         }
                         else {
                             robot.setDrivePower(0, 0, 0, 0);
                             powerstate = Powerstate.FIRST;
                             Shooter.waitingForDrive = false;
+                            Shooter.powershotvel += 0.1;
                         }
                     }
                     return;
@@ -241,35 +244,40 @@ public class Drivetrain implements Subsystem {
                         Shooter.waitingForDrive = false;
                         waitingForShoot = false;
                         powerstate = Powerstate.SECONDTRANSIT;
+                        pstimer = System.currentTimeMillis();
                     }
-                    else {
+                    else if(odometry.getVelocity() * 1000 <= 0.1) {
                         waitingForShoot = true;
                     }
                     return;
                 }
                 else if(powerstate == Powerstate.SECONDTRANSIT) {
-                    waitingForShoot = false;
-                    if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                        Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(robotangle - 110) > 1.0) {
-                            dupdate(robot, 110, robotangle);
+                    if(System.currentTimeMillis() - pstimer >= 750) {
+                        waitingForShoot = false;
+                        if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                            Globals.MIN_SPEED = 0.3;
+                            if (Math.abs(robotangle - 95.5) > 0.5) {
+                                dupdate(robot, 95.5, robotangle);
+                            }
+                            else {
+                                robot.setDrivePower(0, 0, 0, 0);
+                                powerstate = Powerstate.SECOND;
+                            }
                         }
                         else {
-                            robot.setDrivePower(0, 0, 0, 0);
-                            powerstate = Powerstate.SECOND;
+                            Globals.MIN_SPEED = 0.3;
+                            if (Math.abs(robotangle - 95.5) > 0.5) {
+                                dupdate(robot, 95.5, robotangle);
+                            }
+                            else {
+                                robot.setDrivePower(0, 0, 0, 0);
+                                powerstate = Powerstate.SECOND;
+                                Shooter.waitingForDrive = false;
+                            }
                         }
                     }
                     else {
-                        Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(robotangle - 110) > 1.0) {
-                            dupdate(robot, 110, robotangle);
-                        }
-                        else {
-                            robot.setDrivePower(0, 0, 0, 0);
-                            powerstate = Powerstate.SECOND;
-                            Shooter.powershotvel -= 0.1;
-                            Shooter.waitingForDrive = false;
-                        }
+                        robot.setDrivePower(0, 0, 0, 0);
                     }
                     return;
                 }
@@ -278,35 +286,39 @@ public class Drivetrain implements Subsystem {
                     if(Shooter.waitingForDrive) {
                         Shooter.waitingForDrive = false;
                         waitingForShoot = false;
+                        Shooter.powershotvel -= 0.1;
                         powerstate = Powerstate.THIRDTRANSIT;
+                        pstimer = System.currentTimeMillis();
                     }
-                    else {
+                    else if(odometry.getVelocity() * 1000 <= 0.1) {
                         waitingForShoot = true;
                     }
                     return;
                 }
                 else if(powerstate == Powerstate.THIRDTRANSIT) {
-                    waitingForShoot = false;
-                    if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
-                        Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(angle - 116) > 1.0) {
-                            dupdate(robot, 116, robotangle);
-                        }
-                        else {
-                            robot.setDrivePower(0, 0, 0, 0);
-                            powerstate = Powerstate.THIRD;
+                    if(System.currentTimeMillis() - pstimer >= 750) {
+                        waitingForShoot = false;
+                        if (handler.contains("Color") && handler.getData("Color").toString().equalsIgnoreCase("Blue")) {
+                            Globals.MIN_SPEED = 0.3;
+                            if (Math.abs(angle - 103.5) > 0.5) {
+                                dupdate(robot, 103.5, robotangle);
+                            } else {
+                                robot.setDrivePower(0, 0, 0, 0);
+                                powerstate = Powerstate.THIRD;
+                            }
+                        } else {
+                            Globals.MIN_SPEED = 0.3;
+                            if (Math.abs(robotangle - 103.5) > 0.5) {
+                                dupdate(robot, 103.5, robotangle);
+                            } else {
+                                robot.setDrivePower(0, 0, 0, 0);
+                                powerstate = Powerstate.THIRD;
+                                Shooter.waitingForDrive = false;
+                            }
                         }
                     }
                     else {
-                        Globals.MIN_SPEED = 0.3;
-                        if (Math.abs(robotangle - 116) > 1.0) {
-                            dupdate(robot, 116, robotangle);
-                        }
-                        else {
-                            robot.setDrivePower(0, 0, 0, 0);
-                            powerstate = Powerstate.THIRD;
-                            Shooter.waitingForDrive = false;
-                        }
+                        robot.setDrivePower(0, 0, 0, 0);
                     }
                     return;
                 }
@@ -318,7 +330,7 @@ public class Drivetrain implements Subsystem {
                         waitingForShoot = false;
                         Shooter.waitingForDrive = false;
                     }
-                    else {
+                    else if(odometry.getVelocity() * 1000 <= 0.1) {
                         waitingForShoot = true;
                     }
                     return;
@@ -367,11 +379,11 @@ public class Drivetrain implements Subsystem {
                 turn += (kp * error * Globals.MAX_SPEED);
                 robot.setDrivePower(scaleFactor * (drive + turn - angle), scaleFactor * (drive + turn + angle), scaleFactor * (drive - turn + angle), scaleFactor * (drive - turn - angle)); // Set motors to values based on gamepad
             }
-            if (gamepad1.a && !gamepad1.start && !xpressed) {
+            if (gamepad1.b && !gamepad1.start && !xpressed) {
                 xpressed = true;
                 turningToPoint = true;
             }
-            if(!gamepad1.a && !gamepad1.start) {
+            if(!gamepad1.b && !gamepad1.start) {
                 xpressed = false;
             }
 
@@ -383,6 +395,8 @@ public class Drivetrain implements Subsystem {
                 trigger = false;
             }
             if((gamepad1.a || bored) && !gamepad1.start && !bpressed) {
+                odometry.doresetthing();
+                bored = false;
                 bpressed = true;
                 turningToPoint3 = true;
                 integral = 0;
@@ -390,8 +404,7 @@ public class Drivetrain implements Subsystem {
                 lasterror = 0;
                 powerstate = Powerstate.FIRSTTRANSIT;
             }
-            if(!gamepad1.a && !bored) {
-                bored = false;
+            if(!gamepad1.a) {
                 bpressed = false;
             }
         }
@@ -445,7 +458,7 @@ public class Drivetrain implements Subsystem {
         double turn = 0;
         if(!Double.isNaN(myAngle)) {
             error = Functions.normalize(myAngle - current);
-            if(Math.abs(error) >= 0.4) {
+            if(Math.abs(error) >= 0.1) {
                 double deltatime = (System.currentTimeMillis() - lasttime) / 1000.0;
                 double deriv = (error - lasterror) / deltatime;
                 if(Math.abs(error) < 1 / kp) {
@@ -458,11 +471,6 @@ public class Drivetrain implements Subsystem {
             else {
                 integral = 0;
             }
-        }
-        if(integral != 0 && Math.abs(integral) * ki < 0.23) {
-            turn -= ki * integral;
-            integral = Math.signum(integral) * 0.23 / ki;
-            turn += ki * integral;
         }
         robot.setDrivePower(turn, turn, -turn, -turn);
     }
@@ -535,11 +543,6 @@ public class Drivetrain implements Subsystem {
                 integral = 0;
             }
         }
-        if(integral != 0 && Math.abs(integral) * ki < 0.23 && drive == 0 && angle == 0 && Math.abs(odometry.getVelocity()) <= 0.1 / 1000.0) {
-            turn -= ki * integral;
-            integral = Math.signum(integral) * 0.23 / ki;
-            turn += ki * integral;
-        }
         double scaleFactor;
         double max = Math.max(Math.abs(drive + turn - angle), Math.max(Math.abs(drive - turn + angle), Math.max(Math.abs((drive + turn + angle)), Math.abs((drive - turn - angle)))));
         double dT = (System.currentTimeMillis() - mylasttime) / 1000.0;
@@ -550,7 +553,7 @@ public class Drivetrain implements Subsystem {
             mintegral = 0;
         }
         scaleFactor = (mkp * displacement) + (mki * mintegral) + (mkd * mderivative);
-        double targ = (scaleFactor * ((Globals.MAX_STRAIGHT * (drive/(drive + angle))) + (Globals.MAX_STRAFE * (angle/(drive + angle)))));
+        targ = Math.sqrt(Math.pow((Globals.MAX_STRAIGHT * (drive / (Math.abs(drive) + Math.abs(angle)))), 2) + Math.pow((Globals.MAX_STRAFE * (angle / (Math.abs(angle) + Math.abs(drive)))), 2));
         double targa = 0;
         if(targ - (odometry.getVelocity() * 1000) > 0.5) {
             targa = Globals.MAX_ACCEL;

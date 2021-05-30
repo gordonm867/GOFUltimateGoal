@@ -375,6 +375,12 @@ public class Odometry implements Subsystem {
         */
     }
 
+    public void doresetthing() {
+        angleOffset = Functions.normalize(90 - robot.getAngle());
+        lastAngle = 90;
+        angle = 90;
+    }
+
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double myangle, RevBulkData data1, RevBulkData data2, Odometry odometry) {
         if(gamepad1.x) {
             angleOffset = Functions.normalize(90 - robot.getAngle());

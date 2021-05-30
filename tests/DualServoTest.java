@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
@@ -15,7 +14,7 @@ import java.io.IOException;
 
 //@Disabled
 @Config
-@TeleOp(name="DualServoTest")
+@TeleOp(name="DualServoTest", group="Tests")
 public class DualServoTest extends MyOpMode {
 
     GOFHardware robot = GOFHardware.getInstance();

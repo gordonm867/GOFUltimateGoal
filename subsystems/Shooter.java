@@ -31,7 +31,7 @@ public class Shooter implements Subsystem {
     boolean ready = false;
     boolean b1pressed = false;
     boolean override = false;
-    boolean off = false;
+    public static boolean off = false;
 
     public boolean shot = false;
     public boolean shooting = false;
@@ -68,17 +68,17 @@ public class Shooter implements Subsystem {
     public static double PD = 0;
     public static double PF = 0;
 
-    public static double vel = 16.68;
-    public static double firstshotvel = 16.68;
-    public static double secondshotvel = 16.68;
-    public static double thirdshotvel = 16.68;
+    public static double vel = 16.92;
+    public static double firstshotvel = 16.92;
+    public static double secondshotvel = 16.92;
+    public static double thirdshotvel = 16.92;
 
     public static double shotvel = 0;
 
     public static int thing = 4;
     public static int oldthing = 4;
 
-    public static double powershotvel = 15.48;
+    public static double powershotvel = 15.3;
 
     public double cycles = 0;
 
@@ -356,7 +356,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && ((ready && Math.abs((Math.abs(v) - Math.abs(t))) < 1.2) || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && ((ready && Math.abs((Math.abs(v) - Math.abs(t))) < 1.0) || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.25))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
@@ -477,7 +477,7 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
             handler.pushData("saa", a);
         }
-        if (override || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+        if ((override && Math.abs(Math.abs(v) - Math.abs(t)) < 1.2) || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
             override = true;
             if (once) {
                 shootonce(targ, robot);

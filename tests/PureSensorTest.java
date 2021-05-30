@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 
 import java.io.IOException;
 
-@TeleOp(name="PureSensorTest")
+@TeleOp(name="PureSensorTest", group="Tests")
 public class PureSensorTest extends MyOpMode {
 
     GOFHardware robot = GOFHardware.getInstance();

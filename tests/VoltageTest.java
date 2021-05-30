@@ -17,7 +17,7 @@ import org.openftc.revextensions2.RevBulkData;
 import java.util.ArrayList;
 
 @Disabled
-@TeleOp(name="VoltageIntakeTest")
+@TeleOp(name="VoltageIntakeTest", group="Tests")
 public class VoltageTest extends MyOpMode {
 
     private     ArrayList<Subsystem>    subsystems = new ArrayList<>();

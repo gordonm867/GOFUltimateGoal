@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 
 //@Disabled
-@TeleOp(name="flickertest")
+@TeleOp(name="flickertest", group="Tests")
 public class ServoTestImpl extends MyOpMode {
 
     GOFHardware robot = GOFHardware.getInstance();

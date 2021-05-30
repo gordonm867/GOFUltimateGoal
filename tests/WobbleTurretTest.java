@@ -13,7 +13,7 @@ import java.io.IOException;
 
 //@Disabled
 @Config
-@TeleOp(name="WobbleTurretTest")
+@TeleOp(name="WobbleTurretTest",group="Tests")
 public class WobbleTurretTest extends MyOpMode {
 
     GOFHardware robot = GOFHardware.getInstance();

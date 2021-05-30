@@ -47,6 +47,7 @@ public class GOFTeleOp extends MyOpMode {
     private double lastangle = 0;
     private double lasttime = 0;
 
+    public double time = 0;
     public double shotvel = 0;
 
     public void initOp() {
@@ -115,6 +116,10 @@ public class GOFTeleOp extends MyOpMode {
         lasttime = System.currentTimeMillis();
     }
 
+    public void startOp() {
+        time = System.currentTimeMillis();
+    }
+
     public void loopOp() {
         double angle = odometry.getAngle();
         if(angle != lastangle || System.currentTimeMillis() - lasttime >= 200) {
@@ -128,23 +133,23 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
-        if(robot.led != null) {
-            if (!shooter.shooting) {
-                if (Intake.rings == 0) {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
-                } else if (Intake.rings == 1) {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET);
-                } else if (Intake.rings == 2) {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_BLUE);
-                } else {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+        if(System.currentTimeMillis() - time >= 10000 && System.currentTimeMillis() - time <= 14000) {
+            robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE);
+        }
+        else {
+            if(robot.led != null) {
+                if(gamepad2.left_stick_y < 0) {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
                 }
-            } else {
-                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_MEDIUM);
+                else {
+                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
+                }
             }
         }
         telemetry.addData("We will shoot at", Shooter.firstshotvel);
         telemetry.addData("Power State", drive.powerstate == Drivetrain.Powerstate.FIRSTTRANSIT ? "FIRST_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.FIRST ? "first" : drive.powerstate == Drivetrain.Powerstate.SECONDTRANSIT ? "SECOND_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.SECOND ? "second" : drive.powerstate == Drivetrain.Powerstate.THIRDTRANSIT ? "THIRD_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.THIRD ? "third" : "idle");
+        telemetry.addData("Error", drive.lasterror);
+        telemetry.addData("Integral", drive.integral);
         telemetry.addData("Angle", angle);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
