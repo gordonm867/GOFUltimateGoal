@@ -133,17 +133,12 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
-        if(System.currentTimeMillis() - time >= 10000 && System.currentTimeMillis() - time <= 14000) {
-            robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE);
-        }
-        else {
-            if(robot.led != null) {
-                if(gamepad2.left_stick_y < 0) {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
-                }
-                else {
-                    robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
-                }
+        if(robot.led != null) {
+            if(gamepad2.left_stick_y < 0) {
+                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+            }
+            else {
+                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
             }
         }
         telemetry.addData("We will shoot at", Shooter.firstshotvel);

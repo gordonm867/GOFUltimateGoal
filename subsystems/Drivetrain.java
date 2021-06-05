@@ -244,6 +244,7 @@ public class Drivetrain implements Subsystem {
                         Shooter.waitingForDrive = false;
                         waitingForShoot = false;
                         powerstate = Powerstate.SECONDTRANSIT;
+                        Shooter.powershotvel -= 0.1;
                         pstimer = System.currentTimeMillis();
                     }
                     else if(odometry.getVelocity() * 1000 <= 0.1) {
@@ -286,7 +287,6 @@ public class Drivetrain implements Subsystem {
                     if(Shooter.waitingForDrive) {
                         Shooter.waitingForDrive = false;
                         waitingForShoot = false;
-                        Shooter.powershotvel -= 0.1;
                         powerstate = Powerstate.THIRDTRANSIT;
                         pstimer = System.currentTimeMillis();
                     }

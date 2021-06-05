@@ -25,6 +25,7 @@ public class Shooter implements Subsystem {
     boolean lt = false;
     boolean g2 = true;
     boolean uh = false;
+    boolean uh2 = false;
     boolean xpressed = false;
     boolean dpadup = false;
     boolean dpaddown = false;
@@ -98,6 +99,7 @@ public class Shooter implements Subsystem {
 
     public enum Target {
         GOAL,
+        MID,
         POWER
     }
 
@@ -138,6 +140,41 @@ public class Shooter implements Subsystem {
         }
         if(uh && !gamepad2.y) {
             uh = false;
+        }
+        if(!uh2 && ((gamepad2.left_trigger > 0.05))) {
+            uh2 = true;
+            thing = 4;
+            vel = 14.6;
+            attempts = 0;
+            shooting = true;
+            Intake.rings -= (thing - 1);
+            if(Intake.rings < 0) {
+                Intake.rings = 0;
+            }
+            ready = false;
+            handler.pushData("stv", vel);
+            t = (double)handler.getData("stv");
+            targ = Target.MID;
+            try {
+                double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                if(target != 0) {
+                    double closest = 0;
+                    double closestdist = Double.MAX_VALUE;
+                    Enumeration<Double> enumthing = powershotintegrals.keys();
+                    while (enumthing.hasMoreElements()) {
+                        double next = enumthing.nextElement();
+                        if (Math.abs(next - target) < closestdist) {
+                            closestdist = Math.abs(next - target);
+                            closest = next;
+                        }
+                    }
+                    integral = powershotintegrals.get(closest);
+                }
+            }
+            catch(Exception e) {}
+        }
+        if(uh2 && !(gamepad2.left_trigger > 0.05)) {
+            uh2 = false;
         }
         if(((gamepad1.a || Drivetrain.bored) && !gamepad1.start) && !b1pressed) {
             b1pressed = true;
@@ -244,7 +281,7 @@ public class Shooter implements Subsystem {
         if(gamepad2.right_trigger < 0.05 && rt) {
             rt = false;
         }
-        if((gamepad2.left_trigger > 0.05 && !lt) || Intake.rings == 3) {
+        if(Intake.rings == 3) {
             off = false;
             readying = true;
             vel = firstshotvel;
@@ -267,20 +304,46 @@ public class Shooter implements Subsystem {
             }
             catch(Exception e) {}
         }
-        if(gamepad2.left_trigger < 0.05) {
-            lt = false;
+        if(gamepad2.left_bumper && !lt) {
+            lt = true;
+            if(off) {
+                off = false;
+                readying = true;
+                vel = firstshotvel;
+                start(robot, vel);
+                try {
+                    double target = (Math.round(10 * (((DcMotorEx) robot.shoot1).getVelocity(AngleUnit.DEGREES) * 99.5) * 4 * Math.PI * 0.0254 / 360.0) / 10.0);
+                    if(target != 0) {
+                        double closest = 0;
+                        double closestdist = Double.MAX_VALUE;
+                        Enumeration<Double> enumthing = integrals.keys();
+                        while (enumthing.hasMoreElements()) {
+                            double next = enumthing.nextElement();
+                            if (Math.abs(next - target) < closestdist) {
+                                closestdist = Math.abs(next - target);
+                                closest = next;
+                            }
+                        }
+                        integral = integrals.get(closest);
+                    }
+                }
+                catch(Exception e) {}
+            }
+            else {
+                Intake.rings = 0;
+                robot.shoot1.setPower(0);
+                robot.shoot2.setPower(0);
+                off = true;
+                Drivetrain.waitingForShoot = false;
+                integral = 0;
+                shooting = false;
+                ready = false;
+                readying = false;
+                robot.flicker.setPosition(shootOut);
+            }
         }
-        if(gamepad2.left_bumper) {
-            Intake.rings = 0;
-            robot.shoot1.setPower(0);
-            robot.shoot2.setPower(0);
-            off = true;
-            Drivetrain.waitingForShoot = false;
-            integral = 0;
-            shooting = false;
-            ready = false;
-            readying = false;
-            robot.flicker.setPosition(shootOut);
+        if(!gamepad2.left_bumper) {
+            lt = false;
         }
         if(gamepad2.dpad_up && !dpadup) {
             dpadup = true;
