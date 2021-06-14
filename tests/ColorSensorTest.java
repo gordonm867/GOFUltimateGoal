@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
@@ -23,6 +25,7 @@ public class ColorSensorTest extends MyOpMode {
     @Override
     public void initOp() throws InterruptedException, GOFException {
         robot.init(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
     }
 
     @Override
