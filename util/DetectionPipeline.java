@@ -50,7 +50,7 @@ public class DetectionPipeline extends OpenCvPipeline {
         int x = 0;
         for(MatOfPoint contour : contlist) {
             double test = contour.size().height * contour.size().width;
-            if(150 >= test && test >= 10) {
+            if(150 >= test && test >= 40) {
                 if(contlist.size() > x) {
                     Imgproc.drawContours(disp, contlist, x, new Scalar(128, 0, 128), 2);
                 }

@@ -56,8 +56,6 @@ public class GOFTeleOp extends MyOpMode {
         Globals.MAX_SPEED = 1.0;
         Globals.MIN_SPEED = 0.25;
         robot.init(hardwareMap, telemetry);
-        robot.d1.setPosition(0.65);
-        robot.d2.setPosition(0.32);
         robot.wobble.setPosition(Wobble.openpose);
         odometry = Odometry.getInstance(robot);
         drive = new Drivetrain(Subsystem.State.OFF);

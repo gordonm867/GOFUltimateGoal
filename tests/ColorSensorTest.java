@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
@@ -12,13 +11,11 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 
 import java.io.IOException;
 
-@Disabled
 @Config
 @TeleOp(name="ColorSensorTest")
 public class ColorSensorTest extends MyOpMode {
 
-    public static boolean intaking = false;
-    public static boolean outtaking = false;
+    public static double intaking = 0;
 
     GOFHardware robot = GOFHardware.getInstance();
 
@@ -30,15 +27,7 @@ public class ColorSensorTest extends MyOpMode {
 
     @Override
     public void loopOp() throws InterruptedException, GOFException, IOException {
-        if(intaking) {
-            robot.setIntakePower(-1.0);
-        }
-        else if(outtaking) {
-            robot.setIntakePower(1.0);
-        }
-        else {
-            robot.setIntakePower(0);
-        }
+        robot.setIntakePower(-intaking);
         telemetry.addData("Distance", robot.ringsensor.getDistance(DistanceUnit.MM));
         NormalizedRGBA color = robot.ringsensor.getNormalizedColors();
         telemetry.addData("Color", color.red + ", " + color.green + ", " + color.blue + ", " + color.alpha);

@@ -295,7 +295,7 @@ public class GOFHardware {
         try {
             d1 = hwMap.get(Servo.class, "d1");
             d1.setDirection(Servo.Direction.FORWARD);
-            d1.setPosition(0.32);
+            d1.setPosition(0.15);
         }
         catch(Exception p_exception) {
             d1 = null;
@@ -304,7 +304,7 @@ public class GOFHardware {
         try {
             d2 = hwMap.get(Servo.class, "d2");
             d2.setDirection(Servo.Direction.FORWARD);
-            d2.setPosition(0.84);
+            d2.setPosition(0.65);
         }
         catch(Exception p_exception) {
             d2 = null;
