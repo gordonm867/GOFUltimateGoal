@@ -91,6 +91,8 @@ public class GOFHardware {
     public Servo d2;
     public Servo w1;
     public Servo w2;
+    public Servo c1;
+    public Servo c2;
 
     public VoltageSensor battery;
 
@@ -327,6 +329,20 @@ public class GOFHardware {
         catch(Exception p_exception) {
             w2 = null;
         }
+
+        try {
+            c1 = hwMap.get(Servo.class, "c1");
+            c1.setDirection(Servo.Direction.FORWARD);
+            c1.setPosition(0.5);
+        }
+        catch(Exception e) {}
+
+        try {
+            c2 = hwMap.get(Servo.class, "c2");
+            c2.setDirection(Servo.Direction.FORWARD);
+            c2.setPosition(0.6);
+        }
+        catch(Exception e) {}
 
         try {
             camId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());

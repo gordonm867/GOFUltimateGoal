@@ -32,7 +32,7 @@ public class Shooter implements Subsystem {
     boolean ready = false;
     boolean b1pressed = false;
     boolean override = false;
-    public static boolean off = false;
+    public static boolean off = true;
 
     public boolean shot = false;
     public boolean shooting = false;
@@ -426,12 +426,7 @@ public class Shooter implements Subsystem {
             handler.pushData("stv", vel);
         }
         if(!shooting && !readying) {
-            if(!off) {
-                handler.pushData("stv", firstshotvel);
-            }
-            else {
-                handler.pushData("stv", 0.0);
-            }
+            handler.pushData("stv", 0.0);
         }
         handler.pushData("gamepad2", g2);
     }

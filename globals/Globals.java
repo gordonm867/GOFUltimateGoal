@@ -44,6 +44,8 @@ public final class Globals {
 
     public static double MAX_ACCEL = 6.3;
 
+    public static String VUFORIA_KEY = "Af5H7ur/////AAABmY429G1ecU03tDJWuqC+HsGFWAZ7HncaZOGuV5UNF4WD7hTWYRB26fNkvQmA2ALa1vnfXdr0yqd4LApEGNq+UXIf9/9PPfFKv6WyalVXENZS6EgEqPoegSr8dwGvy6jouFdsszyYJU60r2IqEC6OtXO9HWGOm1Ge4xu1ppGMEPUEAGaibUil1miQfS6Tvzvwf95k6cSlUzAWuss8j2QY9Q8pVur1G3w/yFaTRThpQ7SrNi0BXtPCmEit6SpI6xBjmfiuQBqXvl04XLNnddUuXVmkTcvJcvyhQF2nH5QJESiC8b4ocXxDM9071SRu3vZ3AFv1HLslASWXOppVXUCvwomECZJkCa4HTu0793jRfGg7";
+
     //-48º, xraw = -1774, yraw = -407
 
 }
