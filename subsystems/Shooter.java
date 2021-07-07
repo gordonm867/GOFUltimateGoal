@@ -58,9 +58,9 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.3;
     public static double shootOut = 0.55;
 
-    public static double p = 70;
+    public static double p = 30;
     public static double i = 1.5;
-    public static double d = 0;
+    public static double d = 0.1;
     public static double f = 13;
     public static double IP = 150;
 
