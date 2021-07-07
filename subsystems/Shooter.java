@@ -69,10 +69,10 @@ public class Shooter implements Subsystem {
     public static double PD = 0;
     public static double PF = 0;
 
-    public static double vel = 16.92;
-    public static double firstshotvel = 16.92;
-    public static double secondshotvel = 16.92;
-    public static double thirdshotvel = 16.92;
+    public static double vel = 16.26;
+    public static double firstshotvel = 16.26;
+    public static double secondshotvel = 16.26;
+    public static double thirdshotvel = 16.26;
 
     public static double shotvel = 0;
 
@@ -89,6 +89,9 @@ public class Shooter implements Subsystem {
 
     public double lasterror = 0;
     public double integral = 0;
+
+    public double endshootingtimer = System.currentTimeMillis();
+    public double beginshootingtimer = System.currentTimeMillis();
 
     private Dictionary<Double, Double> integrals = new Hashtable<>();
     private Dictionary<Double, Double> powershotintegrals = new Hashtable<>();
@@ -664,7 +667,11 @@ public class Shooter implements Subsystem {
         }
         if(step == 0 && robot.flicker != null) {
             attempts++;
+            if(attempts == 1) {
+                beginshootingtimer = System.currentTimeMillis();
+            }
             if (attempts == thing) {
+                endshootingtimer = System.currentTimeMillis();
                 shot = true;
                 override = false;
                 if(targetlol != Target.POWER) {

@@ -40,11 +40,11 @@ public class WobbleTurretTest extends MyOpMode {
     public void loopOp() throws InterruptedException, GOFException, IOException {
         if(!paused) {
             robot.w1.setPosition(W1POS);
-            robot.w2.setPosition(W2POS);
+            //robot.w2.setPosition(W2POS);
             robot.wobble.setPosition(servo3pos);
         }
         telemetry.addData("w1", robot.w1.getPosition());
-        telemetry.addData("w2", robot.w2.getPosition());
+        //telemetry.addData("w2", robot.w2.getPosition());
         telemetry.addData("claw", robot.wobble.getPosition());
         telemetry.update();
     }

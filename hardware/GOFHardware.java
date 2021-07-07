@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.DetectionPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -68,7 +69,6 @@ import org.openftc.revextensions2.RevBulkData;
 public class GOFHardware {
     /* Declare OpMode members */
     public BNO055IMU gyro;
-    public BNO055IMU gyro1;
 
     public DcMotor rf;
     public DcMotor rb;
@@ -90,7 +90,6 @@ public class GOFHardware {
     public Servo d1;
     public Servo d2;
     public Servo w1;
-    public Servo w2;
     public Servo c1;
     public Servo c2;
 
@@ -151,24 +150,6 @@ public class GOFHardware {
             telemetry.addData("Warning", "Gyro no work :(");
             telemetry.update();
             gyro = null;
-        }
-
-        try { // More gyro
-            gyro1 = hwMap.get(BNO055IMU.class, "g1");
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled = true;
-            parameters.loggingTag = "IMU";
-            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-            if (ex3 != null) {
-                gyro1 = LynxOptimizedI2cFactory.createLynxEmbeddedImu(ex3.getStandardModule(), 0);
-            }
-            gyro1.initialize(parameters);
-        } catch (Exception p_exception) {
-            telemetry.addData("Warning", "Gyro no work :(");
-            telemetry.update();
-            gyro1 = null;
         }
 
         try {
@@ -279,9 +260,9 @@ public class GOFHardware {
         }
 
         try {
-            wobble = hwMap.get(Servo.class, "w");
+            wobble = hwMap.get(Servo.class, "w2");
             wobble.setDirection(Servo.Direction.FORWARD);
-            wobble.setPosition(1.0);
+            wobble.setPosition(Wobble.closedpose);
         }
         catch(Exception p_exception) {
             wobble = null;
@@ -315,19 +296,10 @@ public class GOFHardware {
         try {
             w1 = hwMap.get(Servo.class, "w1");
             w1.setDirection(Servo.Direction.FORWARD);
-            w1.setPosition(0.04);
+            w1.setPosition(0.29);
         }
         catch(Exception p_exception) {
             w1 = null;
-        }
-
-        try {
-            w2 = hwMap.get(Servo.class, "w2");
-            w2.setDirection(Servo.Direction.FORWARD);
-            w2.setPosition(0.7);
-        }
-        catch(Exception p_exception) {
-            w2 = null;
         }
 
         try {
@@ -357,7 +329,6 @@ public class GOFHardware {
 
     /**
      * Get robot's angle
-     *
      * @return Robot angle
      */
     public double getAngle() {
@@ -367,7 +338,7 @@ public class GOFHardware {
     /**
      * Get robot's angle
      *
-     * @return Robot angle
+     * @return Robot y angle
      */
     public double getYAngle() {
         return Functions.normalize(gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).secondAngle + Globals.START_THETA);
@@ -376,7 +347,7 @@ public class GOFHardware {
     /**
      * Get robot's angle
      *
-     * @return Robot angle
+     * @return Robot x angle
      */
     public double getXAngle() {
         return Functions.normalize(gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).thirdAngle + Globals.START_THETA);

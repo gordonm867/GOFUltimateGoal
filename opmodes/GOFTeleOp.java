@@ -37,18 +37,14 @@ public class GOFTeleOp extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
-    public ArrayList<Double> averageterms = new ArrayList<>();
-
-    public boolean achieved = false;
     public boolean red = true;
-    public boolean started = false;
 
-    private double highest = 0;
     private double lastangle = 0;
     private double lasttime = 0;
 
     public double time = 0;
-    public double shotvel = 0;
+
+    public double max = 0;
 
     public void initOp() {
         Globals.AUTO = false;
@@ -116,6 +112,7 @@ public class GOFTeleOp extends MyOpMode {
 
     public void startOp() {
         time = System.currentTimeMillis();
+        Odometry.angleOffset = -odometry.getAngle() + Globals.START_THETA;
     }
 
     public void loopOp() {
@@ -140,10 +137,8 @@ public class GOFTeleOp extends MyOpMode {
             }
         }
         telemetry.addData("We will shoot at", Shooter.firstshotvel);
-        telemetry.addData("Power State", drive.powerstate == Drivetrain.Powerstate.FIRSTTRANSIT ? "FIRST_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.FIRST ? "first" : drive.powerstate == Drivetrain.Powerstate.SECONDTRANSIT ? "SECOND_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.SECOND ? "second" : drive.powerstate == Drivetrain.Powerstate.THIRDTRANSIT ? "THIRD_TRANSIT" : drive.powerstate == Drivetrain.Powerstate.THIRD ? "third" : "idle");
-        telemetry.addData("Error", drive.lasterror);
-        telemetry.addData("Integral", drive.integral);
         telemetry.addData("Angle", angle);
+        telemetry.addData("Max", max);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }
@@ -153,6 +148,7 @@ public class GOFTeleOp extends MyOpMode {
         if(handler.contains("saa")) {
             telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
+        telemetry.addData("Timing", (shooter.endshootingtimer - shooter.beginshootingtimer) / 1000.0);
         telemetry.update();
     }
 

@@ -23,14 +23,14 @@ public class Odometry implements Subsystem {
     public double lastXPos = 0;
     public double lastYPos = 0;
     private static double angle;
-    private double x = Math.abs(Globals.START_X);
+    private double x = Globals.START_X;
     private double y = Globals.START_Y;
     private double lastTime = System.currentTimeMillis();
     private double dTime = 0;
     public int updates = 0;
     private boolean update = true;
     private static Odometry thismetry = null;
-    private static double angleOffset = 0;
+    public static double angleOffset = 0;
     private volatile double velocity = 0;
 
     public volatile double lastangleread = Globals.START_THETA;
@@ -467,6 +467,10 @@ public class Odometry implements Subsystem {
             lastYPos = data1.getMotorCurrentPosition(robot.rb);
             lastXPos = data1.getMotorCurrentPosition(robot.lf);
         }
+    }
+
+    public void setX(double x) {
+        this.x = x;
     }
 
     public double getVelocity() {

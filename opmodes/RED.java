@@ -260,7 +260,7 @@ public class RED extends MyOpMode {
                     if (putimer == 0) {
                         putimer = System.currentTimeMillis();
                     } else if (System.currentTimeMillis() - putimer >= 500) {
-                        robot.w2.setPosition(0.57);
+                        //robot.w2.setPosition(0.57);
                     }
                 }
             }
@@ -272,10 +272,10 @@ public class RED extends MyOpMode {
         if(((rings == 0 && index == 2) || (rings == 1 && index == 4) || (rings == 4 && index == 4)) && System.currentTimeMillis() - pickuptimer >= 500 && false) {
             if (rings == 0) {
                 robot.w1.setPosition(0.52);
-                robot.w2.setPosition(0.63);
+                //robot.w2.setPosition(0.63);
             } else {
                 robot.w1.setPosition(0.52);
-                robot.w2.setPosition(0.62);
+                //robot.w2.setPosition(0.62);
             }
         }
         if(displacement > 1.0/24.0 || Math.abs(angleerror) > 1.0) {
@@ -291,7 +291,7 @@ public class RED extends MyOpMode {
                 odometry.update(robot.bulkRead(), odometry.getAngle());
                 if(index == 0 && rings != 0) {
                     if(rings == 1) {
-                        robot.w2.setPosition(0.8);
+                        //robot.w2.setPosition(0.8);
                         robot.d1.setPosition(0.68);
                         robot.d2.setPosition(0.12);
                         robot.setDrivePower(0, 0, 0, 0);
@@ -320,7 +320,7 @@ public class RED extends MyOpMode {
                         robot.shoot2.setPower(0);
                     }
                     else {
-                        robot.w2.setPosition(0.8);
+                        //robot.w2.setPosition(0.8);
                         robot.setDrivePower(0, 0, 0, 0);
                         double wtime = System.currentTimeMillis();
                         while (System.currentTimeMillis() - wtime <= 150) {
@@ -368,7 +368,7 @@ public class RED extends MyOpMode {
                     break;
                 }
                 if((index == 0 && rings == 0) || (rings != 0 && index == 1)) {
-                    robot.w2.setPosition(0.33);
+                    //robot.w2.setPosition(0.33);
                     double oldKi = Drivetrain.ki;
                     Drivetrain.ki = 0.3;
                     double d1p = robot.d1.getPosition();
@@ -566,10 +566,10 @@ public class RED extends MyOpMode {
                     Drivetrain.ki = oldKi;
                     Shooter.shootTime -= 25.0;
                     if(rings == 4) {
-                        robot.w2.setPosition(0.18);
+                        //robot.w2.setPosition(0.18);
                     }
                     else {
-                        robot.w2.setPosition(0.33);
+                        //robot.w2.setPosition(0.33);
                     }
                     i1timer = System.currentTimeMillis();
                     mypoints.clear();
@@ -591,15 +591,15 @@ public class RED extends MyOpMode {
                 if((rings == 0 && index == 2) || (rings != 0 && index == 4)) {
                     if(rings == 0) {
                         robot.w1.setPosition(0.52);
-                        robot.w2.setPosition(0.63);
+                        //robot.w2.setPosition(0.63);
                     }
                     else if(rings == 1) {
                         robot.w1.setPosition(0.52);
-                        robot.w2.setPosition(0.48);
+                        //robot.w2.setPosition(0.48);
                     }
                     else {
                         robot.w1.setPosition(0.52);
-                        robot.w2.setPosition(0.62);
+                        //robot.w2.setPosition(0.62);
                     }
                     double wobbletime = System.currentTimeMillis();
                     while(opModeIsActive() && System.currentTimeMillis() - wobbletime <= 500) {
@@ -618,13 +618,13 @@ public class RED extends MyOpMode {
                         odometry.update(robot.bulkRead(), odometry.getAngle());
                     }
                     if(rings == 4) {
-                        robot.w2.setPosition(0.4);
+                        //robot.w2.setPosition(0.4);
                     }
                     else if(rings == 1) {
-                        robot.w2.setPosition(0.27);
+                        //robot.w2.setPosition(0.27);
                     }
                     else {
-                        robot.w2.setPosition(0.33);
+                        //robot.w2.setPosition(0.33);
                     }
                     i1timer = System.currentTimeMillis();
                     break;
@@ -689,10 +689,10 @@ public class RED extends MyOpMode {
                     robot.d1.setPosition(0.68);
                     robot.d2.setPosition(0.12);
                     if(rings == 4) {
-                        robot.w2.setPosition(0.2);
+                        //robot.w2.setPosition(0.2);
                     }
                     else {
-                        robot.w2.setPosition(0.33);
+                        //robot.w2.setPosition(0.33);
                     }
                     break;
                 }

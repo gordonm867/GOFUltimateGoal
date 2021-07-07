@@ -53,7 +53,6 @@ public class OdometryTest extends MyOpMode {
                 telemetry.addData("xraw", robot.getVOmniPos(data));
                 telemetry.addData("yraw", robot.getHOmniPos(data));
                 telemetry.addData("angle", odometry.getAngle());
-                telemetry.addData("angle", robot.gyro1.getAngularOrientation().firstAngle);
                 telemetry.update();
             }
         }
