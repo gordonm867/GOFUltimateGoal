@@ -58,10 +58,10 @@ public class Shooter implements Subsystem {
     public static double shootIn = 0.3;
     public static double shootOut = 0.55;
 
-    public static double p = 0.2;
-    public static double i = 0.2;
+    public static double p = 70;
+    public static double i = 1.5;
     public static double d = 0;
-    public static double f = 0;
+    public static double f = 13;
     public static double IP = 150;
 
     public static double PP = 30;
@@ -108,6 +108,8 @@ public class Shooter implements Subsystem {
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
+        ((DcMotorEx) robot.shoot1).setVelocityPIDFCoefficients(Shooter.p, 0, Shooter.d, Shooter.f);
+        ((DcMotorEx) robot.shoot2).setVelocityPIDFCoefficients(Shooter.p, 0, Shooter.d, Shooter.f);
         handler.pushData("Power Shots", powershots);
         if(!uh && (gamepad2.y || Drivetrain.waitingForShoot)) {
             uh = true;
@@ -518,8 +520,8 @@ public class Shooter implements Subsystem {
                 } else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
                 }
-                robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
-                robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+                ((DcMotorEx)(robot.shoot1)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);
+                ((DcMotorEx)(robot.shoot2)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);
             }
             lasterror = error;
             double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
@@ -574,8 +576,8 @@ public class Shooter implements Subsystem {
                 } else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
                 }
-                robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
-                robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
+                ((DcMotorEx)(robot.shoot1)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);
+                ((DcMotorEx)(robot.shoot2)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);
             }
             lasterror = error;
             double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
@@ -629,9 +631,8 @@ public class Shooter implements Subsystem {
                 else {
                     integrals.put(Math.round(10 * v) / 10.0, integral);
                 }
-                robot.shoot1.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
-                robot.shoot2.setPower(Range.clip(p * error + i * integral + d * derivative, -1, 1));
-            }
+                ((DcMotorEx)(robot.shoot1)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);
+                ((DcMotorEx)(robot.shoot2)).setVelocity(((-((double)handler.getData("stv")) * 360.0) / (0.0254 * 4 * Math.PI * 99.5)), AngleUnit.DEGREES);            }
             lasterror = error;
             double realdeltatime = (System.currentTimeMillis() - reallasttime) / 1000.0;
             if(realdeltatime > 0.5) {
