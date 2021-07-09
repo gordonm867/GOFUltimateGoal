@@ -298,6 +298,119 @@ public class MTIPath2RED extends MyOpMode {
                 }
             }
         }
+        else {
+            double displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+            double angle = odometry.getAngle();
+            while(displacement > 0.1 || Math.abs(angle - 103.5) > 0.8) {
+                displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+                drive.update(robot, new Point(4.909, -0.5), odometry, 103.5, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+            }
+            robot.setDrivePower(0, 0, 0, 0);
+            shooter.shot = false;
+            while(!shooter.shot) {
+                shooter.forceshoot(robot, Shooter.firstshotvel, false);
+            }
+            robot.shoot1.setPower(0);
+            robot.shoot2.setPower(0);
+
+            displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+            angle = odometry.getAngle();
+            double time = System.currentTimeMillis();
+            while(System.currentTimeMillis() - time <= WAIT) {
+                odometry.update(robot.bulkRead(), odometry.getAngle());
+            }
+            robot.d1.setPosition(0.68);
+            robot.d2.setPosition(0.12);
+            while(Math.abs(angle - -140) > 1) {
+                displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+                drive.update(robot, new Point(4.909, -0.5), odometry, -140, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+            }
+
+            displacement = odometry.getPoint().distance(new Point(3.77, -1.2), Unit.FEET);
+            angle = odometry.getAngle();
+            double itime = System.currentTimeMillis();
+            while(displacement > 0.1 && robot.ringsensor.getDistance(DistanceUnit.MM) > 29) {
+                if(System.currentTimeMillis() - itime > 200) {
+                    robot.setIntakePower(-1.0);
+                }
+                displacement = odometry.getPoint().distance(new Point(3.77, -1.2), Unit.FEET);
+                drive.update(robot, new Point(3.77, -1.2), odometry, -140, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+            }
+            double intaketime = System.currentTimeMillis();
+
+            displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+            angle = odometry.getAngle();
+            while(displacement > 0.1 || Math.abs(angle - 103.5) > 0.8) {
+                displacement = odometry.getPoint().distance(new Point(4.909, -0.5), Unit.FEET);
+                drive.update(robot, new Point(4.909, -0.5), odometry, 103.5, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+                if(System.currentTimeMillis() - intaketime >= 1500) {
+                    robot.setIntakePower(0);
+                }
+            }
+            robot.setIntakePower(0);
+            robot.d1.setPosition(0.15);
+            robot.d2.setPosition(0.65);
+            robot.setDrivePower(0, 0, 0, 0);
+            shooter.shot = false;
+            while(!shooter.shot) {
+                shooter.forceshoot(robot, Shooter.firstshotvel, true);
+            }
+            shooter.start(robot, Shooter.firstshotvel);
+            double mytime = System.currentTimeMillis();
+            while(System.currentTimeMillis() - mytime <= 500) {}
+            robot.shoot1.setPower(0);
+            robot.shoot2.setPower(0);
+
+            displacement = odometry.getPoint().distance(new Point(4.92, 2), Unit.FEET);
+            angle = odometry.getAngle();
+            while(displacement > 0.3 || Math.abs(angle - -90) > 1) {
+                displacement = odometry.getPoint().distance(new Point(4.92, 2), Unit.FEET);
+                drive.update(robot, new Point(4.92, 2), odometry, -90, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+            }
+            robot.setDrivePower(0, 0, 0, 0);
+
+            robot.w1.setPosition(0.68);
+            time = System.currentTimeMillis();
+            while(System.currentTimeMillis() - time <= 400) {
+                odometry.update(robot.bulkRead(), odometry.getAngle());
+            }
+            robot.wobble.setPosition(Wobble.openpose);
+            time = System.currentTimeMillis();
+            while(System.currentTimeMillis() - time <= 250) {
+                odometry.update(robot.bulkRead(), odometry.getAngle());
+            }
+            robot.w1.setPosition(0.29);
+            time = System.currentTimeMillis();
+            while(System.currentTimeMillis() - time <= 400) {
+                odometry.update(robot.bulkRead(), odometry.getAngle());
+            }
+
+            displacement = odometry.getPoint().distance(new Point(4.909, 0.25), Unit.FEET);
+            angle = odometry.getAngle();
+            while(displacement > 0.1) {
+                displacement = odometry.getPoint().distance(new Point(4.909, 0.25), Unit.FEET);
+                drive.update(robot, new Point(4.909, 0.25), odometry, Double.NaN, angle, robot.bulkRead());
+                angle = odometry.getAngle();
+            }
+            robot.setDrivePower(0, 0, 0, 0);
+            Drivetrain.mks = 0;
+            while(opModeIsActive()) {
+                displacement = odometry.getPoint().distance(new Point(4.909, 0.25), Unit.FEET);
+                angle = odometry.getAngle();
+                if(displacement > 3.0/96.0 || Math.abs(angle - 90) > 1) {
+                    drive.update(robot, new Point(4.909, 0.25), odometry, 90, angle, robot.bulkRead());
+                }
+                else {
+                    robot.setDrivePower(0, 0, 0, 0);
+                    odometry.update(robot.bulkRead(), robot.getAngle());
+                }
+            }
+        }
         requestOpModeStop();
     }
 }

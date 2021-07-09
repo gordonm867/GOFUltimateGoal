@@ -31,9 +31,9 @@ public class Intake implements Subsystem {
 
     public static int rings = 0;
 
-    public static Point height3 = new Point(0.68, 0.12);
-    public static Point height2 = new Point(0.54, 0.23);
-    public static Point height1 = new Point(0.6, 0.16);
+    public static Point height3 = new Point(0.66, 0.19);
+    public static Point height2 = new Point(0.54, 0.28);
+    public static Point height1 = new Point(0.6, 0.23);
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
@@ -104,19 +104,19 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.dpad_left && !ldpad) {
             ldpad = true;
-            robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() + 0.05)));
-            robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() - 0.05)));
+            robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() + 0.025)));
+            robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() - 0.025)));
             if(height == 1) {
-                height1.setX(height1.getX() + 0.05);
-                height1.setY(height1.getY() - 0.05);
+                height1.setX(height1.getX() + 0.025);
+                height1.setY(height1.getY() - 0.025);
             }
             else if(height == 2) {
-                height2.setX(height2.getX() + 0.05);
-                height2.setY(height2.getY() - 0.05);
+                height2.setX(height2.getX() + 0.025);
+                height2.setY(height2.getY() - 0.025);
             }
             else {
-                height3.setX(height3.getX() + 0.05);
-                height3.setY(height3.getY() - 0.05);
+                height3.setX(height3.getX() + 0.025);
+                height3.setY(height3.getY() - 0.025);
             }
         }
         if(!gamepad2.dpad_left) {
@@ -124,19 +124,19 @@ public class Intake implements Subsystem {
         }
         if(gamepad2.dpad_right && !rdpad) {
             rdpad = true;
-            robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() - 0.05)));
-            robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() + 0.05)));
+            robot.d1.setPosition(Math.min(1, Math.max(0, robot.d1.getPosition() - 0.025)));
+            robot.d2.setPosition(Math.min(1, Math.max(0, robot.d2.getPosition() + 0.025)));
             if(height == 1) {
-                height1.setX(height1.getX() - 0.05);
-                height1.setY(height1.getY() + 0.05);
+                height1.setX(height1.getX() - 0.025);
+                height1.setY(height1.getY() + 0.025);
             }
             else if(height == 2) {
-                height2.setX(height2.getX() - 0.05);
-                height2.setY(height2.getY() + 0.05);
+                height2.setX(height2.getX() - 0.025);
+                height2.setY(height2.getY() + 0.025);
             }
             else {
-                height3.setX(height3.getX() - 0.05);
-                height3.setY(height3.getY() + 0.05);
+                height3.setX(height3.getX() - 0.025);
+                height3.setY(height3.getY() + 0.025);
             }
         }
         if(!gamepad2.dpad_right) {

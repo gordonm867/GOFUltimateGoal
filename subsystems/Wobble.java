@@ -59,21 +59,19 @@ public class Wobble implements Subsystem {
             else {
                 child = State.CLOSED;
                 time = System.currentTimeMillis();
-                auto = true;
             }
-        }
-        if(auto && time > 250) {
-            robot.w1.setPosition(0.29);
-            auto = false;
         }
         if(!gamepad2.right_bumper) {
             bumperpressed = false;
         }
         if(gamepad2.right_stick_y > 0.1) {
-            robot.w1.setPosition(0.68);
+            robot.w1.setPosition(0.65);
         }
-        if(gamepad2.right_stick_y < -0.1) {
+        else if(gamepad2.right_stick_y < -0.1) {
             robot.w1.setPosition(0.29);
+        }
+        else if(Math.abs(gamepad2.right_stick_x) > 0.1) {
+            robot.w1.setPosition(0.36);
         }
     }
 
