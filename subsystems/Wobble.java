@@ -12,8 +12,8 @@ public class Wobble implements Subsystem {
     public State child;
     public Subsystem.State parent;
 
-    public static double closedpose = 0.75;
-    public static double openpose = 0;
+    public static double closedpose = 0;
+    public static double openpose = 0.75;
 
     public int target = 0;
 
