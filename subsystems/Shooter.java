@@ -76,8 +76,8 @@ public class Shooter implements Subsystem {
 
     public static double shotvel = 0;
 
-    public static int thing = 4;
-    public static int oldthing = 4;
+    public static int thing = 5;
+    public static int oldthing = 5;
 
     public static double powershotvel = 14.9;
 
@@ -149,7 +149,7 @@ public class Shooter implements Subsystem {
         }
         if(!uh2 && ((gamepad2.left_trigger > 0.05))) {
             uh2 = true;
-            thing = 4;
+            thing = 5;
             vel = 12.9;
             attempts = 0;
             shooting = true;
@@ -184,7 +184,7 @@ public class Shooter implements Subsystem {
         }
         if(!uh3 && gamepad2.x) {
             uh3 = true;
-            thing = 4;
+            thing = 5;
             vel = 9.0;
             attempts = 0;
             shooting = true;
@@ -460,7 +460,7 @@ public class Shooter implements Subsystem {
         if(!gamepad2.a) {
             apressed = false;
         }
-        if (robot.shoot1 != null && robot.shoot2 != null && shooting && ((ready /* && Math.abs((Math.abs(v) - Math.abs(t))) < 1.0 */) || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(v) <= powershotvel && Math.abs(Math.abs(v) - Math.abs(t)) < 0.35))))) {
+        if (robot.shoot1 != null && robot.shoot2 != null && shooting && ((ready && Math.abs((Math.abs(v) - Math.abs(t))) < 1.0) || (((Math.abs(v) > powershotvel && /* NORMAL CONSTRAINT --> */ (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || /* POWER SHOT CONSTRAINTS --> */ (Math.abs(v) <= powershotvel && Math.abs(Math.abs(v) - Math.abs(t)) < 0.35))))) {
             ready = true;
             shoot(targ, robot);
         } else if (shooting && robot.shoot1 != null && robot.shoot2 != null) {
