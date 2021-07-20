@@ -212,7 +212,7 @@ public class GOFHardware {
 
         try { // Intake wheel
             in = hwMap.get(DcMotor.class, "in");
-            in.setDirection(DcMotor.Direction.FORWARD);
+            in.setDirection(DcMotor.Direction.REVERSE);
             in.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             in.setPower(0);
             in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
