@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -68,6 +69,8 @@ import org.openftc.revextensions2.RevBulkData;
 
 public class GOFHardware {
     /* Declare OpMode members */
+
+    public AnalogInput othergyro;
     public BNO055IMU gyro;
 
     public DcMotor rf;
@@ -147,9 +150,16 @@ public class GOFHardware {
             }
             gyro.initialize(parameters);
         } catch (Exception p_exception) {
+            gyro = null;
+        }
+
+        try {
+            othergyro = hwMap.get(AnalogInput.class, "sanford");
+        }
+        catch(Exception p_exception) {
             telemetry.addData("Warning", "Gyro no work :(");
             telemetry.update();
-            gyro = null;
+            othergyro = null;
         }
 
         try {
@@ -451,8 +461,8 @@ public class GOFHardware {
      * @return Encoder reading
      */
     public int getVOmniPos(RevBulkData rev) {
-        if (lf != null) {
-            return -rev.getMotorCurrentPosition(lf);
+        if (lb != null) {
+            return -rev.getMotorCurrentPosition(lb);
         }
         return 0;
     }

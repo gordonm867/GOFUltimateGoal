@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -27,6 +29,7 @@ public class OdometryTest extends MyOpMode {
     public void initOp() {
         Globals.MAX_SPEED = 1.0;
         robot.init(hardwareMap, telemetry);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.resetOmnis();
         drive = new Drivetrain(Subsystem.State.OFF);
         odometry = Odometry.getInstance(robot);

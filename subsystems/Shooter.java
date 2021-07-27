@@ -54,7 +54,7 @@ public class Shooter implements Subsystem {
     public double lasttime = System.currentTimeMillis();
     public double lastv = 0;
 
-    public static double shootTime = 65.0;
+    public static double shootTime = 50.0;
     public static double shootIn = 0.38;
     public static double shootOut = 0.57;
 
@@ -150,7 +150,7 @@ public class Shooter implements Subsystem {
         if(!uh2 && ((gamepad2.left_trigger > 0.05))) {
             uh2 = true;
             thing = 5;
-            vel = 12.9;
+            vel = 13.3;
             attempts = 0;
             shooting = true;
             Intake.rings -= (thing - 1);
@@ -473,6 +473,8 @@ public class Shooter implements Subsystem {
     }
 
     public void shoot(GOFHardware robot, double velocity, boolean once) {
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(p, i, d, f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(p, i, d, f);
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
@@ -531,6 +533,8 @@ public class Shooter implements Subsystem {
     }
 
     public void forceshoot(GOFHardware robot, double velocity, boolean once) {
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(p, i, d, f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(p, i, d, f);
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
@@ -576,7 +580,7 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
             handler.pushData("saa", a);
         }
-        if ((override && Math.abs(Math.abs(v) - Math.abs(t)) < 1.2) || ((Math.abs(Math.abs(v) - Math.abs(t)) < 0.2))) {
+        if ((override && ((velocity <= firstshotvel && Math.abs(Math.abs(v) - Math.abs(t)) < 1.0) || Math.abs(Math.abs(v) - Math.abs(t)) < 0.15)) || ((velocity <= firstshotvel && (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15))) {
             override = true;
             if (once) {
                 shootonce(targ, robot);
@@ -587,6 +591,8 @@ public class Shooter implements Subsystem {
     }
 
     public void reallyforceshoot(GOFHardware robot, double velocity, boolean once) {
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(p, i, d, f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(p, i, d, f);
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
@@ -640,6 +646,8 @@ public class Shooter implements Subsystem {
     }
 
     public void start(GOFHardware robot, double velocity) {
+        ((DcMotorEx)robot.shoot1).setVelocityPIDFCoefficients(p, i, d, f);
+        ((DcMotorEx)robot.shoot2).setVelocityPIDFCoefficients(p, i, d, f);
         handler.pushData("stv", velocity);
         if(robot.shoot1 != null && robot.shoot2 != null) {
             t = (double)handler.getData("stv");
@@ -708,7 +716,7 @@ public class Shooter implements Subsystem {
             if(attempts == 1) {
                 beginshootingtimer = System.currentTimeMillis();
             }
-            if (attempts == thing) {
+            if (attempts >= thing) {
                 endshootingtimer = System.currentTimeMillis();
                 shot = true;
                 override = false;

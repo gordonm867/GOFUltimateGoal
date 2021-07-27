@@ -49,7 +49,7 @@ public class Drivetrain implements Subsystem {
     public static double mkp = 0.5;
     public static double mki = 0;
     public static double mkd = 0;
-    public static double mks = 0.2;
+    public static double mks = 0.09;
     public static double mkv = 0.045;
     public static double mka = 0;
     public double mylasttime = 0;

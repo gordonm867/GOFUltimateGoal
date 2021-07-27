@@ -26,6 +26,7 @@ public class CameraServoTest extends MyOpMode {
     public void initOp() throws InterruptedException, GOFException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(hardwareMap, telemetry);
+        robot.cameraInit();
     }
 
     @Override

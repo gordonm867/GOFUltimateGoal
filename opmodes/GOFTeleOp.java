@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
+import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Handler;
 import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Intake;
@@ -137,7 +138,8 @@ public class GOFTeleOp extends MyOpMode {
             }
         }
         telemetry.addData("We will shoot at", Shooter.firstshotvel);
-        telemetry.addData("Angle", angle);
+        telemetry.addData("Sanford is bad angle", angle + " (raw: " + robot.othergyro.getVoltage() + ")");
+        telemetry.addData("Rev is slightly less bad angle", Functions.normalize(robot.gyro.getAngularOrientation().firstAngle + Globals.START_THETA));
         telemetry.addData("Max", max);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));

@@ -88,6 +88,7 @@ public class Tuning extends MyOpMode {
         telemetry.addData("Point", odometry.getPoint());
         telemetry.addData("Angle", odometry.getAngle());
         telemetry.addData("mintegral", drive.mintegral);
+        telemetry.addData("e", robot.getHOmniPos(data));
         double displacement = odometry.getPoint().distance(new Point(targX, targY), Unit.FEET);
         telemetry.addData("Displacement", displacement);
         double angularerror = odometry.getAngle() - targA;
@@ -100,7 +101,7 @@ public class Tuning extends MyOpMode {
             drive.mylasttime = System.currentTimeMillis();
         }
         thetarget = new Point(targX, targY);
-        if(displacement > 3.0/96.0 ||  Math.abs(angularerror) > 0.5) {
+        if(displacement > 3.0/96.0 ||  Math.abs(angularerror) > 0.25) {
             drive.update(robot, new Point(targX, targY), odometry, targA, odometry.getAngle(), data);
         }
         else {

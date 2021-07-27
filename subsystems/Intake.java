@@ -31,9 +31,9 @@ public class Intake implements Subsystem {
 
     public static int rings = 0;
 
-    public static Point height3 = new Point(0.66, 0.19);
-    public static Point height2 = new Point(0.54, 0.28);
-    public static Point height1 = new Point(0.6, 0.23);
+    public static Point height3 = new Point(0.66, 0.14);
+    public static Point height2 = new Point(0.54, 0.25);
+    public static Point height1 = new Point(0.6, 0.21);
 
     @Override
     public void update(Gamepad gamepad1, Gamepad gamepad2, GOFHardware robot, double angle, RevBulkData dataOne, RevBulkData dataTwo, Odometry odometry) {
@@ -143,7 +143,7 @@ public class Intake implements Subsystem {
             rdpad = false;
         }
 
-        double distance = robot.ringsensor.getDistance(DistanceUnit.MM);
+        double distance = robot.ringsensor == null ? Double.MAX_VALUE : robot.ringsensor.getDistance(DistanceUnit.MM);
 
         if(distance < 29 && !voltage) {
             voltage = true;
