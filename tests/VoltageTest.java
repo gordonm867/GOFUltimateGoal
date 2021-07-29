@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -16,7 +15,6 @@ import org.openftc.revextensions2.RevBulkData;
 
 import java.util.ArrayList;
 
-@Disabled
 @TeleOp(name="VoltageIntakeTest", group="Tests")
 public class VoltageTest extends MyOpMode {
 
@@ -50,13 +48,7 @@ public class VoltageTest extends MyOpMode {
     public void loopOp() {
         RevBulkData data = robot.bulkRead();
         RevBulkData data2 = robot.bulkReadTwo();
-        for(Subsystem subsystem : subsystems) {
-            subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
-        }
-        telemetry.addData("lf", ((ExpansionHubMotor)robot.lf).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-        telemetry.addData("rf", ((ExpansionHubMotor)robot.rf).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-        telemetry.addData("rb", ((ExpansionHubMotor)robot.rb).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-        telemetry.addData("lb", ((ExpansionHubMotor)robot.lb).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
+        for(Subsystem subsystem : subsystems) subsystem.update(gamepad1, gamepad2, robot, odometry.getAngle(),data, data2, odometry);
         telemetry.addData("in", ((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
         telemetry.update();
     }

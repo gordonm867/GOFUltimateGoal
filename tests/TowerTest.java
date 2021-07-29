@@ -32,7 +32,9 @@ public class TowerTest extends MyOpMode {
     private     Wobble                  wobble;
     private     Handler                 handler     = Handler.getInstance();
 
-    private UGAngleHighGoalPipeline mypipeline = new UGAngleHighGoalPipeline(68);
+    public static int fov = 53;
+
+    private UGAngleHighGoalPipeline mypipeline = new UGAngleHighGoalPipeline(fov);
 
     public static double targX = Math.abs(Globals.START_X);
     public static double targY = Globals.START_Y;
@@ -70,8 +72,8 @@ public class TowerTest extends MyOpMode {
     }
 
     public void loopOp() {
-        telemetry.addData("Pitch estimate", mypipeline.calculatePitch(UGAngleHighGoalPipeline.Target.RED));
-        telemetry.addData("Yaw estimate", mypipeline.calculateYaw(UGAngleHighGoalPipeline.Target.RED));
+        telemetry.addData("Pitch estimate", mypipeline.calculatePitch(UGAngleHighGoalPipeline.Target.BLUE));
+        telemetry.addData("Yaw estimate", mypipeline.calculateYaw(UGAngleHighGoalPipeline.Target.BLUE));
         telemetry.addData("Angle", robot.gyro.getAngularOrientation().firstAngle);
         telemetry.addData("Distance", Math.sqrt(Math.pow(odometry.getX() - 3, 2) + Math.pow(odometry.getY() - 6, 2)));
         telemetry.update();

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.opmodes;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
 
 import java.io.IOException;
 
+@Disabled
 @Autonomous(name="PARK-BLUE")
 public class PARKBLUE extends MyOpMode {
 

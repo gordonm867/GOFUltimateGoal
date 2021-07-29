@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.vision.UGAngleHighGoalPipeline;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,8 +28,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-@TeleOp(name="GOFTeleOp",group="GOF")
-public class GOFTeleOp extends MyOpMode {
+@TeleOp(name="RED-GOFTeleOp",group="GOF")
+public class REDGOFTeleOp extends MyOpMode {
     private     ArrayList<Subsystem>    subsystems  = new ArrayList<>();
     private     Drivetrain              drive;
     private     Intake                  intake;
@@ -39,6 +40,7 @@ public class GOFTeleOp extends MyOpMode {
     private     Handler                 handler     = Handler.getInstance();
 
     public boolean red = true;
+    public boolean turning = false;
 
     private double lastangle = 0;
     private double lasttime = 0;
@@ -61,6 +63,7 @@ public class GOFTeleOp extends MyOpMode {
         wobble = new Wobble(Subsystem.State.OFF);
 
         robot.enabled = true;
+        robot.cameraInit(drive.mypipeline);
 
         subsystems.add(odometry);
         subsystems.add(drive);
@@ -86,14 +89,6 @@ public class GOFTeleOp extends MyOpMode {
             telemetry.addData("xraw", data.getMotorCurrentPosition(robot.rf));
             telemetry.addData("yraw", data.getMotorCurrentPosition(robot.rb));
             try {
-                BufferedReader read2 = new BufferedReader(new FileReader(new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt")));
-                String color = read2.readLine();
-                if(color.equalsIgnoreCase("blue")) {
-                    red = false;
-                }
-                else {
-                    red = true;
-                }
                 handler.pushData("Color", red ? "Red" : "Blue");
                 telemetry.addData("Color", red ? "Red" : "Blue");
             }
@@ -117,6 +112,12 @@ public class GOFTeleOp extends MyOpMode {
     }
 
     public void loopOp() {
+        if(!turning && drive.turningToPoint2) {
+            turning = true;
+        }
+        if(shooter.shooting || Math.abs(gamepad1.left_stick_y) > 0.1 || Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_x) > 0.1 || Math.abs(gamepad1.right_stick_y) > 0.1) {
+            turning = false;
+        }
         double angle = odometry.getAngle();
         if(angle != lastangle || System.currentTimeMillis() - lasttime >= 200) {
             double omega = (angle - lastangle) / ((System.currentTimeMillis() - lasttime) / 1000);
@@ -129,8 +130,15 @@ public class GOFTeleOp extends MyOpMode {
         for (Subsystem subsystem : subsystems) {
             subsystem.update(gamepad1, gamepad2, robot, angle, data, data2, odometry);
         }
+        double yaw = drive.mypipeline.calculateYaw(red ? UGAngleHighGoalPipeline.Target.RED : UGAngleHighGoalPipeline.Target.BLUE);
         if(robot.led != null) {
-            if(gamepad2.left_stick_y < 0) {
+            if(turning && yaw != 0 && Math.abs(-7.8 - yaw) > 0.2 && drive.turningToPoint2) {
+                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
+            }
+            else if(turning && yaw == 0) {
+                robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_RED);
+            }
+            else if(gamepad2.left_stick_y < 0) {
                 robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
             }
             else {
@@ -138,9 +146,9 @@ public class GOFTeleOp extends MyOpMode {
             }
         }
         telemetry.addData("We will shoot at", Shooter.firstshotvel);
-        telemetry.addData("Sanford is bad angle", angle + " (raw: " + robot.othergyro.getVoltage() + ")");
-        telemetry.addData("Rev is slightly less bad angle", Functions.normalize(robot.gyro.getAngularOrientation().firstAngle + Globals.START_THETA));
+        telemetry.addData("Angle", Functions.normalize(robot.gyro.getAngularOrientation().firstAngle + Globals.START_THETA));
         telemetry.addData("Max", max);
+        telemetry.addData("Yaw", yaw);
         if(handler.contains("stv")) {
             telemetry.addData("Target", (double)handler.getData("stv"));
         }

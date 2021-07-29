@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.gofultimategoal.tests;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 
 import java.io.IOException;
 
+@Disabled
 @Config
 @TeleOp(name="PureSensorTest", group="Tests")
 public class PureSensorTest extends MyOpMode {

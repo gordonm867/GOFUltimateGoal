@@ -187,6 +187,21 @@ public class MTIPath2BLUE extends MyOpMode {
             }
             robot.setDrivePower(0, 0, 0, 0);
             Drivetrain.mks = 0;
+            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+            File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
+            try {
+                file.createNewFile();
+                file2.createNewFile();
+                PrintWriter something = new PrintWriter(file);
+                PrintWriter somethingelse = new PrintWriter(file2);
+                something.print(odometry.getAngle() + "\n");
+                somethingelse.print("blue");
+                something.flush();
+                somethingelse.flush();
+                something.close();
+                somethingelse.close();
+            }
+            catch (Exception p_exception) {}
             while(opModeIsActive()) {
                 displacement = odometry.getPoint().distance(new Point(-2.8, 1), Unit.FEET);
                 if(displacement > 3.0/96.0) {
@@ -305,6 +320,21 @@ public class MTIPath2BLUE extends MyOpMode {
             }
             robot.setDrivePower(0, 0, 0, 0);
             Drivetrain.mks = 0;
+            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+            File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
+            try {
+                file.createNewFile();
+                file2.createNewFile();
+                PrintWriter something = new PrintWriter(file);
+                PrintWriter somethingelse = new PrintWriter(file2);
+                something.print(odometry.getAngle() + "\n");
+                somethingelse.print("blue");
+                something.flush();
+                somethingelse.flush();
+                something.close();
+                somethingelse.close();
+            }
+            catch (Exception p_exception) {}
             while(opModeIsActive()) {
                 displacement = odometry.getPoint().distance(new Point(-4.909, 1), Unit.FEET);
                 angle = odometry.getAngle();
@@ -447,6 +477,21 @@ public class MTIPath2BLUE extends MyOpMode {
             }
             robot.setDrivePower(0, 0, 0, 0);
             Drivetrain.mks = 0;
+            File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+            File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
+            try {
+                file.createNewFile();
+                file2.createNewFile();
+                PrintWriter something = new PrintWriter(file);
+                PrintWriter somethingelse = new PrintWriter(file2);
+                something.print(odometry.getAngle() + "\n");
+                somethingelse.print("blue");
+                something.flush();
+                somethingelse.flush();
+                something.close();
+                somethingelse.close();
+            }
+            catch (Exception p_exception) {}
             while(opModeIsActive()) {
                 displacement = odometry.getPoint().distance(new Point(-4.909, 1), Unit.FEET);
                 angle = odometry.getAngle();

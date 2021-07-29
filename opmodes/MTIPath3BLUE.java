@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@Autonomous(name="BLUE-PS")
-public class MTIPath1BLUE extends MyOpMode {
+@Autonomous(name="#BLUE-HIGH")
+public class MTIPath3BLUE extends MyOpMode {
 
     public double WAIT = 5000;
 
@@ -137,32 +137,32 @@ public class MTIPath1BLUE extends MyOpMode {
         while(displacement > 2) {
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-            drive.update(robot, new Point(-1.26, 0), odometry, Double.NaN, angle, data);
+            displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
+            drive.update(robot, new Point(-1, 0), odometry, Double.NaN, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 93.5 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 87.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }
-        while((displacement > 1.0/24.0 || Math.abs(angle - 93.5 /* angle 1 */) > 0.6)) {
+        while((displacement > 1.0/24.0 || Math.abs(angle - 87.0 /* angle 1 */) > 0.6)) {
             shooter.start(robot, 15.2);
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-            drive.update(robot, new Point(-1.26, 0), odometry, 93.5 /* angle 1 */, angle, data);
+            displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
+            drive.update(robot, new Point(-1, 0), odometry, 87.0 /* angle 1 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 93.5 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 87.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }
         robot.setDrivePower(0, 0, 0, 0);
         double wtimer = System.currentTimeMillis();
         while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.3);
+            shooter.start(robot, Shooter.firstshotvel);
             odometry.update(robot.bulkRead(), odometry.getAngle());
             robot.setDrivePower(0, 0, 0, 0);
         }
@@ -174,108 +174,15 @@ public class MTIPath1BLUE extends MyOpMode {
             angle = odometry.getAngle();
             odometry.update(robot.bulkRead(), angle);
             if(System.currentTimeMillis() - shoottimer >= 2500) {
-                shooter.shoot(robot, 15.3, true);
+                shooter.shoot(robot, Shooter.firstshotvel, false);
             }
             else {
-                shooter.forceshoot(robot, 15.3, true);
+                shooter.forceshoot(robot, Shooter.firstshotvel, false);
             }
         }
         wtimer = System.currentTimeMillis();
         while(System.currentTimeMillis() - wtimer <= 250) {
             shooter.start(robot, 15.3);
-            odometry.update(robot.bulkRead(), odometry.getAngle());
-            robot.setDrivePower(0, 0, 0, 0);
-        }
-        Globals.MIN_SPEED = oldminspeed;
-        displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-        angle = odometry.getAngle();
-        odometry.update(robot.bulkRead(), odometry.getAngle());
-        drive.integral = 0;
-        drive.lasttime = System.currentTimeMillis();
-        drive.lasterror = 0;
-        while((displacement > 1.0/24.0 || Math.abs(angle - 90.0 /* angle 2 */) > 0.6)) {
-            shooter.start(robot, 15.3);
-            angle = odometry.getAngle();
-            data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-            drive.update(robot, new Point(-1.26, 0), odometry, 90.0 /* angle 2 */, angle, data);
-            if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
-                Globals.MIN_SPEED += 0.008;
-            }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 90.0 /* angle 2 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
-                Globals.MIN_SPEED -= 0.008;
-            }
-        }
-        robot.setDrivePower(0, 0, 0, 0);
-        odometry.update(robot.bulkRead(), odometry.getAngle());
-        shoottimer = System.currentTimeMillis();
-        shooter.shot = false;
-        shooter.attempts = 0;
-        wtimer = System.currentTimeMillis();
-        while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.3);
-            odometry.update(robot.bulkRead(), odometry.getAngle());
-            robot.setDrivePower(0, 0, 0, 0);
-        }
-        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
-            angle = odometry.getAngle();
-            odometry.update(robot.bulkRead(), angle);
-            if(System.currentTimeMillis() - shoottimer >= 2500) {
-                shooter.shoot(robot, 15.1, true);
-            }
-            else {
-                shooter.forceshoot(robot, 15.1, true);
-            }
-        }
-        wtimer = System.currentTimeMillis();
-        while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.2);
-            odometry.update(robot.bulkRead(), odometry.getAngle());
-            robot.setDrivePower(0, 0, 0, 0);
-        }
-        Globals.MIN_SPEED = oldminspeed;
-        angle = odometry.getAngle();
-        displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-        //shooter.integral = oldintegral;
-        drive.integral = 0;
-        drive.lasttime = System.currentTimeMillis();
-        drive.lasterror = 0;
-        while((displacement > 1.0/24.0 || Math.abs(angle - 84.0 /* angle 3 */) > 0.6)) {
-            shooter.start(robot, 15.2);
-            angle = odometry.getAngle();
-            data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(-1.26, 0), Unit.FEET);
-            drive.update(robot, new Point(-1.26, 0), odometry, 84.0 /* angle 3 */, angle, data);
-            if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
-                Globals.MIN_SPEED += 0.008;
-            }
-            else if(displacement < 1.0/12.0 && Math.abs(angle - 84.0 /* angle 3 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
-                Globals.MIN_SPEED -= 0.008;
-            }
-        }
-        robot.setDrivePower(0, 0, 0, 0);
-        odometry.update(robot.bulkRead(), odometry.getAngle());
-        shoottimer = System.currentTimeMillis();
-        shooter.shot = false;
-        shooter.attempts = 0;
-        wtimer = System.currentTimeMillis();
-        while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.3);
-            odometry.update(robot.bulkRead(), odometry.getAngle());
-            robot.setDrivePower(0, 0, 0, 0);
-        }
-        while(opModeIsActive() && System.currentTimeMillis() - shoottimer <= 5000 && !shooter.shot) {
-            angle = odometry.getAngle();
-            odometry.update(robot.bulkRead(), angle);
-            if(System.currentTimeMillis() - shoottimer >= 2500) {
-                shooter.shoot(robot, 15.3, true);
-            }
-            else {
-                shooter.forceshoot(robot, 15.3, true);
-            }
-        }
-        wtimer = System.currentTimeMillis();
-        while(System.currentTimeMillis() - wtimer <= 250) {
             odometry.update(robot.bulkRead(), odometry.getAngle());
             robot.setDrivePower(0, 0, 0, 0);
         }

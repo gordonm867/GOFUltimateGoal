@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.gofultimategoal.subsystems;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.vision.UGAngleHighGoalPipeline;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
@@ -41,10 +42,18 @@ public class Drivetrain implements Subsystem {
     public double lasterror = 0;
     public double lasttime = 0;
     public double integral = 0;
+    public double autoaimintegral = 0;
+    public double autoaimlasttime = 0;
+    public double lastyaw = 0;
+    public double yaw = 0;
 
     public static double kp = 0.025;
     public static double kd = 0.003;
     public static double ki = 0.05;
+
+    public static double autoaimkp = 0.025;
+    public static double autoaimki = 0.05;
+    public static double autoaimkd = 0.003;
 
     public static double mkp = 0.5;
     public static double mki = 0;
@@ -69,6 +78,8 @@ public class Drivetrain implements Subsystem {
 
     public Powerstate powerstate = Powerstate.IDLE;
     public double targ = 0;
+
+    public UGAngleHighGoalPipeline mypipeline = new UGAngleHighGoalPipeline(52);
 
     public Drivetrain(State state) {
         this.state = state;
@@ -189,23 +200,22 @@ public class Drivetrain implements Subsystem {
                 return;
             }
             if(turningToPoint2) {
-                double old = Globals.MIN_SPEED;
-                Globals.MIN_SPEED = minturn;
-                double targetangle = 90;
-                if(Math.abs(Functions.normalize(robotangle - targetangle)) < 0.5 && ((!handler.contains("Omega")) || (handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 20)))  {
-                    robot.setDrivePower(0, 0, 0, 0);
+                lastyaw = yaw;
+                boolean red = (!handler.contains("Color") || !((String) handler.getData("Color")).equalsIgnoreCase("Blue"));
+                yaw = mypipeline.calculateYaw(red ? UGAngleHighGoalPipeline.Target.RED : UGAngleHighGoalPipeline.Target.BLUE);
+                double error = Functions.normalize((red ? -7.8 : 7.8) - yaw);
+                double dtime = (System.currentTimeMillis() - autoaimlasttime) / 1000.0;
+                double derivative = (yaw-lastyaw) / dtime;
+                autoaimintegral += error * dtime;
+                autoaimlasttime = System.currentTimeMillis();
+                double out = (autoaimkp * error) + (autoaimki * autoaimintegral) + (autoaimkd * derivative);
+                if(Math.abs(error) > 0.2 && yaw != 0) {
+                    robot.setDrivePower(out, out, -out, -out);
                     return;
                 }
-                if(Math.signum(Functions.normalize(robotangle - targetangle)) == -lastsign) {
-                    minturn -= 0.01;
+                else {
+                    turningToPoint2 = false;
                 }
-                else if(Math.abs(Functions.normalize(robotangle - targetangle)) > 0.5 && handler.contains("Omega") && Math.abs((double)handler.getData("Omega")) < 0.1) {
-                    minturn += 0.01;
-                }
-                update(robot, odometry.getPoint(), odometry, targetangle, robotangle, data1);
-                Globals.MIN_SPEED = old;
-                lastsign = Math.signum(Functions.normalize(robotangle - targetangle));
-                return;
             }
             Globals.MAX_SPEED = 1.0;
             //Globals.MIN_SPEED = 0.25;
@@ -390,6 +400,9 @@ public class Drivetrain implements Subsystem {
             if(gamepad1.left_trigger > 0.1 && !trigger) {
                 trigger = true;
                 turningToPoint2 = true;
+                autoaimintegral = 0;
+                autoaimlasttime = System.currentTimeMillis();
+                yaw = mypipeline.calculateYaw((handler.contains("Color") && ((String)handler.getData("Color")).equalsIgnoreCase("Blue") ? UGAngleHighGoalPipeline.Target.BLUE : UGAngleHighGoalPipeline.Target.RED));
             }
             if(!(gamepad1.left_trigger > 0.1)) {
                 trigger = false;

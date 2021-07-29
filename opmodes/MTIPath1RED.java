@@ -110,7 +110,7 @@ public class MTIPath1RED extends MyOpMode {
             }
             //robot.cameraOff();
             rings = (int) Math.round(sum);
-            rings = 0;
+            //rings = 0;
             //rings = 1;
             //rings = 4;
         }
@@ -365,6 +365,21 @@ public class MTIPath1RED extends MyOpMode {
             drive.update(robot, new Point(1, 1), odometry, 90, angle, data);
         }
         Drivetrain.mks = 0;
+        File file = new File (Environment.getExternalStorageDirectory().getPath() + "/FIRST/odometry.txt");
+        File file2 = new File(Environment.getExternalStorageDirectory().getPath() + "/FIRST/color.txt");
+        try {
+            file.createNewFile();
+            file2.createNewFile();
+            PrintWriter something = new PrintWriter(file);
+            PrintWriter somethingelse = new PrintWriter(file2);
+            something.print(odometry.getAngle() + "\n");
+            somethingelse.print("red");
+            something.flush();
+            somethingelse.flush();
+            something.close();
+            somethingelse.close();
+        }
+        catch (Exception p_exception) {}
         while(opModeIsActive()) {
             displacement = odometry.getPoint().distance(new Point(1, 1), Unit.FEET);
             angle = odometry.getAngle();
