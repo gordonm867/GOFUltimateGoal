@@ -32,7 +32,7 @@ public class DetectionPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        input = input.submat(200, 480, 0, 640);
+        input = input.submat(200, Globals.END, 0, 640);
         input.convertTo(input, -1, alpha);
         myMat = new Mat();
         disp = new Mat();

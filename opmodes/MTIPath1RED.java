@@ -43,6 +43,8 @@ public class MTIPath1RED extends MyOpMode {
 
     @Override
     public void initOp() throws InterruptedException, GOFException {
+        Globals.RING_SIZE = 95;
+        Globals.END = 320;
         Globals.AUTO = true;
         Globals.START_X = 1.26;
         robot.init(hardwareMap, telemetry);
@@ -122,7 +124,7 @@ public class MTIPath1RED extends MyOpMode {
         Drivetrain.mks = 0.045;
         odometry.setX(Math.abs(odometry.getX()));
         super.startOp();
-        double displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
+        double displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
         double angle = odometry.getAngle();
         double d1p = robot.d1.getPosition();
         double d2p = robot.d2.getPosition();
@@ -135,16 +137,16 @@ public class MTIPath1RED extends MyOpMode {
         drive.lasttime = System.currentTimeMillis();
         drive.lasterror = 0;
         while(displacement > 2) {
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, Double.NaN, angle, robot.bulkRead());
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.25), odometry, Double.NaN, angle, robot.bulkRead());
             angle = odometry.getAngle();
         }
         while((displacement > 1.0/24.0 || Math.abs(angle - 100.0 /* angle 1 */) > 0.35)) {
             shooter.start(robot, 15.2);
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, 100.0 /* angle 1 */, angle, data);
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.25), odometry, 100.0 /* angle 1 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
@@ -155,7 +157,7 @@ public class MTIPath1RED extends MyOpMode {
         robot.setDrivePower(0, 0, 0, 0);
         double wtimer = System.currentTimeMillis();
         while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.3);
+            shooter.start(robot, 15.2);
             odometry.update(robot.bulkRead(), odometry.getAngle());
             robot.setDrivePower(0, 0, 0, 0);
         }
@@ -167,35 +169,35 @@ public class MTIPath1RED extends MyOpMode {
             angle = odometry.getAngle();
             odometry.update(robot.bulkRead(), angle);
             if(System.currentTimeMillis() - shoottimerr >= 2500) {
-                shooter.shoot(robot, 15.3, true);
+                shooter.shoot(robot, 15.2, true);
             }
             else {
-                shooter.forceshoot(robot, 15.3, true);
+                shooter.forceshoot(robot, 15.2, true);
             }
         }
         wtimer = System.currentTimeMillis();
         while(System.currentTimeMillis() - wtimer <= 250) {
-            shooter.start(robot, 15.3);
+            shooter.start(robot, 15.2);
             odometry.update(robot.bulkRead(), odometry.getAngle());
             robot.setDrivePower(0, 0, 0, 0);
         }
         Globals.MIN_SPEED = oldminspeed;
-        displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
+        displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
         angle = odometry.getAngle();
         odometry.update(robot.bulkRead(), odometry.getAngle());
         drive.integral = 0;
         drive.lasttime = System.currentTimeMillis();
         drive.lasterror = 0;
-        while((displacement > 1.0/24.0 || Math.abs(angle - 93.25 /* angle 2 */) > 0.35)) {
+        while((displacement > 1.0/24.0 || Math.abs(angle - 93.75 /* angle 2 */) > 0.35)) {
             shooter.start(robot, 15.3);
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, 93.25 /* angle 2 */, angle, data);
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.25), odometry, 93.75 /* angle 2 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 93.25 /* angle 2 */) > 0.35 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 93.75 /* angle 2 */) > 0.35 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }
@@ -228,7 +230,7 @@ public class MTIPath1RED extends MyOpMode {
         }
         Globals.MIN_SPEED = oldminspeed;
         angle = odometry.getAngle();
-        displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
+        displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
         //shooter.integral = oldintegral;
         drive.integral = 0;
         drive.lasttime = System.currentTimeMillis();
@@ -237,8 +239,8 @@ public class MTIPath1RED extends MyOpMode {
             shooter.start(robot, 15.2);
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, 88.3 /* angle 3 */, angle, data);
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.25), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.25), odometry, 88.3 /* angle 3 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }

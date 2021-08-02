@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
 import org.firstinspires.ftc.teamcode.gofultimategoal.math.Functions;
@@ -132,7 +133,7 @@ public class REDGOFTeleOp extends MyOpMode {
         }
         double yaw = drive.mypipeline.calculateYaw(red ? UGAngleHighGoalPipeline.Target.RED : UGAngleHighGoalPipeline.Target.BLUE);
         if(robot.led != null) {
-            if(turning && yaw != 0 && Math.abs(-7.8 - yaw) > 0.2 && drive.turningToPoint2) {
+            if(turning && yaw != 0 && Math.abs(-10.5 - yaw) > 0.2 && drive.turningToPoint2) {
                 robot.led.setPattern(RevBlinkinLedDriver.BlinkinPattern.LAWN_GREEN);
             }
             else if(turning && yaw == 0) {
@@ -158,7 +159,7 @@ public class REDGOFTeleOp extends MyOpMode {
         if(handler.contains("saa")) {
             telemetry.addData("Shooter acceleration", Math.abs((double)handler.getData("saa")));
         }
-        telemetry.addData("Timing", (shooter.endshootingtimer - shooter.beginshootingtimer) / 1000.0);
+        telemetry.addData("Sensor", robot.ringsensor != null ? robot.ringsensor.getDistance(DistanceUnit.MM) : "null");
         telemetry.update();
     }
 

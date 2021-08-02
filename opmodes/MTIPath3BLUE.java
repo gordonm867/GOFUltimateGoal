@@ -142,20 +142,20 @@ public class MTIPath3BLUE extends MyOpMode {
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 87.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 95.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }
-        while((displacement > 1.0/24.0 || Math.abs(angle - 87.0 /* angle 1 */) > 0.6)) {
+        while((displacement > 1.0/24.0 || Math.abs(angle - 95.0 /* angle 1 */) > 0.6)) {
             shooter.start(robot, 15.2);
             angle = odometry.getAngle();
             data = robot.bulkRead();
             displacement = odometry.getPoint().distance(new Point(-1, 0), Unit.FEET);
-            drive.update(robot, new Point(-1, 0), odometry, 87.0 /* angle 1 */, angle, data);
+            drive.update(robot, new Point(-1, 0), odometry, 95.0 /* angle 1 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 87.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 95.0 /* angle 1 */) > 0.6 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }

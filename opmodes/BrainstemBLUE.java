@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.GOFException;
 import org.firstinspires.ftc.teamcode.gofultimategoal.globals.Globals;
 import org.firstinspires.ftc.teamcode.gofultimategoal.hardware.GOFHardware;
@@ -19,16 +18,14 @@ import org.firstinspires.ftc.teamcode.gofultimategoal.subsystems.Wobble;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.DetectionPipeline;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.MyOpMode;
 import org.firstinspires.ftc.teamcode.gofultimategoal.util.Unit;
-import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@Autonomous(name="BLUE-WALL")
-public class MTIPath2BLUE extends MyOpMode {
+@Autonomous(name="BrainSTEM-BLUE")
+public class BrainstemBLUE extends MyOpMode {
 
     public double WAIT = 0;
 
@@ -122,10 +119,12 @@ public class MTIPath2BLUE extends MyOpMode {
 
     @Override
     public void loopOp() throws InterruptedException, GOFException, IOException {
+        sleep(15000);
         Globals.END = 480;
         globaltime = System.currentTimeMillis();
         odometry.setX(-Math.abs(odometry.getX()));
         if(rings == 0) {
+            Shooter.thing++;
             double displacement = odometry.getPoint().distance(new Point(-4.909, -0.75), Unit.FEET);
             double angle = odometry.getAngle();
             while(displacement > 0.1 || Math.abs(angle - 77) > 0.8) {
@@ -215,8 +214,10 @@ public class MTIPath2BLUE extends MyOpMode {
                     odometry.update(robot.bulkRead(), odometry.getAngle());
                 }
             }
+            Shooter.thing--;
         }
         else if(rings == 1) {
+            Shooter.thing++;
             double displacement = odometry.getPoint().distance(new Point(-4.909, -0.75), Unit.FEET);
             double angle = odometry.getAngle();
             while(displacement > 0.1 || Math.abs(angle - 77) > 0.8) {
@@ -236,7 +237,7 @@ public class MTIPath2BLUE extends MyOpMode {
             }
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
-
+            /*
             displacement = odometry.getPoint().distance(new Point(-4.909, -0.75), Unit.FEET);
             angle = odometry.getAngle();
             robot.d1.setPosition(0.60);
@@ -282,7 +283,7 @@ public class MTIPath2BLUE extends MyOpMode {
             while(System.currentTimeMillis() - mytimer <= 500) {}
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
-
+*/
             displacement = odometry.getPoint().distance(new Point(-4.8, 2.75), Unit.FEET);
             angle = odometry.getAngle();
             while(displacement > 0.3 || Math.abs(angle - 90) > 1) {
@@ -347,116 +348,29 @@ public class MTIPath2BLUE extends MyOpMode {
                     odometry.update(robot.bulkRead(), odometry.getAngle());
                 }
             }
+            Shooter.thing--;
         }
         else {
-            Drivetrain.mks = 0.09;
-            double displacement = odometry.getPoint().distance(new Point(-2.8, -3), Unit.FEET);
+            Shooter.thing++;
+            double displacement = odometry.getPoint().distance(new Point(-4.909, -0.75), Unit.FEET);
             double angle = odometry.getAngle();
-            while(displacement > 0.1 || Math.abs(angle - 94.5) > 0.8) {
-                displacement = odometry.getPoint().distance(new Point(-2.8, -3), Unit.FEET);
-                drive.update(robot, new Point(-2.8, -3), odometry, 94.5, angle, robot.bulkRead());
+            while(displacement > 0.1 || Math.abs(angle - 77) > 0.8) {
+                displacement = odometry.getPoint().distance(new Point(-4.909, -0.75), Unit.FEET);
+                drive.update(robot, new Point(-4.909, -0.75), odometry, 77, angle, robot.bulkRead());
                 angle = odometry.getAngle();
             }
             robot.setDrivePower(0, 0, 0, 0);
             shooter.attempts = 0;
             shooter.shot = false;
             while(!shooter.shot) {
-                shooter.forceshoot(robot, 17, false);
+                shooter.forceshoot(robot, Shooter.firstshotvel + 0.15, false);
             }
             double t = System.currentTimeMillis();
             while(System.currentTimeMillis() - t <= 500) {
-                shooter.start(robot, 17);
+                shooter.start(robot, Shooter.firstshotvel + 0.15);
             }
             robot.shoot1.setPower(0);
             robot.shoot2.setPower(0);
-            angle = odometry.getAngle();
-            while(odometry.getY() < -2.7) {
-                drive.update(robot, new Point(odometry.getX(), 0), odometry, Double.NaN, angle, robot.bulkRead());
-                angle = odometry.getAngle();
-            }
-            displacement = odometry.getPoint().distance(new Point(-2.95, -2.8), Unit.FEET);
-            angle = odometry.getAngle();
-            while(displacement > 0.1 || Math.abs(angle - 92.5) > 0.8) {
-                displacement = odometry.getPoint().distance(new Point(-2.95, -2.8), Unit.FEET);
-                drive.update(robot, new Point(-2.95, -2.8), odometry, 92.5, angle, robot.bulkRead());
-                angle = odometry.getAngle();
-            }
-            robot.setDrivePower(0,0,0,0);
-            robot.d1.setPosition(0.66);
-            robot.d2.setPosition(0.14);
-            for(int xx = 0; xx < 2; xx++) {
-                for (int x = 0; x < 2; x++) {
-                    double itime = System.currentTimeMillis();
-                    while (System.currentTimeMillis() - itime <= 500) {
-                        odometry.update(robot.bulkRead(), odometry.getAngle());
-                    }
-                    robot.setIntakePower(-0.7);
-                    if(x == 1 && xx == 1) {
-                        Globals.MAX_SPEED = 0.5;
-                        robot.setIntakePower(-1.0);
-                    }
-                    else {
-                        Globals.MAX_SPEED = ((-0.04/1.115) * (robot.battery == null ? 13 : robot.battery.getVoltage())) + 0.5985714286;
-                        Globals.MIN_SPEED = Globals.MAX_SPEED - 0.01;
-                    }
-                    boolean done = false;
-                    double jamtimer = System.currentTimeMillis();
-                    while (robot.ringsensor != null && robot.ringsensor.getDistance(DistanceUnit.MM) > 19 && odometry.getY() < -1) {
-                        angle = odometry.getAngle();
-                        double y = odometry.getY();
-                        if((!(xx == 1 && x == 1)) && !done && Math.abs(((ExpansionHubMotor)robot.in).getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS)) > 6) {
-                            double thistimer = System.currentTimeMillis();
-                            while(System.currentTimeMillis() - thistimer <= 500 && odometry.getY() > y - 0.5) {
-                                drive.update(robot, new Point(odometry.getX(), odometry.getY() - 0.5), odometry, 89, angle, robot.bulkRead());
-                                robot.setIntakePower(1.0);
-                            }
-                            jamtimer = System.currentTimeMillis();
-                            done = true;
-                            robot.setIntakePower(-1.0);
-                        }
-                        if(done && System.currentTimeMillis() - jamtimer >= 1000) {
-                            done = false;
-                        }
-                        drive.update(robot, new Point(odometry.getX(), odometry.getY() + 1), odometry, 89, angle, robot.bulkRead());
-                        if(Math.abs(odometry.getVelocity() * 1000) < 0.1) {
-                            Globals.MAX_SPEED += 0.0025;
-                        }
-                    }
-                    robot.setDrivePower(0, 0, 0, 0);
-                }
-                Point m = odometry.getPoint();
-                Globals.MAX_SPEED = 0.5;
-                while(Math.abs(angle - 94) > 0.6) {
-                    angle = odometry.getAngle();
-                    drive.update(robot, m, odometry, 94, angle, robot.bulkRead());
-                }
-                Globals.MAX_SPEED = ((-0.04/1.05) * (robot.battery == null ? 13 : robot.battery.getVoltage())) + 0.5985714286;
-                robot.setDrivePower(0,0,0,0);
-                double itime = System.currentTimeMillis();
-                while (System.currentTimeMillis() - itime <= 1000) {
-                    odometry.update(robot.bulkRead(), odometry.getAngle());
-                }
-                robot.setIntakePower(0);
-                shooter.attempts = 0;
-                shooter.shot = false;
-                while (!shooter.shot) {
-                    telemetry.addData("Shots", shooter.attempts);
-                    telemetry.update();
-                    shooter.forceshoot(robot, xx == 1 ? 16.65 : 16.65, false);
-                    if(shooter.attempts >= 4) {
-                        shooter.shot = true;
-                    }
-                }
-                t = System.currentTimeMillis();
-                while(System.currentTimeMillis() - t <= 500) {
-                    shooter.start(robot, xx == 1 ? 16.65 : 16.65);
-                }
-                robot.shoot1.setPower(0);
-                robot.shoot2.setPower(0);
-                robot.flicker.setPosition(Shooter.shootOut);
-            }
-            Globals.MAX_SPEED = 1.0;
-            Globals.MIN_SPEED = 0.18;
             displacement = odometry.getPoint().distance(new Point(-4.75, 2.75), Unit.FEET);
             angle = odometry.getAngle();
             while(displacement > 0.3 || Math.abs(angle - -169) > 1) {
@@ -521,6 +435,7 @@ public class MTIPath2BLUE extends MyOpMode {
                     odometry.update(robot.bulkRead(), odometry.getAngle());
                 }
             }
+            Shooter.thing--;
         }
         requestOpModeStop();
     }

@@ -69,17 +69,17 @@ public class Shooter implements Subsystem {
     public static double PD = 0;
     public static double PF = 0;
 
-    public static double vel = 16.2;
-    public static double firstshotvel = 16.2;
-    public static double secondshotvel = 16.2;
-    public static double thirdshotvel = 16.2;
+    public static double vel = 16.4;
+    public static double firstshotvel = 16.4;
+    public static double secondshotvel = 16.4;
+    public static double thirdshotvel = 16.4;
 
     public static double shotvel = 0;
 
     public static int thing = 5;
     public static int oldthing = 5;
 
-    public static double powershotvel = 14.9;
+    public static double powershotvel = 15.2;
 
     public double cycles = 0;
 
@@ -150,7 +150,7 @@ public class Shooter implements Subsystem {
         if(!uh2 && ((gamepad2.left_trigger > 0.05))) {
             uh2 = true;
             thing = 5;
-            vel = 13.3;
+            vel = 13.8;
             attempts = 0;
             shooting = true;
             Intake.rings -= (thing - 1);
@@ -580,7 +580,7 @@ public class Shooter implements Subsystem {
             handler.pushData("sav", v);
             handler.pushData("saa", a);
         }
-        if ((override && ((velocity <= firstshotvel && Math.abs(Math.abs(v) - Math.abs(t)) < 1.0) || Math.abs(Math.abs(v) - Math.abs(t)) < 0.15)) || ((velocity <= firstshotvel && (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15))) {
+        if ((override && ((velocity <= firstshotvel && Math.abs(Math.abs(v) - Math.abs(t)) < 0.3) || Math.abs(Math.abs(v) - Math.abs(t)) < 0.15)) || ((velocity <= firstshotvel && (Math.abs(Math.abs(v) - Math.abs(t)) < 0.2)) || (Math.abs(Math.abs(v) - Math.abs(t)) < 0.15))) {
             override = true;
             if (once) {
                 shootonce(targ, robot);
@@ -704,8 +704,8 @@ public class Shooter implements Subsystem {
 
     public void shoot(Target targetlol, GOFHardware robot) {
         if(!Globals.AUTO) {
-            robot.d1.setPosition(0.32);
-            robot.d2.setPosition(0.84);
+            robot.d1.setPosition(0);
+            robot.d2.setPosition(0.8);
         }
         if(targ == Target.POWER) {
             shootonce(targetlol, robot);

@@ -65,10 +65,10 @@ public class Wobble implements Subsystem {
             bumperpressed = false;
         }
         if(gamepad2.right_stick_y > 0.1) {
-            robot.w1.setPosition(0.65);
+            robot.w1.setPosition(0.66);
         }
         else if(gamepad2.right_stick_y < -0.1) {
-            robot.w1.setPosition(0.29);
+            robot.w1.setPosition(0.28);
         }
         else if(Math.abs(gamepad2.right_stick_x) > 0.1) {
             robot.w1.setPosition(0.36);

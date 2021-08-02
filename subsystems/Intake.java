@@ -145,7 +145,7 @@ public class Intake implements Subsystem {
 
         double distance = robot.ringsensor == null ? Double.MAX_VALUE : robot.ringsensor.getDistance(DistanceUnit.MM);
 
-        if(distance < 29 && !voltage) {
+        if(distance < 19 && !voltage) {
             voltage = true;
             if(robot.in.getPower() > 0) {
                 rings--;
@@ -154,7 +154,7 @@ public class Intake implements Subsystem {
                 rings++;
             }
         }
-        if(distance > 32) {
+        if(distance > 22) {
             voltage = false;
         }
     }

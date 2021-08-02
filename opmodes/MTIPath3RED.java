@@ -122,7 +122,7 @@ public class MTIPath3RED extends MyOpMode {
         Drivetrain.mks = 0.045;
         odometry.setX(Math.abs(odometry.getX()));
         super.startOp();
-        double displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
+        double displacement = odometry.getPoint().distance(new Point(1.0, -0.35), Unit.FEET);
         double angle = odometry.getAngle();
         double d1p = robot.d1.getPosition();
         double d2p = robot.d2.getPosition();
@@ -135,19 +135,19 @@ public class MTIPath3RED extends MyOpMode {
         drive.lasttime = System.currentTimeMillis();
         drive.lasterror = 0;
         while(displacement > 2) {
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, Double.NaN, angle, robot.bulkRead());
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.35), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.35), odometry, Double.NaN, angle, robot.bulkRead());
             angle = odometry.getAngle();
         }
-        while((displacement > 1.0/24.0 || Math.abs(angle - 87.0 /* angle 1 */) > 0.35)) {
+        while((displacement > 1.0/24.0 || Math.abs(angle - 77.0 /* angle 1 */) > 0.35)) {
             angle = odometry.getAngle();
             data = robot.bulkRead();
-            displacement = odometry.getPoint().distance(new Point(1.0, 0), Unit.FEET);
-            drive.update(robot, new Point(1.0, 0), odometry, 87.0 /* angle 1 */, angle, data);
+            displacement = odometry.getPoint().distance(new Point(1.0, -0.35), Unit.FEET);
+            drive.update(robot, new Point(1.0, -0.35), odometry, 77.0 /* angle 1 */, angle, data);
             if(Math.abs(odometry.getVelocity()) < 0.1 / 1000.0 && Globals.MIN_SPEED < 0.3) {
                 Globals.MIN_SPEED += 0.008;
             }
-            else if(displacement < 1.0/48.0 && Math.abs(angle - 87.0 /* angle 1 */) > 0.35 && Globals.MIN_SPEED > 0.23) {
+            else if(displacement < 1.0/48.0 && Math.abs(angle - 77.0 /* angle 1 */) > 0.35 && Globals.MIN_SPEED > 0.23) {
                 Globals.MIN_SPEED -= 0.008;
             }
         }

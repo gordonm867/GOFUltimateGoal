@@ -306,7 +306,7 @@ public class GOFHardware {
         try {
             w1 = hwMap.get(Servo.class, "w1");
             w1.setDirection(Servo.Direction.FORWARD);
-            w1.setPosition(0.29);
+            w1.setPosition(0.28);
         }
         catch(Exception p_exception) {
             w1 = null;

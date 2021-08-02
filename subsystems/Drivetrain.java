@@ -203,7 +203,7 @@ public class Drivetrain implements Subsystem {
                 lastyaw = yaw;
                 boolean red = (!handler.contains("Color") || !((String) handler.getData("Color")).equalsIgnoreCase("Blue"));
                 yaw = mypipeline.calculateYaw(red ? UGAngleHighGoalPipeline.Target.RED : UGAngleHighGoalPipeline.Target.BLUE);
-                double error = Functions.normalize((red ? -7.8 : 7.8) - yaw);
+                double error = Functions.normalize((red ? -7.8 : -10.5) - yaw);
                 double dtime = (System.currentTimeMillis() - autoaimlasttime) / 1000.0;
                 double derivative = (yaw-lastyaw) / dtime;
                 autoaimintegral += error * dtime;

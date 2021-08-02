@@ -28,7 +28,7 @@ import java.util.ArrayList;
 @Autonomous(name="BLUE-PS")
 public class MTIPath1BLUE extends MyOpMode {
 
-    public double WAIT = 5000;
+    public double WAIT = 0;
 
     GOFHardware robot = GOFHardware.getInstance();
     Drivetrain drive;
